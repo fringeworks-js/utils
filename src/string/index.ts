@@ -31,4 +31,5 @@ export { default as retypeToNoLineFeed } from './retypeToNoLineFeed';
 export { default as retypeToNoSpace } from './retypeToNoSpace';
 export { default as safeMatchAll } from './safeMatchAll';
 export { default as transformString } from './transformString';
+export { default as unit } from './unit';
 export { default as upperFirst } from './upperFirst';

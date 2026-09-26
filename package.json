@@ -1,6 +1,6 @@
 {
   "name": "@niche-works/utils",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "private": true,
   "keywords": [
     "utils"
@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@niche-works/dev": "^0.5.4",
+    "@niche-works/dev": "^0.5.5",
     "@niche-works/rollup-plugin-dist-package": "^0.2.2",
     "@types/node": "^25.5.0",
     "@typescript-eslint/eslint-plugin": "^8.59.2",
