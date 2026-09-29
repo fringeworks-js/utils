@@ -23,10 +23,9 @@ const user: User = {
 
 describe('distribute', () => {
   // ---------------------------------------------------------------------------
-  // DistributePropertyList（配列形式）
+  // DistributePropertyList
   // ---------------------------------------------------------------------------
-
-  describe('rules: 配列形式 (DistributePropertyList)', () => {
+  describe('rules: プロパティ名の配列 (DistributePropertyList)', () => {
     it('指定したプロパティが対象グループに含まれる', () => {
       const result = distribute(user, {
         identity: ['id', 'name'] as const,
@@ -66,54 +65,6 @@ describe('distribute', () => {
       });
 
       expect(result.identity).toEqual({ id: 1, name: 'Alice' });
-    });
-  });
-
-  // ---------------------------------------------------------------------------
-  // DistributePropertyMap（オブジェクト形式）
-  // ---------------------------------------------------------------------------
-
-  describe('rules: オブジェクト形式 (DistributePropertyMap)', () => {
-    it('value=true のプロパティは元のキー名で分配される', () => {
-      const result = distribute(user, {
-        info: { id: true, name: true },
-      });
-
-      expect(result.info).toEqual({ id: 1, name: 'Alice' });
-    });
-
-    it('value=false のプロパティは分配されない', () => {
-      const result = distribute(user, {
-        info: { id: true, name: false },
-      });
-
-      expect(result.info).toEqual({ id: 1 });
-      expect(result.info).not.toHaveProperty('name');
-    });
-
-    it('value=文字列 のプロパティは指定のキー名にリネームされて分配される', () => {
-      const result = distribute(user, {
-        renamed: { id: 'userId', name: 'userName' },
-      });
-
-      expect(result.renamed).toEqual({ userId: 1, userName: 'Alice' });
-    });
-
-    it('true / false / リネームが混在しても正しく動作する', () => {
-      const result = distribute(user, {
-        mixed: { id: 'userId', name: true, age: false },
-      });
-
-      expect(result.mixed).toEqual({ userId: 1, name: 'Alice' });
-      expect(result.mixed).not.toHaveProperty('age');
-    });
-
-    it('指定したプロパティが元のオブジェクトに存在しない', () => {
-      const result = distribute(user, {
-        info: { id: true, name: true, none: true },
-      });
-
-      expect(result.info).toEqual({ id: 1, name: 'Alice' });
     });
   });
 
@@ -178,15 +129,15 @@ describe('distribute', () => {
   // ---------------------------------------------------------------------------
 
   describe('複数グループの組み合わせ', () => {
-    it('配列形式・オブジェクト形式・nullを同時に使用できる', () => {
+    it('複数のグループとnullを同時に使用できる', () => {
       const result = distribute(user, {
         identity: ['id', 'name'] as const,
-        meta: { role: 'userRole' },
+        meta: ['role'] as const,
         rest: null,
       });
 
       expect(result.identity).toEqual({ id: 1, name: 'Alice' });
-      expect(result.meta).toEqual({ userRole: 'admin' });
+      expect(result.meta).toEqual({ role: 'admin' });
       expect(result.rest).toEqual({ age: 30, email: 'alice@example.com' });
     });
 

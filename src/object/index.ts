@@ -4,6 +4,8 @@ export { default as countKeys } from './countKeys';
 export { default as createCaseInsensitiveObject } from './createCaseInsensitiveObject';
 export { default as createKeyTransformObject } from './createKeyTransformObject';
 export { default as distribute } from './distribute';
+export { default as exactKeys } from './exactKeys';
+export { default as exactKeysFromRecord } from './exactKeysFromRecord';
 export { default as filterByKeys } from './filterByKeys';
 export { default as filterByValues } from './filterByValues';
 export { default as flattenObject } from './flattenObject';

@@ -1,6 +1,5 @@
 import type { LooseRecord } from '@niche-works/types';
 import * as R from 'remeda';
-import unsafeCast from '../../type/unsafeCast';
 import type {
   DistributeOptions,
   DistributeResult,
@@ -51,29 +50,12 @@ function _distribute<T extends LooseRecord, DR extends DistributeRules<T>>(
     if (properties == null) {
       // 分配できなかったプロパティを設定するグループ
       restGroupKeys.push(groupKey);
-    } else if (Array.isArray(properties)) {
+    } else {
       // 指定のプロパティを対象のグループへ分配
       for (const property of properties) {
         if (has(property)) {
-          // 元のプロパティ名でグループへ設定
           group[property] = get(property);
           delete rest[property];
-        }
-      }
-    } else {
-      // 指定のプロパティを対象のグループへ分配
-      for (const property in properties) {
-        if (has(property)) {
-          const value = properties[property];
-          if (value === true) {
-            // 元のプロパティ名でグループへ設定
-            group[property] = get(property);
-            delete rest[property];
-          } else if (value !== false) {
-            // 指定のプロパティ名でグループへ設定
-            group[unsafeCast<string>(value)] = get(property);
-            delete rest[property];
-          }
         }
       }
     }

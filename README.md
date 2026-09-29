@@ -809,7 +809,16 @@ flattenObject({ a: { b: { c: 1 } } });
 
 #### `distribute(data, rules, options?)` [`*`](#-data-last-support)
 
-Distributes object properties into multiple groups according to rules.
+Distributes object properties into multiple groups according to rules. Each group takes an array of property names; a group set to `null` receives the properties not distributed to any other group.
+
+```ts
+const { identity, rest } = distribute(user, {
+  identity: ['id', 'name'],
+  rest: null,
+});
+// identity: { id, name }
+// rest: all other properties of user
+```
 
 ---
 

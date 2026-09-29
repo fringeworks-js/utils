@@ -809,7 +809,16 @@ flattenObject({ a: { b: { c: 1 } } });
 
 #### `distribute(data, rules, options?)` [`*`](#-data-last-対応)
 
-オブジェクトのプロパティをルールに従って複数のグループに分配します。
+オブジェクトのプロパティをルールに従って複数のグループに分配します。各グループにはプロパティ名の配列を指定します。`null` を指定したグループには、他のどのグループにも分配されなかったプロパティが入ります。
+
+```ts
+const { identity, rest } = distribute(user, {
+  identity: ['id', 'name'],
+  rest: null,
+});
+// identity: { id, name }
+// rest: user のそれ以外のプロパティ
+```
 
 ---
 
