@@ -1,4 +1,4 @@
-import type { LooseDictionary } from '@niche-works/types';
+import type { LooseDictionary } from '@fringeworks/types';
 import get from '../../object/get';
 import escapeRegExp from '../escapeRegExp';
 import type { ReplacePlaceholdersOptions } from './types';
@@ -14,7 +14,10 @@ const replacePlaceholders = (
   options: ReplacePlaceholdersOptions = {},
 ): string => _replacePlaceholders(template, values, options);
 replacePlaceholders.dataLast =
-  (values: LooseDictionary | unknown[], options: ReplacePlaceholdersOptions = {}) =>
+  (
+    values: LooseDictionary | unknown[],
+    options: ReplacePlaceholdersOptions = {},
+  ) =>
   (template: string): string =>
     _replacePlaceholders(template, values, options);
 export default replacePlaceholders;

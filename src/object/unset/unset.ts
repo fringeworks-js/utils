@@ -1,4 +1,4 @@
-import type { LooseRecord } from '@niche-works/types';
+import type { LooseRecord } from '@fringeworks/types';
 import _parsePath from '../../_internal/_parsePath';
 
 /**

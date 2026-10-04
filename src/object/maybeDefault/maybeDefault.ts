@@ -1,4 +1,4 @@
-import type { LooseRecord } from '@niche-works/types';
+import type { LooseRecord } from '@fringeworks/types';
 import maybeDefaultMutable from '../maybeDefaultMutable';
 import type { MaybeDefaultOptions } from './types';
 
@@ -16,7 +16,10 @@ const maybeDefault = <T extends LooseRecord, V extends LooseRecord>(
   options: MaybeDefaultOptions = {},
 ): T & V => _maybeDefault(target, defaultValues, options);
 maybeDefault.dataLast =
-  <V extends LooseRecord>(defaultValues: V, options: MaybeDefaultOptions = {}) =>
+  <V extends LooseRecord>(
+    defaultValues: V,
+    options: MaybeDefaultOptions = {},
+  ) =>
   <T extends LooseRecord>(target: T): T & V =>
     _maybeDefault(target, defaultValues, options);
 export default maybeDefault;

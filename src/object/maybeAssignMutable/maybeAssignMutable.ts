@@ -1,4 +1,4 @@
-import type { LooseRecord } from '@niche-works/types';
+import type { LooseRecord } from '@fringeworks/types';
 import forEachValues from '../forEachValues';
 import type { MaybeAssignMutableOptions } from './types';
 

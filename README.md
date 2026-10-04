@@ -1,28 +1,28 @@
-# @niche-works/utils
+# @fringeworks/utils
 
-`@niche-works/utils` is a niche library of general-purpose utility functions covering a wide range of categories including arrays, objects, strings, numbers, dates, timers, and more.
+`@fringeworks/utils` is a niche library of general-purpose utility functions covering a wide range of categories including arrays, objects, strings, numbers, dates, timers, and more.
 
 **[日本語の README はこちら](./README.ja.md)**
 
 ## Installation
 
 ```bash
-npm install @niche-works/utils
+npm install @fringeworks/utils
 # or
-pnpm add @niche-works/utils
+pnpm add @fringeworks/utils
 ```
 
 ## Usage
 
 ```ts
-import { ensureArray, normalizeString, rangeClamp } from '@niche-works/utils';
+import { ensureArray, normalizeString, rangeClamp } from '@fringeworks/utils';
 ```
 
 You can also import by category.
 
 ```ts
-import { ensureArray } from '@niche-works/utils/array';
-import { normalizeString } from '@niche-works/utils/string';
+import { ensureArray } from '@fringeworks/utils/array';
+import { normalizeString } from '@fringeworks/utils/string';
 ```
 
 ## Data Last Pattern
@@ -30,7 +30,7 @@ import { normalizeString } from '@niche-works/utils/string';
 Many functions have a `.dataLast` property that returns a curried function receiving data as the last argument. This is useful for pipeline processing.
 
 ```ts
-import { ensureArray } from '@niche-works/utils/array';
+import { ensureArray } from '@fringeworks/utils/array';
 
 // data-first (normal call)
 const arr = ensureArray('hello'); // ['hello']
@@ -57,8 +57,8 @@ asArray(null); // []
 asArray(new Set([1, 2])); // [1, 2]
 ```
 
-| Option | Type      | Description                                                       |
-| ------ | --------- | ----------------------------------------------------------------- |
+| Option | Type      | Description                                                        |
+| ------ | --------- | ------------------------------------------------------------------ |
 | `raw`  | `boolean` | When `true`, wraps iterables as a single element without spreading |
 
 ---
@@ -73,8 +73,8 @@ ensureArray(42); // [42]
 ensureArray(null); // []
 ```
 
-| Option | Type      | Description                                                              |
-| ------ | --------- | ------------------------------------------------------------------------ |
+| Option | Type      | Description                                                                        |
+| ------ | --------- | ---------------------------------------------------------------------------------- |
 | `raw`  | `boolean` | When `true`, wraps the value as a single element without checking if it's an array |
 
 ---
@@ -98,8 +98,8 @@ Inserts elements at the specified index. The index is clamped to the valid range
 insertAt([1, 2, 3], 1, [10, 20]); // [1, 10, 20, 2, 3]
 ```
 
-| Option    | Type      | Description                                    |
-| --------- | --------- | ---------------------------------------------- |
+| Option    | Type      | Description                                       |
+| --------- | --------- | ------------------------------------------------- |
 | `inplace` | `boolean` | When `true`, directly modifies the original array |
 
 ---
@@ -169,11 +169,11 @@ nestedKeyBy(users, ['role', 'id']);
 // { admin: { a: {...} }, user: { b: {...} } }
 ```
 
-| Option         | Type      | Description                                                                   |
-| -------------- | --------- | ----------------------------------------------------------------------------- |
+| Option         | Type      | Description                                                                                            |
+| -------------- | --------- | ------------------------------------------------------------------------------------------------------ |
 | `overwrite`    | `boolean` | When `true`, later values take precedence for duplicate keys (default: earlier values take precedence) |
-| `flat`         | `boolean` | When `true`, produces a flat object with concatenated keys                    |
-| `keySeparator` | `string`  | Key separator for `flat` mode (default: `'.'`)                                |
+| `flat`         | `boolean` | When `true`, produces a flat object with concatenated keys                                             |
+| `keySeparator` | `string`  | Key separator for `flat` mode (default: `'.'`)                                                         |
 
 ---
 
@@ -295,10 +295,10 @@ Checks equality of two values using the specified comparison mode.
 isEqualBy({ a: 1 }, { a: 1 }, { mode: 'deep' }); // true
 ```
 
-| Option       | Type                            | Description                          |
-| ------------ | ------------------------------- | ------------------------------------ |
+| Option       | Type                            | Description                           |
+| ------------ | ------------------------------- | ------------------------------------- |
 | `mode`       | `'strict' \| 'loose' \| 'deep'` | Comparison mode (default: `'strict'`) |
-| `customizer` | `Function`                      | Custom comparison function           |
+| `customizer` | `Function`                      | Custom comparison function            |
 
 ---
 
@@ -363,10 +363,10 @@ await cachedFetch('user-1'); // API call
 await cachedFetch('user-1'); // returned from cache
 ```
 
-| Option     | Type       | Description                    |
-| ---------- | ---------- | ------------------------------ |
-| `ttl`      | `number`   | Cache time-to-live (ms)        |
-| `cacheKey` | `Function` | Cache key generator function   |
+| Option     | Type       | Description                  |
+| ---------- | ---------- | ---------------------------- |
+| `ttl`      | `number`   | Cache time-to-live (ms)      |
+| `cacheKey` | `Function` | Cache key generator function |
 
 ---
 
@@ -452,25 +452,25 @@ fitToRatio(100, 16 / 9, { mode: 'expand' }); // 178
 fitToRatio(100, 16 / 9, { mode: 'shrink' }); // 56
 ```
 
-| Option     | Type                   | Description          |
-| ---------- | ---------------------- | -------------------- |
+| Option     | Type                   | Description           |
+| ---------- | ---------------------- | --------------------- |
 | `mode`     | `'expand' \| 'shrink'` | Expand or shrink mode |
-| `decimals` | `number`               | Decimal places       |
+| `decimals` | `number`               | Decimal places        |
 
 Dedicated functions for specific ratios are also provided.
 
-| Function        | Ratio               | Data Last |
-| --------------- | ------------------- | --------- |
-| `fitToGolden`   | Golden ratio (1.618…) | ✓        |
-| `fitToSilver`   | Silver ratio (2.414…) |          |
-| `fitToBronze`   | Bronze ratio (3.303…) |          |
-| `fitToDouble`   | 2:1                 |           |
-| `fitToYamato`   | Yamato ratio (√2)   |           |
-| `fitToSqrt2`    | √2                  |           |
-| `fitToSqrt3`    | √3                  |           |
-| `fitToSqrt5`    | √5                  |           |
-| `fitToHarmonic` | Harmonic ratio      |           |
-| `fitToPlatinum` | Platinum ratio      |           |
+| Function        | Ratio                 | Data Last |
+| --------------- | --------------------- | --------- |
+| `fitToGolden`   | Golden ratio (1.618…) | ✓         |
+| `fitToSilver`   | Silver ratio (2.414…) |           |
+| `fitToBronze`   | Bronze ratio (3.303…) |           |
+| `fitToDouble`   | 2:1                   |           |
+| `fitToYamato`   | Yamato ratio (√2)     |           |
+| `fitToSqrt2`    | √2                    |           |
+| `fitToSqrt3`    | √3                    |           |
+| `fitToSqrt5`    | √5                    |           |
+| `fitToHarmonic` | Harmonic ratio        |           |
+| `fitToPlatinum` | Platinum ratio        |           |
 
 ---
 
@@ -486,12 +486,12 @@ limitDecimal('999', { max: 100 }); // '100'
 limitDecimal('-', { interactive: true, min: -100 }); // '-' (allow while typing)
 ```
 
-| Option        | Type               | Description                                           |
-| ------------- | ------------------ | ----------------------------------------------------- |
-| `dp`          | `number`           | Maximum decimal places                                |
-| `min`         | `number \| string` | Minimum value                                         |
-| `max`         | `number \| string` | Maximum value                                         |
-| `interactive` | `boolean`          | Allow in-progress states (`-`, trailing `.`, etc.)    |
+| Option        | Type               | Description                                        |
+| ------------- | ------------------ | -------------------------------------------------- |
+| `dp`          | `number`           | Maximum decimal places                             |
+| `min`         | `number \| string` | Minimum value                                      |
+| `max`         | `number \| string` | Maximum value                                      |
+| `interactive` | `boolean`          | Allow in-progress states (`-`, trailing `.`, etc.) |
 
 ---
 
@@ -538,8 +538,8 @@ const result = measure(() => heavyCalc(), { iteration: 100 });
 console.log(result.time); // execution time (ms)
 ```
 
-| Option      | Type     | Description                      |
-| ----------- | -------- | -------------------------------- |
+| Option      | Type     | Description                        |
+| ----------- | -------- | ---------------------------------- |
 | `iteration` | `number` | Number of executions (default: 10) |
 
 ---
@@ -744,9 +744,9 @@ filterByKeys({ name: 'Alice', age: 30 }, 'na');
 // { name: 'Alice' }
 ```
 
-| Option      | Type      | Description                                    |
-| ----------- | --------- | ---------------------------------------------- |
-| `normalize` | `boolean` | Apply string normalization before comparison   |
+| Option      | Type      | Description                                  |
+| ----------- | --------- | -------------------------------------------- |
+| `normalize` | `boolean` | Apply string normalization before comparison |
 
 ---
 
@@ -761,9 +761,9 @@ filterByValues({ a: 1, b: 2, c: 1 }, 1);
 // { a: 1, c: 1 }
 ```
 
-| Option      | Type      | Description                                          |
-| ----------- | --------- | ---------------------------------------------------- |
-| `normalize` | `boolean` | Apply normalization before string comparison         |
+| Option      | Type      | Description                                  |
+| ----------- | --------- | -------------------------------------------- |
+| `normalize` | `boolean` | Apply normalization before string comparison |
 
 ---
 
@@ -779,15 +779,15 @@ transformObject({ firstName: 'Alice', age: 30 }, [
 // { user: { name: 'Alice' }, doubleAge: 60 }
 ```
 
-| Rule Property            | Type                 | Description                                   |
-| ------------------------ | -------------------- | --------------------------------------------- |
-| `from`                   | `string \| Function` | Path or function to compute the source value  |
-| `to`                     | `string \| Function` | Path or function to transform the result      |
-| `shouldRemoveFromSource` | `boolean`            | When `true`, removes the source property      |
+| Rule Property            | Type                 | Description                                  |
+| ------------------------ | -------------------- | -------------------------------------------- |
+| `from`                   | `string \| Function` | Path or function to compute the source value |
+| `to`                     | `string \| Function` | Path or function to transform the result     |
+| `shouldRemoveFromSource` | `boolean`            | When `true`, removes the source property     |
 
-| Option             | Type      | Description                                        |
-| ------------------ | --------- | -------------------------------------------------- |
-| `deleteSourceKeys` | `boolean` | When `true`, removes source keys for all rules     |
+| Option             | Type      | Description                                    |
+| ------------------ | --------- | ---------------------------------------------- |
+| `deleteSourceKeys` | `boolean` | When `true`, removes source keys for all rules |
 
 ---
 
@@ -853,13 +853,13 @@ sensitive['name']; // undefined
 sensitive['Name']; // 'Alice'
 ```
 
-| Option             | Type                          | Description                                                  |
-| ------------------ | ----------------------------- | ------------------------------------------------------------ |
-| `target`           | `object`                      | Initial value object                                         |
-| `caseSensitive`    | `boolean`                     | When `true`, keys are case-sensitive (default: `false`)      |
-| `storedKeyType`    | `'transformed' \| 'original'` | Key storage format                                           |
-| `isMutable`        | `boolean`                     | When `true`, directly modifies the original object           |
-| `includeInherited` | `boolean`                     | When `true`, includes inherited properties                   |
+| Option             | Type                          | Description                                             |
+| ------------------ | ----------------------------- | ------------------------------------------------------- |
+| `target`           | `object`                      | Initial value object                                    |
+| `caseSensitive`    | `boolean`                     | When `true`, keys are case-sensitive (default: `false`) |
+| `storedKeyType`    | `'transformed' \| 'original'` | Key storage format                                      |
+| `isMutable`        | `boolean`                     | When `true`, directly modifies the original object      |
+| `includeInherited` | `boolean`                     | When `true`, includes inherited properties              |
 
 ---
 
@@ -983,19 +983,19 @@ normalizeString('Café', { ignoreDakuon: true }); // 'Cafe'
 normalizeString('Hello World', { ignoreCase: true }); // 'hello world'
 ```
 
-| Option                | Type      | Description                                              |
-| --------------------- | --------- | -------------------------------------------------------- |
-| `ignoreCase`          | `boolean` | Ignore case (unify to lowercase)                         |
-| `ignoreWidth`         | `boolean` | Ignore full-width/half-width (unify to half-width)       |
-| `ignoreKana`          | `boolean` | Ignore katakana/hiragana (unify to hiragana)             |
-| `ignoreDakuon`        | `boolean` | Ignore voiced/semi-voiced consonant marks                |
-| `ignoreSokuon`        | `boolean` | Ignore geminate consonants (っ/ッ → つ/ツ)               |
-| `ignoreYouon`         | `boolean` | Ignore contracted sounds (ゃゅょ, etc.)                  |
-| `ignoreChouon`        | `boolean` | Ignore long vowel marks (ー)                             |
-| `ignoreLineFeed`      | `boolean` | Ignore line feeds                                        |
-| `ignoreSpace`         | `boolean` | Ignore spaces                                            |
-| `ignoreCompatibility` | `boolean` | Normalize Unicode compatibility characters               |
-| `ignoreComposition`   | `boolean` | Normalize Unicode composed characters                    |
+| Option                | Type      | Description                                        |
+| --------------------- | --------- | -------------------------------------------------- |
+| `ignoreCase`          | `boolean` | Ignore case (unify to lowercase)                   |
+| `ignoreWidth`         | `boolean` | Ignore full-width/half-width (unify to half-width) |
+| `ignoreKana`          | `boolean` | Ignore katakana/hiragana (unify to hiragana)       |
+| `ignoreDakuon`        | `boolean` | Ignore voiced/semi-voiced consonant marks          |
+| `ignoreSokuon`        | `boolean` | Ignore geminate consonants (っ/ッ → つ/ツ)         |
+| `ignoreYouon`         | `boolean` | Ignore contracted sounds (ゃゅょ, etc.)            |
+| `ignoreChouon`        | `boolean` | Ignore long vowel marks (ー)                       |
+| `ignoreLineFeed`      | `boolean` | Ignore line feeds                                  |
+| `ignoreSpace`         | `boolean` | Ignore spaces                                      |
+| `ignoreCompatibility` | `boolean` | Normalize Unicode compatibility characters         |
+| `ignoreComposition`   | `boolean` | Normalize Unicode composed characters              |
 
 ---
 
@@ -1014,11 +1014,11 @@ replacePlaceholders('{{0}} and {{1}}', ['Alice', 'Bob']);
 // 'Alice and Bob'
 ```
 
-| Option               | Type               | Description                                                       |
-| -------------------- | ------------------ | ----------------------------------------------------------------- |
-| `bracket`            | `[string, string]` | Placeholder bracket characters (default: `['{{', '}}']`)         |
-| `removePlaceholders` | `boolean`          | When `true`, removes placeholders with no matching value          |
-| `flatKeys`           | `boolean`          | When `true`, resolves with flat (non-nested) keys                 |
+| Option               | Type               | Description                                              |
+| -------------------- | ------------------ | -------------------------------------------------------- |
+| `bracket`            | `[string, string]` | Placeholder bracket characters (default: `['{{', '}}']`) |
+| `removePlaceholders` | `boolean`          | When `true`, removes placeholders with no matching value |
+| `flatKeys`           | `boolean`          | When `true`, resolves with flat (non-nested) keys        |
 
 ---
 
@@ -1063,22 +1063,22 @@ extract('{{name}} here'); // ['name']
 
 #### Character Type Conversion
 
-| Function                       | Description                                       | Data Last |
-| ------------------------------ | ------------------------------------------------- | --------- |
-| `retypeToFullWidth(str)`       | Half-width to full-width                          | ✓         |
-| `retypeToHalfWidth(str)`       | Full-width to half-width                          |           |
-| `retypeToHiragana(str)`        | Katakana to hiragana                              | ✓         |
-| `retypeToKatakana(str)`        | Hiragana to katakana                              |           |
-| `retypeToHiraganaSeion(str)`   | Katakana to hiragana (clear sounds only)          |           |
-| `retypeToKatakanaSeion(str)`   | Hiragana to katakana (clear sounds only)          |           |
-| `retypeToNoChouon(str)`        | Remove long vowel marks                           |           |
-| `retypeToNoLineFeed(str)`      | Remove line feeds                                 |           |
-| `retypeToNoSpace(str)`         | Remove spaces                                     |           |
-| `retypeToNfc(str)`             | NFC normalization                                 | ✓         |
-| `retypeToNfd(str)`             | NFD normalization                                 | ✓         |
-| `retypeToNfkc(str)`            | NFKC normalization                                | ✓         |
-| `retypeToNfkd(str)`            | NFKD normalization                                | ✓         |
-| `retype(str, types, options?)` | Apply multiple character type conversions         |           |
+| Function                       | Description                               | Data Last |
+| ------------------------------ | ----------------------------------------- | --------- |
+| `retypeToFullWidth(str)`       | Half-width to full-width                  | ✓         |
+| `retypeToHalfWidth(str)`       | Full-width to half-width                  |           |
+| `retypeToHiragana(str)`        | Katakana to hiragana                      | ✓         |
+| `retypeToKatakana(str)`        | Hiragana to katakana                      |           |
+| `retypeToHiraganaSeion(str)`   | Katakana to hiragana (clear sounds only)  |           |
+| `retypeToKatakanaSeion(str)`   | Hiragana to katakana (clear sounds only)  |           |
+| `retypeToNoChouon(str)`        | Remove long vowel marks                   |           |
+| `retypeToNoLineFeed(str)`      | Remove line feeds                         |           |
+| `retypeToNoSpace(str)`         | Remove spaces                             |           |
+| `retypeToNfc(str)`             | NFC normalization                         | ✓         |
+| `retypeToNfd(str)`             | NFD normalization                         | ✓         |
+| `retypeToNfkc(str)`            | NFKC normalization                        | ✓         |
+| `retypeToNfkd(str)`            | NFKD normalization                        | ✓         |
+| `retype(str, types, options?)` | Apply multiple character type conversions |           |
 
 ---
 
@@ -1101,16 +1101,16 @@ extract('{{name}} here'); // ['name']
 
 #### Other String Utilities
 
-| Function                                  | Description                                   | Data Last |
-| ----------------------------------------- | --------------------------------------------- | --------- |
-| `ensureString(value)`                     | Convert to string                             | ✓         |
-| `escapeRegExp(str)`                       | Escape special regex characters               |           |
-| `isFullWidth(str)`                        | Check if all characters are full-width        |           |
-| `isHalfWidth(str)`                        | Check if all characters are half-width        |           |
-| `isLooseEqual(a, b, options?)`            | Check equality after normalizing strings      | ✓         |
-| `isSurroundedBy(str, prefix, suffix)`     | Check if surrounded by specified prefix/suffix | ✓        |
-| `maybeReplace(str, pattern, replacement)` | Replace only if the pattern matches           | ✓         |
-| `safeMatchAll(str, pattern)`              | Safely execute `matchAll` and return results  |           |
+| Function                                  | Description                                    | Data Last |
+| ----------------------------------------- | ---------------------------------------------- | --------- |
+| `ensureString(value)`                     | Convert to string                              | ✓         |
+| `escapeRegExp(str)`                       | Escape special regex characters                |           |
+| `isFullWidth(str)`                        | Check if all characters are full-width         |           |
+| `isHalfWidth(str)`                        | Check if all characters are half-width         |           |
+| `isLooseEqual(a, b, options?)`            | Check equality after normalizing strings       | ✓         |
+| `isSurroundedBy(str, prefix, suffix)`     | Check if surrounded by specified prefix/suffix | ✓         |
+| `maybeReplace(str, pattern, replacement)` | Replace only if the pattern matches            | ✓         |
+| `safeMatchAll(str, pattern)`              | Safely execute `matchAll` and return results   |           |
 
 ---
 

@@ -1,4 +1,4 @@
-import { TypeOfResult } from '@niche-works/constants';
+import { TypeOfResult } from '@fringeworks/constants';
 
 /**
  * 型種別

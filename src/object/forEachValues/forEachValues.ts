@@ -1,4 +1,4 @@
-import type { LooseRecord } from '@niche-works/types';
+import type { LooseRecord } from '@fringeworks/types';
 import type { ForEachValuesOptions } from './types';
 
 /**
@@ -31,8 +31,8 @@ function _forEachValues<T extends LooseRecord>(
   const { includeInherited } = options;
   if (target) {
     const has = includeInherited
-      ? (target, key) => key in target
-      : (target, key) => Object.hasOwn(target, key);
+      ? (target: T, key: PropertyKey) => key in target
+      : (target: T, key: PropertyKey) => Object.hasOwn(target, key);
     for (const key in target) {
       if (has(target, key)) {
         const value = target[key];

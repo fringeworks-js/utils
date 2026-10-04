@@ -1,4 +1,4 @@
-import type { LooseRecord } from '@niche-works/types';
+import type { LooseRecord } from '@fringeworks/types';
 
 /**
  * 分配するプロパティの情報

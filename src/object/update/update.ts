@@ -1,4 +1,4 @@
-import type { LooseRecord } from '@niche-works/types';
+import type { LooseRecord } from '@fringeworks/types';
 import updateMutable from '../updateMutable';
 import type { UpdateOptions } from './types';
 
@@ -16,9 +16,9 @@ const update = <T extends LooseRecord>(
   options?: UpdateOptions,
 ): Partial<T> => _update(object, values, options);
 update.dataLast =
-  <T extends LooseRecord>(values: Partial<T>, options?: UpdateOptions) =>
-  (object: T): Partial<T> =>
-    _update(object, values, options);
+  (values: LooseRecord, options?: UpdateOptions) =>
+  <T extends LooseRecord>(object: T): Partial<T> =>
+    _update(object, values as Partial<T>, options);
 export default update;
 
 function _update<T extends LooseRecord>(

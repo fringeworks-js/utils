@@ -1,4 +1,4 @@
-import type { TypeOfResult } from '@niche-works/constants';
+import type { TypeOfResult } from '@fringeworks/constants';
 import type { KindType } from '../../type/kind';
 
 export type PriorityOptions = {
@@ -14,7 +14,7 @@ export type PriorityOptions = {
    *
    * @default { undefined: -2, null: -1 }
    */
-  priorityMap?: Record<KindType | TypeOfResult, number>;
+  priorityMap?: Partial<Record<KindType | TypeOfResult, number>>;
 
   /**
    * 優先順位を解決する関数\

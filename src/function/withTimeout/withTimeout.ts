@@ -1,4 +1,4 @@
-import type { AsyncFunction } from '@niche-works/types';
+import type { AsyncFunction } from '@fringeworks/types';
 import TimeoutError from '../../error/TimeoutError';
 import type { WithTimeoutOptions } from './types';
 

@@ -14,8 +14,8 @@ const set = <T extends object>(
   value: unknown,
 ) => _set(data, path, value);
 set.dataLast =
-  <T extends object>(path: string | PropertyKey[], value: unknown) =>
-  (data: T) =>
+  (path: string | PropertyKey[], value: unknown) =>
+  <T extends object>(data: T) =>
     _set(data, path, value);
 export default set;
 

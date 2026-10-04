@@ -1,4 +1,4 @@
-import type { AsyncFunction } from '@niche-works/types';
+import type { AsyncFunction } from '@fringeworks/types';
 import alwaysTrue from '../alwaysTrue';
 import type { WithRetryOptions } from './types';
 

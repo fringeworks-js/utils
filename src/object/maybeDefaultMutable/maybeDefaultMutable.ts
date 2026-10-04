@@ -1,4 +1,4 @@
-import type { LooseRecord } from '@niche-works/types';
+import type { LooseRecord } from '@fringeworks/types';
 import forEachValues from '../forEachValues';
 import type { MaybeDefaultMutableOptions } from './types';
 
@@ -21,11 +21,11 @@ export default function maybeDefaultMutable<
   if (target && defaultValues) {
     const { skipNull, overwriteNull, ...opts } = options;
     const isValidValue = skipNull
-      ? (value) => value != null
-      : (value) => value !== undefined;
+      ? (value: unknown) => value != null
+      : (value: unknown) => value !== undefined;
     const isOverwritedValue = overwriteNull
-      ? (value) => value == null
-      : (value) => value === undefined;
+      ? (value: unknown) => value == null
+      : (value: unknown) => value === undefined;
     forEachValues(
       defaultValues,
       (value, key) => {

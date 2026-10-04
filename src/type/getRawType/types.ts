@@ -1,4 +1,4 @@
-import type { ToStringResult } from '@niche-works/constants';
+import type { ToStringResult } from '@fringeworks/constants';
 
 /**
  * 主要な組み込みオブジェクトの型ラベルのUnion

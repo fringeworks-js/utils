@@ -1,4 +1,4 @@
-import type { AsyncFunction } from '@niche-works/types';
+import type { AsyncFunction } from '@fringeworks/types';
 import type { CacheEntry, WithCacheOptions } from './types';
 
 /**

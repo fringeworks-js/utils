@@ -1,4 +1,4 @@
-import type { LooseRecord } from '@niche-works/types';
+import type { LooseRecord } from '@fringeworks/types';
 import * as R from 'remeda';
 import get from '../get';
 import setMutable from '../setMutable';

@@ -1,28 +1,28 @@
-# @niche-works/utils
+# @fringeworks/utils
 
-`@niche-works/utils` は、配列・オブジェクト・文字列・数値・日付・タイマーなど幅広いカテゴリにわたる汎用ユーティリティ関数のニッチなライブラリです。
+`@fringeworks/utils` は、配列・オブジェクト・文字列・数値・日付・タイマーなど幅広いカテゴリにわたる汎用ユーティリティ関数のニッチなライブラリです。
 
 **[English README is available here](./README.md)**
 
 ## インストール
 
 ```bash
-npm install @niche-works/utils
+npm install @fringeworks/utils
 # または
-pnpm add @niche-works/utils
+pnpm add @fringeworks/utils
 ```
 
 ## 使い方
 
 ```ts
-import { ensureArray, normalizeString, rangeClamp } from '@niche-works/utils';
+import { ensureArray, normalizeString, rangeClamp } from '@fringeworks/utils';
 ```
 
 カテゴリごとにインポートすることもできます。
 
 ```ts
-import { ensureArray } from '@niche-works/utils/array';
-import { normalizeString } from '@niche-works/utils/string';
+import { ensureArray } from '@fringeworks/utils/array';
+import { normalizeString } from '@fringeworks/utils/string';
 ```
 
 ## Data Last パターン
@@ -30,7 +30,7 @@ import { normalizeString } from '@niche-works/utils/string';
 多くの関数は `.dataLast` プロパティを持ち、データを最後の引数として受け取るカリー化された関数を返します。パイプライン処理に活用できます。
 
 ```ts
-import { ensureArray } from '@niche-works/utils/array';
+import { ensureArray } from '@fringeworks/utils/array';
 
 // data-first（通常の呼び出し）
 const arr = ensureArray('hello'); // ['hello']

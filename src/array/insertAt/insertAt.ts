@@ -6,16 +6,16 @@ import type { InsertAtOptions } from './types';
  * @param index 追加先のインデックス
  * @param items 追加する要素
  */
-const insertAt = <T>(
+const insertAt = <T, U = T>(
   data: T[],
   index: number,
-  items: T[],
+  items: U[],
   options?: InsertAtOptions,
-): T[] => _insertAt(data, index, items, options);
+): (T | U)[] => _insertAt<T | U>(data, index, items, options);
 insertAt.dataLast =
-  <I>(index: number, items: I[], options?: InsertAtOptions) =>
-  (data: I[]) =>
-    _insertAt(data, index, items, options);
+  <U>(index: number, items: U[], options?: InsertAtOptions) =>
+  <T>(data: T[]): (T | U)[] =>
+    _insertAt<T | U>(data, index, items, options);
 export default insertAt;
 
 function _insertAt<T>(

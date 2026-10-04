@@ -7,5 +7,5 @@ export default async function ensureAsync<A extends unknown[], R>(
   fn: (...args: A) => R,
   args?: A,
 ): Promise<R> {
-  return fn?.(...args);
+  return fn?.(...(args ?? ([] as unknown as A)));
 }

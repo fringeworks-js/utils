@@ -182,7 +182,7 @@ describe('sortDependencies', () => {
 
   describe('dataLast', () => {
     it('基本動作', () => {
-      const result = sortDependencies.dataLast({
+      const result = sortDependencies.dataLast<(typeof TREE_1)[number]>({
         idProp: 'id',
         depsProp: 'deps',
         isTree: true,

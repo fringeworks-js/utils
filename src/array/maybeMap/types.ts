@@ -1,4 +1,4 @@
-export type { Empty, Falsy, Nullish } from '@niche-works/types';
+export type { Empty, Falsy, Nullish } from '@fringeworks/types';
 
 export type MaybeMapOptions = {
   /**
