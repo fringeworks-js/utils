@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import distribute from './distribute';
 
 // ---------------------------------------------------------------------------
@@ -256,9 +256,86 @@ describe('distribute', () => {
     });
   });
 
+  // ---------------------------------------------------------------------------
+  // 型
+  // ---------------------------------------------------------------------------
+
+  describe('型', () => {
+    it('分配結果は指定したプロパティのみを持つ', () => {
+      const result = distribute(user, {
+        identity: ['id', 'name'] as const,
+      });
+
+      expectTypeOf(result.identity).toEqualTypeOf<{
+        id: number;
+        name: string;
+      }>();
+    });
+
+    it('残余グループはdataのPartialになる', () => {
+      const result = distribute(user, {
+        identity: ['id', 'name'] as const,
+        rest: null,
+      });
+
+      expectTypeOf(result.rest).toEqualTypeOf<Partial<User>>();
+    });
+
+    describe('ユニオン型', () => {
+      type Link = { kind: 'link'; href: string; label: string };
+      type Button = { kind: 'button'; type: string; label: string };
+      const link = { kind: 'link', href: '/', label: 'Home' } as Link | Button;
+
+      it('いずれかのメンバーに存在するプロパティを指定できる', () => {
+        const result = distribute(link, {
+          group: ['kind', 'href', 'type'] as const,
+          rest: null,
+        });
+
+        expect(result.group).toEqual({ kind: 'link', href: '/' });
+        expect(result.rest).toEqual({ label: 'Home' });
+        expectTypeOf(result.group).toEqualTypeOf<
+          { kind: 'link'; href: string } | { kind: 'button'; type: string }
+        >();
+        expectTypeOf(result.rest).toEqualTypeOf<
+          Partial<Link> | Partial<Button>
+        >();
+      });
+
+      it('分配結果を判別プロパティで絞り込める', () => {
+        const result = distribute(link, {
+          group: ['kind', 'href', 'type'] as const,
+        });
+
+        if (result.group.kind === 'link') {
+          expectTypeOf(result.group.href).toEqualTypeOf<string>();
+        }
+      });
+
+      it('どのメンバーにも存在しないプロパティは型エラー', () => {
+        distribute(link, {
+          // @ts-expect-error 存在しないプロパティを意図的に渡す
+          group: ['nonExistent'] as const,
+        });
+      });
+    });
+
+    it('ジェネリック型のプロパティを指定できる', () => {
+      const fn = <P extends { a: number; b: string; c: boolean }>(props: P) => {
+        const result = distribute(props, { group: ['b', 'c'] as const });
+        const picked: Pick<P, 'b' | 'c'> = result.group;
+        return picked;
+      };
+
+      expect(fn({ a: 1, b: 'x', c: true })).toEqual({ b: 'x', c: true });
+    });
+  });
+
   describe('dataLast', () => {
     it('基本動作', () => {
-      const result = distribute.dataLast({ identity: ['id', 'name'] as const })(user);
+      const result = distribute.dataLast({ identity: ['id', 'name'] as const })(
+        user,
+      );
       expect(result.identity).toEqual({ id: 1, name: 'Alice' });
     });
   });
