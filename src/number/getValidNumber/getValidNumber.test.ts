@@ -26,7 +26,7 @@ describe('getValidNumber', () => {
   });
 
   it('カスタムデフォルト値', () => {
-    expect(getValidNumber(null, { defaultValue: 99 })).toBe(99);
+    expect(getValidNumber(null, { invalidValue: 99 })).toBe(99);
   });
 
   it('Infinityはデフォルトでは無効', () => {

@@ -5,7 +5,7 @@ export type MeasureOptions<A extends unknown[] = unknown[]> = {
   /**
    * 関数の実行回数
    */
-  iteration?: number;
+  iterations?: number;
 
   /**
    * 関数に渡す引数
@@ -22,7 +22,7 @@ export type MeasureOptions<A extends unknown[] = unknown[]> = {
 /**
  * measure関数の戻り値
  */
-export type MeasureReturnValue<R = unknown> = {
+export type MeasureResult<R = unknown> = {
   /**
    * 所要時間
    */

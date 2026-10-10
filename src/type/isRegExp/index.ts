@@ -1,1 +1,1 @@
-export { default } from './isRegExp';
+export { default, default as isRegExp } from './isRegExp';

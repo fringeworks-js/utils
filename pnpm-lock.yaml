@@ -115,9 +115,6 @@ importers:
       '@fringeworks/types':
         specifier: ^0.8.0
         version: 0.8.0
-      big.js:
-        specifier: ^6.2.2
-        version: 6.2.2
       klona:
         specifier: ^2.0.6
         version: 2.0.6
@@ -132,8 +129,8 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.4.0(supports-color@7.2.0))
       '@fringeworks/dev':
-        specifier: ^0.8.0
-        version: 0.8.0
+        specifier: ^0.9.1
+        version: 0.9.1
       '@fringeworks/rollup-plugin-dist-package':
         specifier: ^0.8.0
         version: 0.8.0(rollup@4.64.0)
@@ -446,8 +443,8 @@ packages:
   '@fringeworks/constants@0.8.0':
     resolution: {integrity: sha512-5p1ezW9x5pwyhMWCk6bdEri3s0F8CsIDXCh8J47n+LaXS6ULyodI0BZx7mnquV6GEgCgN5oDy0q5nknlcon4yA==}
 
-  '@fringeworks/dev@0.8.0':
-    resolution: {integrity: sha512-YA+uqgbCzWHRWm7YSm32+kchKFI6PtlloGsghAEmNw/TfONN42tbm76/yOe8dHfErKplVc0oreI0EpzCBS9wQA==}
+  '@fringeworks/dev@0.9.1':
+    resolution: {integrity: sha512-M5s+iWXKuJ/ysisWZiSdR6mrFZNxUK9d8OFUl1Kf27e2cWJGPcQcDcK4bmnAWZ0cWSQ2KACgw3RYp4QA/WBbcw==}
 
   '@fringeworks/rollup-plugin-dist-package@0.8.0':
     resolution: {integrity: sha512-ymifDraR1cZ8dk5gUaE6/CEnXO3sH9s12gHJlSIkyVWh3oDjkkmrB068GZH6Lm0vQnMcAmxsNRDwy9ww5jRROA==}
@@ -1017,9 +1014,6 @@ packages:
   balanced-match@4.0.4:
     resolution: {integrity: sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==}
     engines: {node: 18 || 20 || >=22}
-
-  big.js@6.2.2:
-    resolution: {integrity: sha512-y/ie+Faknx7sZA5MfGA2xKlu0GDv8RWrXGsmlteyJQ2lvoKv9GBK/fpRMc2qlSoBAgNxrixICFCBefIq8WCQpQ==}
 
   birpc@4.0.0:
     resolution: {integrity: sha512-LShSxJP0KTmd101b6DRyGBj57LZxSDYWKitQNW/mi8GRMvZb078Uf9+pveax1DrVL89vm7mWe+TovdI/UDOuPw==}
@@ -2076,7 +2070,7 @@ snapshots:
 
   '@fringeworks/constants@0.8.0': {}
 
-  '@fringeworks/dev@0.8.0':
+  '@fringeworks/dev@0.9.1':
     dependencies:
       fast-glob: 3.3.3
       fs-extra: 11.4.1
@@ -2559,8 +2553,6 @@ snapshots:
   balanced-match@1.0.2: {}
 
   balanced-match@4.0.4: {}
-
-  big.js@6.2.2: {}
 
   birpc@4.0.0: {}
 

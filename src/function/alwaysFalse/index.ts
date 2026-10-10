@@ -1,1 +1,1 @@
-export { default } from './alwaysFalse';
+export { default as alwaysFalse, default } from './alwaysFalse';

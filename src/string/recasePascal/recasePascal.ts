@@ -1,6 +1,6 @@
 import * as R from 'remeda';
-import isBlank from '../../type/isBlank';
-import upperFirst from '../upperFirst';
+import { isBlank } from '../../type/isBlank';
+import { upperFirst } from '../upperFirst';
 
 /**
  * hello world -> HelloWorld

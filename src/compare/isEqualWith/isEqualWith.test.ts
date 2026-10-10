@@ -32,11 +32,15 @@ describe('isEqualWith', () => {
 
   describe('オブジェクト', () => {
     it('同じオブジェクトはtrue', () => {
-      expect(isEqualWith({ a: 1, b: 2 }, { a: 1, b: 2 }, () => undefined)).toBe(true);
+      expect(isEqualWith({ a: 1, b: 2 }, { a: 1, b: 2 }, () => undefined)).toBe(
+        true,
+      );
     });
 
     it('キーが異なるオブジェクトはfalse', () => {
-      expect(isEqualWith({ a: 1 }, { a: 1, b: 2 }, () => undefined)).toBe(false);
+      expect(isEqualWith({ a: 1 }, { a: 1, b: 2 }, () => undefined)).toBe(
+        false,
+      );
     });
 
     it('値が異なるオブジェクトはfalse', () => {
@@ -44,7 +48,9 @@ describe('isEqualWith', () => {
     });
 
     it('片方にしかないキーはfalse', () => {
-      expect(isEqualWith({ a: 1, b: 2 }, { a: 1, c: 2 }, () => undefined)).toBe(false);
+      expect(isEqualWith({ a: 1, b: 2 }, { a: 1, c: 2 }, () => undefined)).toBe(
+        false,
+      );
     });
   });
 
@@ -96,6 +102,41 @@ describe('isEqualWith', () => {
   describe('dataLast', () => {
     it('基本動作', () => {
       expect(isEqualWith.dataLast(1, () => undefined)(1)).toBe(true);
+    });
+  });
+
+  describe('Map・Set', () => {
+    const customizer = () => undefined;
+    it('同じ内容のMapはtrue', () => {
+      expect(
+        isEqualWith(
+          new Map([['a', { x: 1 }]]),
+          new Map([['a', { x: 1 }]]),
+          customizer,
+        ),
+      ).toBe(true);
+    });
+    it('内容が異なるMapはfalse', () => {
+      expect(isEqualWith(new Map([[1, 2]]), new Map(), customizer)).toBe(false);
+      expect(
+        isEqualWith(new Map([[1, 2]]), new Map([[1, 3]]), customizer),
+      ).toBe(false);
+      expect(
+        isEqualWith(new Map([[1, 2]]), new Map([[2, 2]]), customizer),
+      ).toBe(false);
+    });
+    it('同じ要素のSetはtrue', () => {
+      expect(isEqualWith(new Set([1, 2]), new Set([2, 1]), customizer)).toBe(
+        true,
+      );
+    });
+    it('要素が異なるSetはfalse', () => {
+      expect(isEqualWith(new Set([1]), new Set(), customizer)).toBe(false);
+      expect(isEqualWith(new Set([1]), new Set([2]), customizer)).toBe(false);
+    });
+    it('MapとMap以外はfalse', () => {
+      expect(isEqualWith(new Map(), {}, customizer)).toBe(false);
+      expect(isEqualWith(new Set(), {}, customizer)).toBe(false);
     });
   });
 });

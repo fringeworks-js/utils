@@ -36,7 +36,12 @@ describe('unset', () => {
   });
 
   it('ネストした配列内の要素を削除できる', () => {
-    const obj = { arr: [[1, 2, 3], [4, 5, 6]] };
+    const obj = {
+      arr: [
+        [1, 2, 3],
+        [4, 5, 6],
+      ],
+    };
     const result = unset(obj, 'arr.0.1') as any;
     expect(result.arr[0]).toEqual([1, 3]);
     expect(result.arr[1]).toEqual([4, 5, 6]);

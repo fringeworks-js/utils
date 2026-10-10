@@ -16,6 +16,10 @@ function _prepareSortedValue(value: unknown): unknown {
   if (value === null || typeof value !== 'object') {
     return value;
   }
+  if (typeof (value as { toJSON?: unknown }).toJSON === 'function') {
+    // JSON.stringifyと同様にtoJSONの結果を変換対象とする（Dateなど）
+    return _prepareSortedValue((value as { toJSON: () => unknown }).toJSON());
+  }
 
   if (Array.isArray(value)) {
     return value.map(_prepareSortedValue);

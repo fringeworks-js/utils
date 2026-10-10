@@ -1,2 +1,1 @@
-export { default } from './insertAt';
-export type * from './types';
+export { default, default as insertAt } from './insertAt';

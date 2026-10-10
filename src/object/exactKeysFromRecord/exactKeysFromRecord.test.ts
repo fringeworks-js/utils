@@ -12,9 +12,10 @@ describe('exactKeysFromRecord', () => {
   it('シンボルのキーも返す', () => {
     const sym = Symbol('sym');
     type WithSymbol = { id: number; [sym]: string };
-    expect(exactKeysFromRecord<WithSymbol>({ id: true, [sym]: true })).toEqual(
-      ['id', sym],
-    );
+    expect(exactKeysFromRecord<WithSymbol>({ id: true, [sym]: true })).toEqual([
+      'id',
+      sym,
+    ]);
   });
 
   it('キーのない型は空配列', () => {

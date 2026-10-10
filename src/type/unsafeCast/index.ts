@@ -1,1 +1,1 @@
-export { default } from './unsafeCast';
+export { default, default as unsafeCast } from './unsafeCast';

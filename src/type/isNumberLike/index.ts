@@ -1,1 +1,1 @@
-export { default } from './isNumberLike';
+export { default, default as isNumberLike } from './isNumberLike';

@@ -34,7 +34,11 @@ describe('isIterable', () => {
   });
 
   it('カスタムイテレーターを持つオブジェクトはtrue', () => {
-    const obj = { [Symbol.iterator]: () => ({ next: () => ({ done: true, value: undefined }) }) };
+    const obj = {
+      [Symbol.iterator]: () => ({
+        next: () => ({ done: true, value: undefined }),
+      }),
+    };
     expect(isIterable(obj)).toBe(true);
   });
 });

@@ -10,7 +10,13 @@ describe('swapPairs', () => {
   });
 
   it('複数のペア', () => {
-    expect(swapPairs([['a', 1], ['b', 2], ['c', 3]])).toEqual([
+    expect(
+      swapPairs([
+        ['a', 1],
+        ['b', 2],
+        ['c', 3],
+      ]),
+    ).toEqual([
       [1, 'a'],
       [2, 'b'],
       [3, 'c'],
@@ -18,7 +24,15 @@ describe('swapPairs', () => {
   });
 
   it('同じ型のペア', () => {
-    expect(swapPairs([[1, 2], [3, 4]])).toEqual([[2, 1], [4, 3]]);
+    expect(
+      swapPairs([
+        [1, 2],
+        [3, 4],
+      ]),
+    ).toEqual([
+      [2, 1],
+      [4, 3],
+    ]);
   });
 
   describe('dataLast', () => {

@@ -1,1 +1,1 @@
-export { default as ensureBoolean } from './ensureBoolean';
+export * from './ensureBoolean';

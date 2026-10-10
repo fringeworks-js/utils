@@ -1,2 +1,2 @@
-export { default } from './ensureArray';
+export { default, default as ensureArray } from './ensureArray';
 export type * from './types';

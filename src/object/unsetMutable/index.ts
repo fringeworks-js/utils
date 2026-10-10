@@ -1,1 +1,1 @@
-export { default } from './unsetMutable';
+export { default, default as unsetMutable } from './unsetMutable';

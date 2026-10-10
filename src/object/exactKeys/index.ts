@@ -1,1 +1,1 @@
-export { default } from './exactKeys';
+export { default, default as exactKeys } from './exactKeys';

@@ -1,2 +1,2 @@
-export { default } from './maybeReplace';
+export { default, default as maybeReplace } from './maybeReplace';
 export type * from './types';

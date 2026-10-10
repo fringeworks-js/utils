@@ -2,7 +2,10 @@ import filterByValues from './filterByValues';
 
 describe('filterByValues', () => {
   it('conditionを含む値を持つプロパティだけ残す', () => {
-    const result = filterByValues({ name: 'Alice', city: 'Boston', code: 'XA1' }, 'A');
+    const result = filterByValues(
+      { name: 'Alice', city: 'Boston', code: 'XA1' },
+      'A',
+    );
     expect(result).toEqual({ name: 'Alice', code: 'XA1' });
   });
 
@@ -12,7 +15,10 @@ describe('filterByValues', () => {
   });
 
   it('ネストしたオブジェクトも再帰的に処理する', () => {
-    const result = filterByValues({ user: { name: 'Alice', code: 'B2' } }, 'Alice');
+    const result = filterByValues(
+      { user: { name: 'Alice', code: 'B2' } },
+      'Alice',
+    );
     expect(result).toEqual({ user: { name: 'Alice' } });
   });
 
@@ -21,9 +27,15 @@ describe('filterByValues', () => {
     expect(result).toEqual({ a: 1, c: 1 });
   });
 
-  it('normalize: trueで条件を正規化して比較する', () => {
-    const result = filterByValues({ name: 'Alice', city: 'Boston' }, 'Al', { normalize: true });
-    expect(result).toEqual({ name: 'Alice' });
+  it('normalizeで正規化して比較する', () => {
+    const result = filterByValues(
+      { name: 'ＡＬＩＣＥ', city: 'Boston' },
+      'al',
+      {
+        normalize: (value) => value.normalize('NFKC').toLowerCase(),
+      },
+    );
+    expect(result).toEqual({ name: 'ＡＬＩＣＥ' });
   });
 
   it('配列を対象にフィルタリングする', () => {
@@ -43,7 +55,10 @@ describe('filterByValues', () => {
 
   describe('dataLast', () => {
     it('基本動作', () => {
-      const result = filterByValues.dataLast('A')({ name: 'Alice', city: 'Boston' });
+      const result = filterByValues.dataLast('A')({
+        name: 'Alice',
+        city: 'Boston',
+      });
       expect(result).toEqual({ name: 'Alice' });
     });
   });

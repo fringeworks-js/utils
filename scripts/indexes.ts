@@ -1,18 +1,3 @@
-import indexes from '@fringeworks/dev/indexes';
-import {
-  CONSTANTS,
-  PRIVATE,
-  TEST_FILE,
-} from '@fringeworks/dev/indexes/constants';
+import generateIndexFiles from '@fringeworks/dev/generateIndexFiles';
 
-indexes({
-  exclude: [
-    CONSTANTS,
-    PRIVATE,
-    TEST_FILE,
-    {
-      valueType: 'path',
-      conditions: /\/_internal\/.+/,
-    },
-  ],
-});
+generateIndexFiles();

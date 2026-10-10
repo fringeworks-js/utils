@@ -1,11 +1,4 @@
-export { default as alwaysFalse } from './alwaysFalse';
-export { default as alwaysInput } from './alwaysInput';
-export { default as alwaysTrue } from './alwaysTrue';
-export { default as alwaysVoid } from './alwaysVoid';
-export { default as ensureAsync } from './ensureAsync';
-export { default as maybeApply } from './maybeApply';
-export { default as maybeCall } from './maybeCall';
-export { default as withCache } from './withCache';
-export { default as withFallback } from './withFallback';
-export { default as withRetry } from './withRetry';
-export { default as withTimeout } from './withTimeout';
+export * from './alwaysFalse';
+export * from './alwaysInput';
+export * from './alwaysTrue';
+export * from './alwaysVoid';

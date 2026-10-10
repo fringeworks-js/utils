@@ -1,2 +1,2 @@
 export type * from './types';
-export { default } from './update';
+export { default, default as update } from './update';

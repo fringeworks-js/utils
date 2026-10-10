@@ -1,26 +1,20 @@
 import type {
-  MeasurementAgenda,
-  MeasurementResult,
-  RequiredTimeResult,
+  ComparePerformanceOptions,
+  ComparePerformanceResult,
 } from '../comparePerformance';
 
 /**
- * 測定の議題
+ * comparePerformanceAsyncのオプション
  */
-export type MeasurementAsyncAgenda<
+export type ComparePerformanceAsyncOptions<
   A extends unknown[] = unknown[],
   R = unknown,
-> = MeasurementAgenda<A, Promise<R>>;
-
-/**
- * 計測された処理時間
- */
-export type RequiredTimeAsyncResult = RequiredTimeResult;
+> = ComparePerformanceOptions<A, Promise<R>>;
 
 /**
  * 測定結果
  */
-export type MeasurementAsyncResult<
+export type ComparePerformanceAsyncResult<
   A extends unknown[] = unknown[],
   R = unknown,
-> = MeasurementResult<A, R>;
+> = ComparePerformanceResult<A, R>;

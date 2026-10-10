@@ -18,10 +18,7 @@ const isEqualWith = (
   value: unknown,
   other: unknown,
   customizer: Customizer,
-  key?: string | number,
-  parent?: unknown,
-  otherParent?: unknown,
-): boolean => _isEqualWith(value, other, customizer, key, parent, otherParent);
+): boolean => _isEqualWith(value, other, customizer);
 isEqualWith.dataLast =
   (other: unknown, customizer: Customizer) =>
   (value: unknown): boolean =>
@@ -65,6 +62,43 @@ function _isEqualWith(
   ) {
     if (value instanceof Date && other instanceof Date) {
       return value.getTime() === other.getTime();
+    }
+    if (value instanceof Map || other instanceof Map) {
+      // Mapはキーの有無と値を比較する
+      if (
+        !(value instanceof Map && other instanceof Map) ||
+        value.size !== other.size
+      ) {
+        return false;
+      }
+      for (const [k, v] of value) {
+        if (!other.has(k)) {
+          return false;
+        }
+        const indexOrKey =
+          typeof k === 'string' || typeof k === 'number' ? k : undefined;
+        if (
+          !_isEqualWith(v, other.get(k), customizer, indexOrKey, value, other)
+        ) {
+          return false;
+        }
+      }
+      return true;
+    }
+    if (value instanceof Set || other instanceof Set) {
+      // Setは同じ要素（SameValueZero）を持つかを比較する
+      if (
+        !(value instanceof Set && other instanceof Set) ||
+        value.size !== other.size
+      ) {
+        return false;
+      }
+      for (const item of value) {
+        if (!other.has(item)) {
+          return false;
+        }
+      }
+      return true;
     }
 
     const keys = Object.keys(value);

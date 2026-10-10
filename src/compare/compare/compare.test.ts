@@ -62,7 +62,9 @@ describe('compare', () => {
   });
 
   it('未対応の演算子はエラーをスロー', () => {
-    expect(() => compare(1, 'invalid' as any, 1)).toThrow('[compare] Unsupported operator: invalid');
+    expect(() => compare(1, 'invalid' as any, 1)).toThrow(
+      '[compare] Unsupported operator: invalid',
+    );
   });
 
   describe('dataLast', () => {

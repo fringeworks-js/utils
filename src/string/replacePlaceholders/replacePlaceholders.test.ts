@@ -27,7 +27,7 @@ describe('replacePlaceholders', () => {
     const result = replacePlaceholders(
       '{{ABC}}DEFGHIJKL{{M}}NOPQRSTUVWX{{YZ}}',
       { B: '_', M: '?', YZ: '@@' },
-      { removePlaceholders: true },
+      { removeUnresolved: true },
     );
     expect(result).toBe('DEFGHIJKL?NOPQRSTUVWX@@');
   });
@@ -35,7 +35,7 @@ describe('replacePlaceholders', () => {
     const result = replacePlaceholders(
       '{{ABC}}DEFGHIJKL*[M]*NOPQRSTUVWX*[YZ]*',
       { ABC: '!!!', M: '?', YZ: '@@' },
-      { bracket: ['*[', ']*'] },
+      { delimiters: ['*[', ']*'] },
     );
     expect(result).toBe('{{ABC}}DEFGHIJKL?NOPQRSTUVWX@@');
   });
@@ -51,8 +51,15 @@ describe('replacePlaceholders', () => {
 
   describe('dataLast', () => {
     it('基本動作', () => {
-      const result = replacePlaceholders.dataLast({ name: 'Alice' })('{{name}}さん');
+      const result = replacePlaceholders.dataLast({ name: 'Alice' })(
+        '{{name}}さん',
+      );
       expect(result).toBe('Aliceさん');
     });
+  });
+  it('delimitersに単一の文字列を指定すると開始・終了共通になる', () => {
+    expect(
+      replacePlaceholders('%name%さん', { name: 'Alice' }, { delimiters: '%' }),
+    ).toBe('Aliceさん');
   });
 });

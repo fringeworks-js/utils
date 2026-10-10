@@ -1,5 +1,5 @@
 import type { LooseRecord } from '@fringeworks/types';
-import isEqualBy from '../../compare/isEqualBy';
+import { isEqual } from '../../compare/isEqual';
 import type { UpdateMutableOptions } from './types';
 
 /**
@@ -35,7 +35,7 @@ function _updateMutable<T extends LooseRecord>(
       if (Object.hasOwn(values, key)) {
         const value = values[key];
         const oldValue = object[key];
-        if (!isEqualBy(oldValue, value, options)) {
+        if (!isEqual(oldValue, value, options)) {
           object[key] = value;
           oldValues[key] = oldValue;
         }

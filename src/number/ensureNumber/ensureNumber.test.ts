@@ -61,4 +61,8 @@ describe('ensureNumber', () => {
       expect(ensureNumber.dataLast()(123)).toBe(123);
     });
   });
+
+  it('NaN', () => {
+    expect(ensureNumber(NaN)).toBe(0);
+  });
 });

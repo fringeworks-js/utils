@@ -1,5 +1,5 @@
 import * as R from 'remeda';
-import isBlank from '../../type/isBlank';
+import { isBlank } from '../../type/isBlank';
 
 /**
  * hello world -> hello-world

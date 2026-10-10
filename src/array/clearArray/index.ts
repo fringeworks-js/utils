@@ -1,1 +1,1 @@
-export { default } from './clearArray';
+export { default as clearArray, default } from './clearArray';

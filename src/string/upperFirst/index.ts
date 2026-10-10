@@ -1,1 +1,1 @@
-export { default } from './upperFirst';
+export { default, default as upperFirst } from './upperFirst';

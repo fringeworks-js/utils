@@ -7,7 +7,9 @@ describe('transformObject', () => {
   });
 
   it('fromとtoで別パスに変換できる', () => {
-    const result = transformObject({ name: 'Alice' }, [{ from: 'name', to: 'user.name' }]);
+    const result = transformObject({ name: 'Alice' }, [
+      { from: 'name', to: 'user.name' },
+    ]);
     expect((result as any).user.name).toBe('Alice');
   });
 
@@ -25,16 +27,16 @@ describe('transformObject', () => {
     expect((result as any).computed).toBe(84);
   });
 
-  it('deleteSourceKeys: trueでソースのキーを削除する', () => {
+  it('removeFromSource: trueでソースのキーを削除する', () => {
     const source = { a: 1, b: 2 };
-    transformObject(source, ['a'], { deleteSourceKeys: true });
+    transformObject(source, ['a'], { removeFromSource: true });
     expect(source.a).toBeUndefined();
     expect(source.b).toBe(2);
   });
 
-  it('shouldRemoveFromSourceでルール単位のソース削除', () => {
+  it('ルールのremoveFromSourceでルール単位のソース削除', () => {
     const source = { a: 1, b: 2 };
-    transformObject(source, [{ from: 'a', to: 'a', shouldRemoveFromSource: true }]);
+    transformObject(source, [{ from: 'a', to: 'a', removeFromSource: true }]);
     expect(source.a).toBeUndefined();
     expect(source.b).toBe(2);
   });
@@ -45,7 +47,9 @@ describe('transformObject', () => {
   });
 
   it('fromが関数でtoが未指定の場合は設定しない', () => {
-    const result = transformObject({ a: 1, b: 2 }, [{ from: (s) => s.a + s.b }] as any);
+    const result = transformObject({ a: 1, b: 2 }, [
+      { from: (s) => s.a + s.b },
+    ] as any);
     expect(result).toEqual({});
   });
 

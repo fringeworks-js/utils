@@ -27,7 +27,10 @@ describe('ensureMap', () => {
   });
 
   it('タプル配列はMapに変換する', () => {
-    const result = ensureMap([['a', 1], ['b', 2]] as [string, number][]);
+    const result = ensureMap([
+      ['a', 1],
+      ['b', 2],
+    ] as [string, number][]);
     expect(result.get('a')).toBe(1);
     expect(result.get('b')).toBe(2);
   });

@@ -1,1 +1,1 @@
-export { default } from './countKeys';
+export { default as countKeys, default } from './countKeys';

@@ -16,11 +16,7 @@ isSurroundedBy.dataLast =
     _isSurroundedBy(str, prefix, suffix);
 export default isSurroundedBy;
 
-function _isSurroundedBy(
-  str: string,
-  prefix: string,
-  suffix: string,
-): boolean {
+function _isSurroundedBy(str: string, prefix: string, suffix: string): boolean {
   if (str) {
     if (str.length <= prefix.length + suffix.length) {
       // prefix+suffixよりも短い場合はfalse

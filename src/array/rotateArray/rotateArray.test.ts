@@ -22,25 +22,16 @@ describe('rotateArray', () => {
     expect(result).toEqual([3, 4, 0, 1, 2]);
   });
 
-  describe('inplace', () => {
-    it('元の配列を破壊的に変更する', () => {
-      const array = [0, 1, 2, 3, 4];
-      const result = rotateArray(array, { count: 2, inplace: true });
-      expect(result).toBe(array);
-      expect(array).toEqual([2, 3, 4, 0, 1]);
-    });
-
-    it('count: 0のとき元の配列をそのまま返す', () => {
-      const array = [0, 1, 2, 3, 4];
-      const result = rotateArray(array, { count: 0, inplace: true });
-      expect(result).toBe(array);
-    });
-  });
-
   describe('dataLast', () => {
     it('基本動作', () => {
       const result = rotateArray.dataLast({ count: 2 })([0, 1, 2, 3, 4]);
       expect(result).toEqual([2, 3, 4, 0, 1]);
     });
+  });
+
+  it('負の数は右シフト', () => {
+    const array = [0, 1, 2, 3, 4];
+    expect(rotateArray(array, { count: -1 })).toEqual([4, 0, 1, 2, 3]);
+    expect(rotateArray(array, { count: -7 })).toEqual([3, 4, 0, 1, 2]);
   });
 });

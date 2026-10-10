@@ -1,5 +1,5 @@
-import kind from '../kind';
-import { KindType } from '../kind/constants';
+import { getKind } from '../getKind';
+import { Kind } from '../getKind/constants';
 import type { EnsureValidValueOptions } from './types';
 
 /**
@@ -42,20 +42,20 @@ function _ensureValidValue<T = unknown>(
   } else {
     // 型の指定あり
     // 型の判定
-    const type = kind(data);
-    const { validType = KindType.any } = options;
+    const type = getKind(data);
+    const { validType = Kind.any } = options;
     if (type === validType) {
       // 指定の型だった場合
       return data as T;
-    } else if (type === KindType.undefined && 'undefinedValue' in options) {
+    } else if (type === Kind.undefined && 'undefinedValue' in options) {
       // undefinedの場合の代替値
       return options.undefinedValue as T;
-    } else if (type === KindType.null && 'nullValue' in options) {
+    } else if (type === Kind.null && 'nullValue' in options) {
       // nullの場合の代替値
       return options.nullValue as T;
-    } else if ('defaultValue' in options) {
+    } else if ('invalidValue' in options) {
       // 想定外の型の場合の代替値
-      return options.defaultValue as T;
+      return options.invalidValue as T;
     }
     // 指定の型ではないが、置き換える値が設定されていない場合
     return data as T;

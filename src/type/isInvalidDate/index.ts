@@ -1,1 +1,1 @@
-export { default } from './isInvalidDate';
+export { default, default as isInvalidDate } from './isInvalidDate';

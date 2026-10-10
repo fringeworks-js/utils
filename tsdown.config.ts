@@ -1,4 +1,5 @@
-import createExternalOptionFunction from '@fringeworks/dev/createExternalOptionFunction';
+import createExports from '@fringeworks/dev/createExports';
+import createExternal from '@fringeworks/dev/createExternal';
 import distPackage from '@fringeworks/rollup-plugin-dist-package';
 import copy from 'rollup-plugin-copy';
 import { defineConfig } from 'tsdown';
@@ -17,11 +18,13 @@ export default defineConfig({
   outDir: 'dist',
   minify: false,
   inputOptions: {
-    external: createExternalOptionFunction(),
+    external: createExternal(),
   },
   outputOptions: {
     preserveModules: true,
     preserveModulesRoot: 'src',
+    // default exportとnamed exportを併用するため、CJSでも名前付きで出力する
+    exports: 'named',
   },
   plugins: [
     distPackage({
@@ -29,39 +32,11 @@ export default defineConfig({
         main: './index.cjs',
         module: './index.mjs',
         types: './index.d.cts',
-        exports: {
-          '.': {
-            import: { types: './index.d.mts', default: './index.mjs' },
-            require: { types: './index.d.cts', default: './index.cjs' },
-          },
-          './package.json': './package.json',
-          './constants': {
-            import: { types: './constants.d.mts', default: './constants.mjs' },
-            require: { types: './constants.d.cts', default: './constants.cjs' },
-          },
-          './*/constants': {
-            import: {
-              types: './*/constants.d.mts',
-              default: './*/constants.mjs',
-            },
-            require: {
-              types: './*/constants.d.cts',
-              default: './*/constants.cjs',
-            },
-          },
-          './types': {
-            import: { types: './types.d.mts', default: './types.mjs' },
-            require: { types: './types.d.cts', default: './types.cjs' },
-          },
-          './*/types': {
-            import: { types: './*/types.d.mts', default: './*/types.mjs' },
-            require: { types: './*/types.d.cts', default: './*/types.cjs' },
-          },
-          './*': {
-            import: { types: './*/index.d.mts', default: './*/index.mjs' },
-            require: { types: './*/index.d.cts', default: './*/index.cjs' },
-          },
-        },
+        sideEffects: false,
+        exports: createExports({
+          target: 'dist',
+          extraExports: { './package.json': './package.json' },
+        }),
       },
       resolveWorkspaceDeps: true,
     }),

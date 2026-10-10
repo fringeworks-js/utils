@@ -1,2 +1,2 @@
-export { default } from './debounce';
+export { default as debounce, default } from './debounce';
 export type * from './types';

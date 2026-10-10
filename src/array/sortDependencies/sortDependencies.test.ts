@@ -57,9 +57,9 @@ const FLAT_1 = [
 describe('sortDependencies', () => {
   it('ツリー形式', () => {
     const result = sortDependencies(TREE_1, {
-      idProp: 'id',
-      depsProp: 'deps',
-      isTree: true,
+      id: 'id',
+      dependencies: 'deps',
+      tree: true,
     });
     expect(result.map((item) => item.id)).toEqual([
       ID_1A_2A_3A,
@@ -77,10 +77,10 @@ describe('sortDependencies', () => {
 
   it('フラット形式', () => {
     const result = sortDependencies(FLAT_1, {
-      idProp: 'id',
-      depsProp: 'deps',
-      depsIdProp: (dep) => dep,
-      ignoreNoSubstance: true,
+      id: 'id',
+      dependencies: 'deps',
+      dependencyId: (dep) => dep,
+      ignoreMissing: true,
     });
     expect(result.map((item) => item.id)).toEqual([
       ID_1A_2A,
@@ -103,10 +103,10 @@ describe('sortDependencies', () => {
       { id: 'C', deps: [] },
     ];
     const result = sortDependencies(data, {
-      idProp: 'id',
-      depsProp: 'deps',
-      depsIdProp: (dep) => dep,
-      ignoreNoSubstance: true,
+      id: 'id',
+      dependencies: 'deps',
+      dependencyId: (dep) => dep,
+      ignoreMissing: true,
     });
     expect(result.map((item) => item.id)).toEqual(['C', 'A', 'B']);
   });
@@ -118,10 +118,10 @@ describe('sortDependencies', () => {
     ];
     expect(() =>
       sortDependencies(data, {
-        idProp: 'id',
-        depsProp: 'deps',
-        depsIdProp: (dep) => dep,
-        ignoreNoSubstance: true,
+        id: 'id',
+        dependencies: 'deps',
+        dependencyId: (dep) => dep,
+        ignoreMissing: true,
       }),
     ).toThrow('Cyclic dependency');
   });
@@ -130,52 +130,52 @@ describe('sortDependencies', () => {
     const data = [{ id: 'A', deps: ['B'] }];
     expect(() =>
       sortDependencies(data, {
-        idProp: 'id',
-        depsProp: 'deps',
-        depsIdProp: (dep) => dep,
+        id: 'id',
+        dependencies: 'deps',
+        dependencyId: (dep) => dep,
       }),
     ).toThrow('No substance');
   });
 
-  it('desc: trueで逆順に並ぶ', () => {
+  it('reverse: trueで逆順に並ぶ', () => {
     const data = [
       { id: 'A', deps: [] },
       { id: 'B', deps: ['A'] },
     ];
     const result = sortDependencies(data, {
-      idProp: 'id',
-      depsProp: 'deps',
-      depsIdProp: (dep) => dep,
-      ignoreNoSubstance: true,
-      desc: true,
+      id: 'id',
+      dependencies: 'deps',
+      dependencyId: (dep) => dep,
+      ignoreMissing: true,
+      reverse: true,
     });
     expect(result.map((item) => item.id)).toEqual(['B', 'A']);
   });
 
-  it('idPropが関数の場合も動作する', () => {
+  it('idが関数の場合も動作する', () => {
     const data = [
       { id: 'A', deps: [] },
       { id: 'B', deps: ['A'] },
     ];
     const result = sortDependencies(data, {
-      idProp: (item) => item.id,
-      depsProp: 'deps',
-      depsIdProp: (dep) => dep,
-      ignoreNoSubstance: true,
+      id: (item) => item.id,
+      dependencies: 'deps',
+      dependencyId: (dep) => dep,
+      ignoreMissing: true,
     });
     expect(result.map((item) => item.id)).toEqual(['A', 'B']);
   });
 
-  it('depsPropが関数の場合も動作する', () => {
+  it('dependenciesが関数の場合も動作する', () => {
     const data = [
       { id: 'A', deps: [] },
       { id: 'B', deps: ['A'] },
     ];
     const result = sortDependencies(data, {
-      idProp: 'id',
-      depsProp: (item: any) => item.deps,
-      depsIdProp: (dep: any) => dep,
-      ignoreNoSubstance: true,
+      id: 'id',
+      dependencies: (item: any) => item.deps,
+      dependencyId: (dep: any) => dep,
+      ignoreMissing: true,
     });
     expect(result.map((item) => item.id)).toEqual(['A', 'B']);
   });
@@ -183,9 +183,9 @@ describe('sortDependencies', () => {
   describe('dataLast', () => {
     it('基本動作', () => {
       const result = sortDependencies.dataLast<(typeof TREE_1)[number]>({
-        idProp: 'id',
-        depsProp: 'deps',
-        isTree: true,
+        id: 'id',
+        dependencies: 'deps',
+        tree: true,
       })(TREE_1);
       expect(result.map((item) => item.id)).toEqual([
         ID_1A_2A_3A,

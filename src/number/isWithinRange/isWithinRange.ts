@@ -5,11 +5,8 @@
  * @param max 最大値
  * @returns 範囲内であれば true
  */
-const isWithinRange = (
-  value: number,
-  min: number,
-  max: number,
-): boolean => _isWithinRange(value, min, max);
+const isWithinRange = (value: number, min: number, max: number): boolean =>
+  _isWithinRange(value, min, max);
 isWithinRange.dataLast =
   (min: number, max: number) =>
   (value: number): boolean =>

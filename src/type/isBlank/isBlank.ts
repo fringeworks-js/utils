@@ -1,7 +1,7 @@
 import type { IsBlankOptions } from './types';
 
-const REGEX_FULL_WHITESPACE = /　/g;
-const REGEX_BOTH_WHITESPACE = /[ 　]/g;
+const REGEX_FULL_WHITESPACE = /\u3000/g;
+const REGEX_BOTH_WHITESPACE = /[ \u3000]/g;
 const REGEX_ALL_WHITESPACE = /\s/g;
 
 /**

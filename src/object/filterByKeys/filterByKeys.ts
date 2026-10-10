@@ -1,8 +1,7 @@
 import type { LooseRecord } from '@fringeworks/types';
 import * as R from 'remeda';
-import alwaysInput from '../../function/alwaysInput';
-import normalizeString from '../../string/normalizeString';
-import countKeys from '../countKeys';
+import { alwaysInput } from '../../function/alwaysInput';
+import { countKeys } from '../countKeys';
 import type { FilterByKeysOptions } from './types';
 
 /**
@@ -33,7 +32,7 @@ function _filterByKeys<T = unknown>(
   let normalizeFn: (value: string) => string = alwaysInput;
   if (condition !== undefined) {
     if (normalize && R.isString(condition)) {
-      normalizeFn = normalizeString;
+      normalizeFn = normalize;
       condition = normalizeFn(condition);
     }
   }

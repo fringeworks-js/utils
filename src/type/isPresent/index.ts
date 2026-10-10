@@ -1,1 +1,1 @@
-export { default } from './isPresent';
+export { default, default as isPresent } from './isPresent';

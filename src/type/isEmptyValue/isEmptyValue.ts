@@ -1,8 +1,8 @@
-import isBlank from '../isBlank';
-import isEmptyCollection from '../isEmptyCollection';
+import { isBlank } from '../isBlank';
+import { isEmptyCollection } from '../isEmptyCollection';
 import type { IsEmptyValueOptions } from './types';
 
-export default function isEmpty(
+export default function isEmptyValue(
   value: unknown,
   options: IsEmptyValueOptions = {},
 ): boolean {

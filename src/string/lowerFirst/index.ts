@@ -1,1 +1,1 @@
-export { default } from './lowerFirst';
+export { default, default as lowerFirst } from './lowerFirst';

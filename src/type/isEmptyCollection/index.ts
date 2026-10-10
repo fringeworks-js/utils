@@ -1,1 +1,1 @@
-export { default } from './isEmptyCollection';
+export { default, default as isEmptyCollection } from './isEmptyCollection';

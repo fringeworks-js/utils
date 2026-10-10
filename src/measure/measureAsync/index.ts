@@ -1,2 +1,2 @@
-export { default } from './measureAsync';
+export { default, default as measureAsync } from './measureAsync';
 export type * from './types';

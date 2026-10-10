@@ -1,1 +1,1 @@
-export { default } from './recaseKebab';
+export { default, default as recaseKebab } from './recaseKebab';

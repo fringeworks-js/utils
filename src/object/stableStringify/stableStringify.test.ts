@@ -39,4 +39,11 @@ describe('stableStringify', () => {
   it('空配列', () => {
     expect(stableStringify([])).toBe('[]');
   });
+
+  it('toJSONを持つ値はtoJSONの結果を使う', () => {
+    const date = new Date(0);
+    expect(stableStringify({ b: date, a: 1 })).toBe(
+      `{"a":1,"b":"${date.toJSON()}"}`,
+    );
+  });
 });

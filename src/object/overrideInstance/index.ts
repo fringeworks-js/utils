@@ -1,1 +1,1 @@
-export { default } from './overrideInstance';
+export { default, default as overrideInstance } from './overrideInstance';

@@ -1,1 +1,1 @@
-export { default } from './isPrimitive';
+export { default, default as isPrimitive } from './isPrimitive';

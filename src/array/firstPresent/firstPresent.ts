@@ -1,5 +1,3 @@
-import maybeFind from '../maybeFind';
-
 /**
  * 配列の先頭から見て最初のnull,undefined以外の値を返す
  * @param data 配列
@@ -12,7 +10,7 @@ firstPresent.dataLast =
 export default firstPresent;
 
 function _firstPresent<V>(data: V[]): V | undefined {
-  return maybeFind(data, _isTarget);
+  return data?.find(_isTarget);
 }
 function _isTarget<V>(value: V) {
   return value != null;

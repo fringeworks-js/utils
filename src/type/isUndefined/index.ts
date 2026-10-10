@@ -1,1 +1,1 @@
-export { default } from './isUndefined';
+export { default, default as isUndefined } from './isUndefined';

@@ -3,7 +3,10 @@
  * @param str
  */
 const upperFirst = (str: string): string => _upperFirst(str);
-upperFirst.dataLast = () => (str: string): string => _upperFirst(str);
+upperFirst.dataLast =
+  () =>
+  (str: string): string =>
+    _upperFirst(str);
 export default upperFirst;
 
 function _upperFirst(str: string): string {

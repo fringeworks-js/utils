@@ -1,10 +1,10 @@
-import rotateArray from '../../array/rotateArray';
+import { rotateArray } from '../../array/rotateArray';
+import type { ElapsedTimes } from '../comparePerformance';
 import _tabulateResult from '../comparePerformance/_tabulateResult';
-import measureAsync from '../measureAsync';
+import { measureAsync } from '../measureAsync';
 import type {
-  MeasurementAsyncAgenda,
-  MeasurementAsyncResult,
-  RequiredTimeAsyncResult,
+  ComparePerformanceAsyncOptions,
+  ComparePerformanceAsyncResult,
 } from './types';
 
 /**
@@ -15,7 +15,9 @@ import type {
 export default async function comparePerformanceAsync<
   A extends unknown[] = unknown[],
   R = unknown,
->(agenda: MeasurementAsyncAgenda<A>): Promise<MeasurementAsyncResult<A, R>> {
+>(
+  agenda: ComparePerformanceAsyncOptions<A>,
+): Promise<ComparePerformanceAsyncResult<A, R>> {
   // 開始日時
   const start = new Date();
   const {
@@ -23,20 +25,20 @@ export default async function comparePerformanceAsync<
     targets,
     args,
     getArgs,
-    iteration = 10,
-    tests = 10,
-    warmingUp,
+    iterations = 10,
+    rounds = 10,
+    warmUp,
   } = agenda;
   // measureAsync関数の引数
-  const opts = { args, getArgs, iteration };
+  const opts = { args, getArgs, iterations };
   // 各測定回の結果
-  const results: RequiredTimeAsyncResult[] = [];
+  const results: ElapsedTimes[] = [];
   // 各測定対象の戻り値
   const returnValues = {};
 
-  if (warmingUp) {
+  if (warmUp) {
     // ウォーミングアップ
-    const warmingUpOpts = { ...opts, iteration: 1 };
+    const warmingUpOpts = { ...opts, iterations: 1 };
     await Promise.all(
       targets.map((target) => measureAsync(target.fn, warmingUpOpts)),
     );
@@ -44,7 +46,7 @@ export default async function comparePerformanceAsync<
 
   // 測定する順番を変えながら測定を行う
   let processingOrder = targets;
-  for (let i = 0; i < tests; i++) {
+  for (let i = 0; i < rounds; i++) {
     // 指定回数分測定する
     // このループ1回分が測定結果を一覧にした際の1行分
     const result = {};

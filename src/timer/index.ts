@@ -1,4 +1,4 @@
-export { default as debounce } from './debounce';
-export { default as setTimeoutExtended } from './setTimeoutExtended';
-export { default as sleep } from './sleep';
-export { default as throttle } from './throttle';
+export * from './debounce';
+export * from './setLongTimeout';
+export * from './sleep';
+export * from './throttle';

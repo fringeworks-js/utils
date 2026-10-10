@@ -1,1 +1,1 @@
-export { default } from './replaceByMap';
+export { default, default as replaceByMap } from './replaceByMap';

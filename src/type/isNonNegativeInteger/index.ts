@@ -1,1 +1,4 @@
-export { default } from './isNonNegativeInteger';
+export {
+  default,
+  default as isNonNegativeInteger,
+} from './isNonNegativeInteger';

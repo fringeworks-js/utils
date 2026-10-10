@@ -1,1 +1,1 @@
-export { default } from './recaseCamel';
+export { default, default as recaseCamel } from './recaseCamel';

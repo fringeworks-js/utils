@@ -1,1 +1,1 @@
-export { default } from './createUtcDate';
+export { default as createUtcDate, default } from './createUtcDate';

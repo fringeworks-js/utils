@@ -1,1 +1,1 @@
-export { default } from './maybeHasOwn';
+export { default, default as maybeHasOwn } from './maybeHasOwn';

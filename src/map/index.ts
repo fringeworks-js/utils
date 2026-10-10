@@ -1,1 +1,1 @@
-export { default as ensureMap } from './ensureMap';
+export * from './ensureMap';

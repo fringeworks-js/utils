@@ -1,4 +1,4 @@
-import setProperty from '../setProperty';
+import _setProperty from '../../_internal/_setProperty';
 
 /**
  * 浅いコピーをする。未対応のものはそのまま返す。
@@ -58,7 +58,7 @@ export default function cloneShallow<T>(value: T): T {
     // シンボルのプロパティ
     const symbols = Object.getOwnPropertySymbols(original);
     for (let i = 0; i < symbols.length; i++) {
-      setProperty(
+      _setProperty(
         copy,
         symbols[i],
         Object.getOwnPropertyDescriptor(original, symbols[i]),
@@ -69,7 +69,7 @@ export default function cloneShallow<T>(value: T): T {
     for (let i = 0; i < names.length; i++) {
       const key = names[i];
       if (!Object.hasOwn(copy, key) || copy[key] !== original[key]) {
-        setProperty(copy, key, Object.getOwnPropertyDescriptor(original, key));
+        _setProperty(copy, key, Object.getOwnPropertyDescriptor(original, key));
       }
     }
     return copy;

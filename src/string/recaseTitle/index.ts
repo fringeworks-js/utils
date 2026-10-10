@@ -1,1 +1,1 @@
-export { default } from './recaseTitle';
+export { default, default as recaseTitle } from './recaseTitle';

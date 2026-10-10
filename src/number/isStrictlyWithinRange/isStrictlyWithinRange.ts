@@ -16,6 +16,10 @@ isStrictlyWithinRange.dataLast =
     _isStrictlyWithinRange(value, min, max);
 export default isStrictlyWithinRange;
 
-function _isStrictlyWithinRange(value: number, min: number, max: number): boolean {
+function _isStrictlyWithinRange(
+  value: number,
+  min: number,
+  max: number,
+): boolean {
   return value > min && value < max;
 }

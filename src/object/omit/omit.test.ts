@@ -11,9 +11,9 @@ describe('omit', () => {
     expect(result).toEqual({ b: 2 });
   });
 
-  it('ドットパス記法で複数のキーを指定できる', () => {
-    const result = omit({ a: 1, b: 2, c: 3 }, 'a.b');
-    expect(result).toEqual({ c: 3 });
+  it('キーをパスとして解釈しない', () => {
+    const result = omit({ a: { b: 1 }, b: 2, 'a.b': 3 }, 'a.b');
+    expect(result).toEqual({ a: { b: 1 }, b: 2 });
   });
 
   it('nullを渡した場合はundefinedを返す', () => {

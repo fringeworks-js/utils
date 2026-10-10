@@ -1,2 +1,2 @@
-export { default } from './ensureBoolean';
+export { default, default as ensureBoolean } from './ensureBoolean';
 export type * from './types';

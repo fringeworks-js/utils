@@ -1,1 +1,4 @@
-export { default } from './recaseScreamingSnake';
+export {
+  default,
+  default as recaseScreamingSnake,
+} from './recaseScreamingSnake';

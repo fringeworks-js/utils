@@ -1,5 +1,3 @@
-import type { ComparisonStrategy } from './types';
-
 /**
  * 比較演算子
  */
@@ -27,35 +25,3 @@ export const ComparisonOperator = {
  */
 export type ComparisonOperator =
   (typeof ComparisonOperator)[keyof typeof ComparisonOperator];
-
-const { EQ, NE, GT, LT, GE, LE, LOOSE_EQ, LOOSE_NE, BETWEEN, IN, LIKE } =
-  ComparisonOperator;
-
-/**
- * 全比較関数
- */
-export const ComparisonStrategies = {
-  [EQ]: (left, right) => left === right,
-  [NE]: (left, right) => left !== right,
-  [GT]: (left, right) => left > right,
-  [LT]: (left, right) => left < right,
-  [GE]: (left, right) => left >= right,
-  [LE]: (left, right) => left <= right,
-  // eslint-disable-next-line eqeqeq
-  [LOOSE_EQ]: (left, right) => left == right,
-  // eslint-disable-next-line eqeqeq
-  [LOOSE_NE]: (left, right) => left != right,
-  [BETWEEN]: ((value, range: [unknown, unknown]) =>
-    Array.isArray(range) &&
-    value >= range[0] &&
-    value <= range[1]) as ComparisonStrategy,
-  [IN]: ((value, list: unknown[]) =>
-    list.includes(value)) as ComparisonStrategy,
-  [LIKE]: ((value: string, pattern: string) =>
-    value.includes(pattern)) as ComparisonStrategy,
-} as const satisfies Record<ComparisonOperator, ComparisonStrategy>;
-
-/**
- * 全比較関数
- */
-export type ComparisonStrategies = typeof ComparisonStrategies;

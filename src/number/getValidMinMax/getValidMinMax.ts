@@ -1,4 +1,4 @@
-import type { NormalizeMinMaxOptions } from './types';
+import type { GetValidMinMaxOptions } from './types';
 
 /**
  * 最小値と最大値の順序を正しく整えて返す
@@ -11,7 +11,7 @@ import type { NormalizeMinMaxOptions } from './types';
 export default function getValidMinMax(
   min: number | null | undefined,
   max: number | null | undefined,
-  options: NormalizeMinMaxOptions = {},
+  options: GetValidMinMaxOptions = {},
 ): [number, number] {
   const { defaultMin = -Infinity, defaultMax = Infinity } = options;
   const minValue = min ?? defaultMin;

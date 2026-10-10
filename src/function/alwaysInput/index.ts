@@ -1,1 +1,1 @@
-export { default } from './alwaysInput';
+export { default as alwaysInput, default } from './alwaysInput';

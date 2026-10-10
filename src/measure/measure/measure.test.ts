@@ -9,9 +9,9 @@ describe('measure', () => {
     expect(result.time).toBeGreaterThanOrEqual(0);
   });
 
-  it('iterationで実行回数を指定できる', () => {
+  it('iterationsで実行回数を指定できる', () => {
     const fn = vi.fn(() => 'hello');
-    const result = measure(fn, { iteration: 5 });
+    const result = measure(fn, { iterations: 5 });
     expect(fn).toHaveBeenCalledTimes(5);
     expect(result.returnValue).toBe('hello');
   });
@@ -25,7 +25,7 @@ describe('measure', () => {
   it('getArgsで毎回異なる引数を渡せる', () => {
     let count = 0;
     const fn = vi.fn((n: number) => n);
-    measure(fn, { iteration: 3, getArgs: () => [count++] as [number] });
+    measure(fn, { iterations: 3, getArgs: () => [count++] as [number] });
     expect(fn).toHaveBeenNthCalledWith(1, 0);
     expect(fn).toHaveBeenNthCalledWith(2, 1);
     expect(fn).toHaveBeenNthCalledWith(3, 2);

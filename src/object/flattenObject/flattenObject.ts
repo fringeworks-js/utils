@@ -32,17 +32,17 @@ function _flattenObject(
   options: FlattenObjectOptions,
   parentPath?: string,
 ): LooseRecord {
-  if (R.isPlainObject(data) || (Array.isArray(data) && !options.ignoreArray)) {
+  if (R.isPlainObject(data) || (Array.isArray(data) && !options.keepArrays)) {
     // オブジェクトの場合は配下要素をフラットな状態に変換
     let flatObj: { [key: string]: unknown } = {};
     let currentPath: string;
-    const { noPathKeys = false, keySeparator = '.' } = options;
+    const { leafKeysOnly = false, keySeparator = '.' } = options;
     const keys = Object.keys(data);
 
     for (const key of keys) {
       const value: unknown = data[key];
       // キー名
-      if (parentPath && !noPathKeys) {
+      if (parentPath && !leafKeysOnly) {
         // ネストしたキー名
         currentPath = parentPath + keySeparator + key;
       } else {

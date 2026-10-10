@@ -23,13 +23,17 @@ describe('flattenObject', () => {
 
   describe('keySeparator', () => {
     it('区切り文字を変更できる', () => {
-      expect(flattenObject({ a: { b: 1 } }, { keySeparator: '_' })).toEqual({ a_b: 1 });
+      expect(flattenObject({ a: { b: 1 } }, { keySeparator: '_' })).toEqual({
+        a_b: 1,
+      });
     });
   });
 
-  describe('ignoreArray', () => {
+  describe('keepArrays', () => {
     it('配列をフラット化しない', () => {
-      expect(flattenObject({ a: [1, 2] }, { ignoreArray: true })).toEqual({ a: [1, 2] });
+      expect(flattenObject({ a: [1, 2] }, { keepArrays: true })).toEqual({
+        a: [1, 2],
+      });
     });
   });
 

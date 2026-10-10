@@ -61,14 +61,6 @@ describe('insertAt', () => {
     expect(array).toEqual([0, 1, 2, 3, 4]);
   });
 
-  describe('inplace', () => {
-    it('元の配列を直接変更する', () => {
-      const array: any[] = [0, 1, 2, 3, 4];
-      insertAt(array, 2, ['a'], { inplace: true });
-      expect(array).toEqual([0, 1, 'a', 2, 3, 4]);
-    });
-  });
-
   it('dataがnullの場合はnullを返す', () => {
     const result = insertAt(null as any, 0, ['a']);
     expect(result).toBeNull();

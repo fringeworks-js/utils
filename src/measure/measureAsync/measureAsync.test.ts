@@ -9,9 +9,9 @@ describe('measureAsync', () => {
     expect(result.time).toBeGreaterThanOrEqual(0);
   });
 
-  it('iterationで実行回数を指定できる', async () => {
+  it('iterationsで実行回数を指定できる', async () => {
     const fn = vi.fn(async () => 'hello');
-    const result = await measureAsync(fn, { iteration: 3 });
+    const result = await measureAsync(fn, { iterations: 3 });
     expect(fn).toHaveBeenCalledTimes(3);
     expect(result.returnValue).toBe('hello');
   });
@@ -26,7 +26,7 @@ describe('measureAsync', () => {
     let call = 0;
     const fn = vi.fn(async (n: number) => n);
     const result = await measureAsync(fn, {
-      iteration: 2,
+      iterations: 2,
       getArgs: () => [call++] as [number],
     });
     expect(fn).toHaveBeenCalledTimes(2);
@@ -34,7 +34,11 @@ describe('measureAsync', () => {
   });
 
   it('fnが拒否した場合はrejectされる', async () => {
-    const fn = vi.fn(async () => { throw new Error('test error'); });
-    await expect(measureAsync(fn, { iteration: 1 })).rejects.toThrow('test error');
+    const fn = vi.fn(async () => {
+      throw new Error('test error');
+    });
+    await expect(measureAsync(fn, { iterations: 1 })).rejects.toThrow(
+      'test error',
+    );
   });
 });

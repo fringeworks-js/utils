@@ -1,10 +1,10 @@
-import rotateArray from '../../array/rotateArray';
-import measure from '../measure';
+import { rotateArray } from '../../array/rotateArray';
+import { measure } from '../measure';
 import _tabulateResult from './_tabulateResult';
 import type {
-  MeasurementAgenda,
-  MeasurementResult,
-  RequiredTimeResult,
+  ComparePerformanceOptions,
+  ComparePerformanceResult,
+  ElapsedTimes,
 } from './types';
 
 /**
@@ -15,7 +15,7 @@ import type {
 export default function comparePerformance<
   A extends unknown[] = unknown[],
   R = unknown,
->(agenda: MeasurementAgenda<A>): MeasurementResult<A, R> {
+>(agenda: ComparePerformanceOptions<A>): ComparePerformanceResult<A, R> {
   // 開始日時
   const start = new Date();
   const {
@@ -23,20 +23,20 @@ export default function comparePerformance<
     targets,
     args,
     getArgs,
-    iteration = 10,
-    tests = 10,
-    warmingUp,
+    iterations = 10,
+    rounds = 10,
+    warmUp,
   } = agenda;
   // measure関数の引数
-  const opts = { args, getArgs, iteration };
+  const opts = { args, getArgs, iterations };
   // 各測定回の結果
-  const results: RequiredTimeResult[] = [];
+  const results: ElapsedTimes[] = [];
   // 各測定対象の戻り値
   const returnValues = {};
 
-  if (warmingUp) {
+  if (warmUp) {
     // ウォーミングアップ
-    const warmingUpOpts = { ...opts, iteration: 1 };
+    const warmingUpOpts = { ...opts, iterations: 1 };
     for (const target of targets) {
       measure(target.fn, warmingUpOpts);
     }
@@ -44,7 +44,7 @@ export default function comparePerformance<
 
   // 測定する順番を変えながら測定を行う
   let processingOrder = targets;
-  for (let i = 0; i < tests; i++) {
+  for (let i = 0; i < rounds; i++) {
     // 指定回数分測定する
     // このループ1回分が測定結果を一覧にした際の1行分
     const result = {};

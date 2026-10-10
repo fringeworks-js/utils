@@ -1,6 +1,10 @@
 import * as R from 'remeda';
-import ensureArray from '../ensureArray';
-import type { GetDepsFn, GetIdFn, SortDependenciesOptions } from './types';
+import { ensureArray } from '../ensureArray';
+import type {
+  SortDependenciesGetDependencies,
+  SortDependenciesGetId,
+  SortDependenciesOptions,
+} from './types';
 
 /**
  * 依存関係のソート
@@ -25,34 +29,34 @@ function _sortDependencies<I>(
     return data;
   }
   const {
-    idProp = 0,
-    depsProp = 1,
-    depsIdProp = idProp,
-    ignoreNoSubstance,
-    isTree,
-    desc,
+    id = 0,
+    dependencies = 1,
+    dependencyId = id,
+    ignoreMissing,
+    tree,
+    reverse,
   } = options;
-  const getId: GetIdFn<I> = R.isFunction(idProp)
-    ? idProp
-    : (item: I) => item[idProp];
-  const getDeps: GetDepsFn<I> = R.isFunction(depsProp)
-    ? depsProp
-    : (item: I) => item[depsProp];
-  const getDepId: GetIdFn<I> = R.isFunction(depsIdProp)
-    ? depsIdProp
-    : (item: I) => item[depsIdProp];
+  const getId: SortDependenciesGetId<I> = R.isFunction(id)
+    ? id
+    : (item: I) => item[id];
+  const getDeps: SortDependenciesGetDependencies<I> = R.isFunction(dependencies)
+    ? dependencies
+    : (item: I) => item[dependencies];
+  const getDepId: SortDependenciesGetId<I> = R.isFunction(dependencyId)
+    ? dependencyId
+    : (item: I) => item[dependencyId];
   const itemsMap = getUniqItems(
     new Map<unknown, I>(),
     data,
     getId,
     getDeps,
     getDepId,
-    isTree,
+    tree,
   );
 
-  const sorted = sort(itemsMap, getId, getDeps, getDepId, ignoreNoSubstance);
+  const sorted = sort(itemsMap, getId, getDeps, getDepId, ignoreMissing);
 
-  return desc ? sorted.reverse() : sorted;
+  return reverse ? sorted.reverse() : sorted;
 }
 
 /**
@@ -65,15 +69,15 @@ function _sortDependencies<I>(
 function getUniqItems<I>(
   results: Map<unknown, I>,
   items: I[],
-  getId: GetIdFn<I>,
-  getDeps: GetDepsFn<I>,
-  getDepId: GetIdFn<I>,
-  isTree: boolean,
+  getId: SortDependenciesGetId<I>,
+  getDeps: SortDependenciesGetDependencies<I>,
+  getDepId: SortDependenciesGetId<I>,
+  tree: boolean,
 ) {
   for (const item of items) {
     const id = getId(item);
     results.set(id, item);
-    if (isTree) {
+    if (tree) {
       _getUniqItems(results, ensureArray(getDeps(item)), getDepId, getDeps);
     }
   }
@@ -91,8 +95,8 @@ function getUniqItems<I>(
 function _getUniqItems<I>(
   results: Map<unknown, I>,
   items: I[],
-  getDepId: GetIdFn<I>,
-  getDeps: GetDepsFn<I>,
+  getDepId: SortDependenciesGetId<I>,
+  getDeps: SortDependenciesGetDependencies<I>,
 ) {
   for (const item of items) {
     const id = getDepId(item);
@@ -112,10 +116,10 @@ function _getUniqItems<I>(
  */
 function sort<I>(
   itemsMap: Map<unknown, I>,
-  getId: GetIdFn<I>,
-  getDeps: GetDepsFn<I>,
-  getDepId: GetIdFn<I>,
-  ignoreNoSubstance: boolean,
+  getId: SortDependenciesGetId<I>,
+  getDeps: SortDependenciesGetDependencies<I>,
+  getDepId: SortDependenciesGetId<I>,
+  ignoreMissing: boolean,
 ) {
   const distinctArray = new Array(...itemsMap.values());
   const length = distinctArray.length;
@@ -128,7 +132,7 @@ function sort<I>(
     dependenciesMap,
     reverseLookupMap,
     getId,
-    ignoreNoSubstance,
+    ignoreMissing,
   );
 
   for (let i = 0; i < length; i++) {
@@ -144,8 +148,8 @@ function createVisit<I>(
   itemsMap: Map<unknown, I>,
   dependenciesMap: Map<unknown, Set<unknown>>,
   reverseLookupMap: Map<unknown, number>,
-  getId: GetIdFn<I>,
-  ignoreNoSubstance: boolean,
+  getId: SortDependenciesGetId<I>,
+  ignoreMissing: boolean,
 ) {
   return function visit(
     item: I,
@@ -185,7 +189,7 @@ function createVisit<I>(
           sorted,
           visited,
         );
-      } else if (!ignoreNoSubstance) {
+      } else if (!ignoreMissing) {
         throw new Error('No substance: ' + dependencyId);
       }
     }
@@ -209,8 +213,8 @@ function createVisit<I>(
  */
 function makeDependenciesMap<I>(
   itemsMap: Map<unknown, I>,
-  getDeps: GetDepsFn<I>,
-  getDepId: GetIdFn<I>,
+  getDeps: SortDependenciesGetDependencies<I>,
+  getDepId: SortDependenciesGetId<I>,
 ): Map<unknown, Set<unknown>> {
   const map = new Map<unknown, Set<unknown>>();
   itemsMap.forEach((item, id) => {
@@ -234,7 +238,7 @@ function makeDependenciesMap<I>(
  */
 function makeReverseLookupMap<I>(
   distinctArray: I[],
-  getId: GetIdFn<I>,
+  getId: SortDependenciesGetId<I>,
 ): Map<unknown, number> {
   return distinctArray.reduce((map, item, index) => {
     map.set(getId(item), index);

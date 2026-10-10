@@ -39,26 +39,34 @@ describe('ensureValidValue', () => {
       expect(ensureValidValue(42, { validType: 'number' })).toBe(42);
     });
 
-    it('指定した型でない場合はそのまま返す（defaultValueなし）', () => {
+    it('指定した型でない場合はそのまま返す（invalidValueなし）', () => {
       expect(ensureValidValue('hello', { validType: 'number' })).toBe('hello');
     });
 
-    it('指定した型でない場合はdefaultValueを返す', () => {
-      expect(ensureValidValue('hello', { validType: 'number', defaultValue: 0 })).toBe(0);
+    it('指定した型でない場合はinvalidValueを返す', () => {
+      expect(
+        ensureValidValue('hello', { validType: 'number', invalidValue: 0 }),
+      ).toBe(0);
     });
 
     it('validType指定時にundefinedはundefinedValueを返す', () => {
-      expect(ensureValidValue(undefined, { validType: 'number', undefinedValue: 0 })).toBe(0);
+      expect(
+        ensureValidValue(undefined, { validType: 'number', undefinedValue: 0 }),
+      ).toBe(0);
     });
 
     it('validType指定時にnullはnullValueを返す', () => {
-      expect(ensureValidValue(null, { validType: 'number', nullValue: 0 })).toBe(0);
+      expect(
+        ensureValidValue(null, { validType: 'number', nullValue: 0 }),
+      ).toBe(0);
     });
   });
 
   describe('dataLast', () => {
     it('基本動作', () => {
-      expect(ensureValidValue.dataLast({ undefinedValue: 0 })(undefined)).toBe(0);
+      expect(ensureValidValue.dataLast({ undefinedValue: 0 })(undefined)).toBe(
+        0,
+      );
     });
   });
 });

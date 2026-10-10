@@ -1,4 +1,4 @@
-import type { EnsureMapOptions, MappableObject } from './types';
+import type { EnsureMapOptions, EnsureMapSource } from './types';
 
 /**
  * Mapであることを保証する\
@@ -7,11 +7,11 @@ import type { EnsureMapOptions, MappableObject } from './types';
  * @returns Mapに変換された値
  */
 const ensureMap = <K, V>(
-  data: MappableObject<K, V> | null | undefined,
+  data: EnsureMapSource<K, V> | null | undefined,
   options?: EnsureMapOptions,
 ): Map<K, V> => _ensureMap(data, options);
 ensureMap.dataLast = (options: EnsureMapOptions = {}) => {
-  return <K, V>(data: MappableObject<K, V> | null | undefined): Map<K, V> =>
+  return <K, V>(data: EnsureMapSource<K, V> | null | undefined): Map<K, V> =>
     _ensureMap(data, options);
 };
 export default ensureMap;
@@ -23,7 +23,7 @@ export default ensureMap;
  * - Array: [key, value] のペアの配列、またはインデックスをキーとした Map
  */
 function _ensureMap<K, V>(
-  data: MappableObject<K, V> | null | undefined,
+  data: EnsureMapSource<K, V> | null | undefined,
   options: EnsureMapOptions = {},
 ): Map<K, V> {
   if (data == null) {

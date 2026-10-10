@@ -3,15 +3,16 @@
  */
 export type ReplacePlaceholdersOptions = {
   /**
-   * プレイスホルダーを括る文字
-   * デフォルトは`{{`,`}}`
+   * プレースホルダーの開始・終了の囲み文字
+   * 単一の文字列の場合は開始・終了共通
+   * @default ['{{', '}}']
    */
-  bracket?: [string, string];
+  delimiters?: string | [string, string];
 
   /**
    * 置換対象が存在しなかったプレイスホルダーは削除する
    */
-  removePlaceholders?: boolean;
+  removeUnresolved?: boolean;
 
   /**
    * プレイスホルダーに'.'が含まれていてもvalues直下の値で置換する

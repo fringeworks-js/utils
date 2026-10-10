@@ -1,1 +1,1 @@
-export { default } from './asUtcDate';
+export { default as asUtcDate, default } from './asUtcDate';

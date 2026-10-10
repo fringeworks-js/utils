@@ -49,11 +49,30 @@ describe('escapeRegExp', () => {
     expect(escapeRegExp('a\\b')).toBe('a\\\\b');
   });
 
+  it('ハイフンは16進数でエスケープする', () => {
+    expect(escapeRegExp('a-b')).toBe('a\\x2db');
+  });
+
   it('正規表現として使用できること', () => {
     const input = 'a.b*c';
     const escaped = escapeRegExp(input);
     const regex = new RegExp(escaped);
     expect(regex.test(input)).toBe(true);
     expect(regex.test('aXbXc')).toBe(false);
+  });
+
+  it.each(['', 'u', 'v'])(
+    'フラグ "%s" の正規表現として使用できること',
+    (flags) => {
+      const input = 'a-b.c[d]e{1}f|g\\h';
+      const regex = new RegExp(`^${escapeRegExp(input)}$`, flags);
+      expect(regex.test(input)).toBe(true);
+    },
+  );
+
+  it('文字クラスの中で使用しても範囲指定にならないこと', () => {
+    const regex = new RegExp(`^[${escapeRegExp('a-c')}]$`, 'u');
+    expect(regex.test('-')).toBe(true);
+    expect(regex.test('b')).toBe(false);
   });
 });

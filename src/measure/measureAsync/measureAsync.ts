@@ -1,10 +1,10 @@
-import type { MeasureAsyncOptions, MeasureAsyncReturnValue } from './types';
+import type { MeasureAsyncOptions, MeasureAsyncResult } from './types';
 
 /**
  * 関数を指定回数実行しかかった時間を測定する
  * @param fn 測定対象の関数
  * @param args 測定対象の関数を実行する際に渡す引数
- * @param iteration 実行回数。未指定の場合は10回
+ * @param iterations 実行回数。未指定の場合は10回
  * @returns
  */
 export default function measureAsync<
@@ -13,14 +13,14 @@ export default function measureAsync<
 >(
   fn: (...args: A) => Promise<R>,
   options: MeasureAsyncOptions<A> = {},
-): Promise<MeasureAsyncReturnValue<R>> {
-  const { iteration = 10, args = [] as A, getArgs = () => args } = options;
+): Promise<MeasureAsyncResult<R>> {
+  const { iterations = 10, args = [] as A, getArgs = () => args } = options;
   // 指定回数分実行
-  let promise = Promise.resolve<MeasureAsyncReturnValue<R>>({
+  let promise = Promise.resolve<MeasureAsyncResult<R>>({
     time: 0,
     returnValue: undefined,
   });
-  for (let i = 0; i < iteration; i++) {
+  for (let i = 0; i < iterations; i++) {
     promise = promise.then((previousResult) => {
       // 引数の取得
       const currentArgs = getArgs();

@@ -3,7 +3,10 @@ import type { MeasureOptions } from '../measure';
 /**
  * 測定する対象
  */
-export type MeasurementTarget<A extends unknown[] = unknown[], R = unknown> = {
+export type ComparePerformanceTarget<
+  A extends unknown[] = unknown[],
+  R = unknown,
+> = {
   /**
    * ID
    */
@@ -18,9 +21,9 @@ export type MeasurementTarget<A extends unknown[] = unknown[], R = unknown> = {
 };
 
 /**
- * 測定の議題
+ * comparePerformanceのオプション
  */
-export type MeasurementAgenda<
+export type ComparePerformanceOptions<
   A extends unknown[] = unknown[],
   R = unknown,
 > = MeasureOptions<A> & {
@@ -32,23 +35,25 @@ export type MeasurementAgenda<
   /**
    * 測定対象
    */
-  targets: MeasurementTarget<A, R>[];
+  targets: ComparePerformanceTarget<A, R>[];
 
   /**
-   * 1回の測定で対象の関数を実行する回数
+   * 測定を何周行うか
+   * 1周ごとに各測定対象の関数を`iterations`回ずつ実行し、周ごとに測定する順番を入れ替える
+   * @default 10
    */
-  tests?: number;
+  rounds?: number;
 
   /**
    * trueの場合、測定前に各測定対象を1回ずつ実行する
    */
-  warmingUp?: boolean;
+  warmUp?: boolean;
 };
 
 /**
  * 計測された処理時間
  */
-export type RequiredTimeResult = {
+export type ElapsedTimes = {
   /**
    * 測定対象毎の処理時間
    */
@@ -56,13 +61,16 @@ export type RequiredTimeResult = {
 };
 
 /**
- * 集計結果
+ * 測定結果
  */
-export type TabulatedResult<A extends unknown[] = unknown[]> = {
+export type ComparePerformanceResult<
+  A extends unknown[] = unknown[],
+  R = unknown,
+> = {
   /**
    * 測定結果毎の平均
    */
-  average: RequiredTimeResult;
+  average: ElapsedTimes;
 
   /**
    * 全体の平均
@@ -72,16 +80,8 @@ export type TabulatedResult<A extends unknown[] = unknown[]> = {
   /**
    * 順位
    */
-  order: MeasurementTarget<A>[];
-};
+  order: ComparePerformanceTarget<A>[];
 
-/**
- * 測定結果
- */
-export type MeasurementResult<
-  A extends unknown[] = unknown[],
-  R = unknown,
-> = TabulatedResult<A> & {
   /**
    * ID
    */
@@ -90,7 +90,7 @@ export type MeasurementResult<
   /**
    * 測定結果
    */
-  results: RequiredTimeResult[];
+  results: ElapsedTimes[];
 
   /**
    * 測定結果毎の戻り値(最後の処理分のみ)

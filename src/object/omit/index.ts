@@ -1,1 +1,1 @@
-export { default } from './omit';
+export { default, default as omit } from './omit';

@@ -3,7 +3,10 @@
  * @param str
  */
 const lowerFirst = (str: string): string => _lowerFirst(str);
-lowerFirst.dataLast = () => (str: string): string => _lowerFirst(str);
+lowerFirst.dataLast =
+  () =>
+  (str: string): string =>
+    _lowerFirst(str);
 export default lowerFirst;
 
 function _lowerFirst(str: string): string {

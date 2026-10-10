@@ -19,7 +19,9 @@ describe('recaseScreamingSnake', () => {
 
   describe('dataLast', () => {
     it('基本動作', () => {
-      expect(recaseScreamingSnake.dataLast()('hello world')).toBe('HELLO_WORLD');
+      expect(recaseScreamingSnake.dataLast()('hello world')).toBe(
+        'HELLO_WORLD',
+      );
     });
   });
 });

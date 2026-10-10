@@ -7,7 +7,7 @@ export type FlattenObjectOptions = {
    *
    * @default false
    */
-  noPathKeys?: boolean;
+  leafKeysOnly?: boolean;
 
   /**
    * 階層を連結する際の区切り文字
@@ -24,5 +24,5 @@ export type FlattenObjectOptions = {
    *
    * @default false
    */
-  ignoreArray?: boolean;
+  keepArrays?: boolean;
 };

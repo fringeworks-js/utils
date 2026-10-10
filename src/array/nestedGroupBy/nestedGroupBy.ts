@@ -1,6 +1,6 @@
 import _nestedBy from '../../_internal/_nestedBy';
-import get from '../../object/get';
-import setMutable from '../../object/setMutable';
+import { get } from '../../object/get';
+import { setMutable } from '../../object/setMutable';
 import type { NestedGroupByOptions, NestedGroupByResult } from './types';
 
 /**

@@ -1,1 +1,1 @@
-export { default } from './recaseUpper';
+export { default, default as recaseUpper } from './recaseUpper';

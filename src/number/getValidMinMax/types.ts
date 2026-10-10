@@ -1,4 +1,4 @@
-export type NormalizeMinMaxOptions = {
+export type GetValidMinMaxOptions = {
   /**
    * 最小値のデフォルト
    */

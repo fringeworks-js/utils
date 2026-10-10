@@ -1,17 +1,21 @@
 /**
  * 静的パターン
  */
-export type StaticPattern = string | RegExp;
+export type MaybeReplaceStaticPattern = string | RegExp;
 
 /**
  * 動的パターン
  */
-export type DynamicPattern = (options?: MaybeReplaceOptions) => StaticPattern;
+export type MaybeReplaceDynamicPattern = (
+  options?: MaybeReplaceOptions,
+) => MaybeReplaceStaticPattern;
 
 /**
  * 静的・動的パターン
  */
-export type FlexiblePattern = StaticPattern | DynamicPattern;
+export type MaybeReplacePattern =
+  | MaybeReplaceStaticPattern
+  | MaybeReplaceDynamicPattern;
 
 /**
  * パターンを動的に作成する関数の引数に渡すオプション

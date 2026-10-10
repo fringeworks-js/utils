@@ -1,1 +1,1 @@
-export { default } from './firstDefined';
+export { default, default as firstDefined } from './firstDefined';

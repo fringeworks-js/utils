@@ -1,1 +1,1 @@
-export { default } from './roundToStep';
+export { default, default as roundToStep } from './roundToStep';

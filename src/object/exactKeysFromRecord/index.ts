@@ -1,1 +1,1 @@
-export { default } from './exactKeysFromRecord';
+export { default, default as exactKeysFromRecord } from './exactKeysFromRecord';

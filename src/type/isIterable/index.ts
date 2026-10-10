@@ -1,1 +1,1 @@
-export { default } from './isIterable';
+export { default, default as isIterable } from './isIterable';

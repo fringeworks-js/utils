@@ -1,1 +1,1 @@
-export { default } from './recasePascal';
+export { default, default as recasePascal } from './recasePascal';

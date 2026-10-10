@@ -80,7 +80,9 @@ describe('nestedKeyBy', () => {
     it('overwrite: true で複数項目のとき後の値が優先される', () => {
       const ITEM_A = { field3: '!!', $id: 'ID0', value: 'A' };
       const ITEM_B = { field3: '!!', $id: 'ID0', value: 'B' };
-      const result = nestedKeyBy([ITEM_A, ITEM_B], ['field3', '$id'], { overwrite: true });
+      const result = nestedKeyBy([ITEM_A, ITEM_B], ['field3', '$id'], {
+        overwrite: true,
+      });
       expect(result).toEqual({ '!!': { ID0: ITEM_B } });
     });
   });

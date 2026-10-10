@@ -7,7 +7,7 @@ export type EnsureMapOptions = {
   raw?: boolean;
 };
 
-export type MappableObject<K, V> =
+export type EnsureMapSource<K, V> =
   | Map<K, V>
   | Record<PropertyKey, V>
   | Array<[K, V]>

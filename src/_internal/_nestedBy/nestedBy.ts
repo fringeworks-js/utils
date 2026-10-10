@@ -1,11 +1,12 @@
-import ensureArray from '../../array/ensureArray';
+import type { LooseRecord } from '@fringeworks/types';
+import { ensureArray } from '../../array/ensureArray';
 import type { NestedByOptions, NestedByResult } from './types';
 
 export default function _nestedBy<I extends object, R = NestedByResult<I>>(
   data: I[],
   properties: keyof I | (keyof I)[],
-  setByFlatKey: (data: any, key: string, value: any) => void,
-  setByNestedKey: (data: any, path: string[], value: any) => void,
+  setByFlatKey: (data: LooseRecord, key: string, value: I) => void,
+  setByNestedKey: (data: LooseRecord, path: string[], value: I) => void,
   options: NestedByOptions,
 ) {
   if (!data) {

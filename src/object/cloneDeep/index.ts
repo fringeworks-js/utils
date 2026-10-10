@@ -1,1 +1,1 @@
-export { default } from './cloneDeep';
+export { default as cloneDeep, default } from './cloneDeep';

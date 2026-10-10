@@ -1,11 +1,11 @@
-import isEmptyCollection from '../../type/isEmptyCollection';
+import { rotateArrayMutable } from '../rotateArrayMutable';
 import type { RotateArrayOptions } from './types';
 
 /**
- * 配列の前方の要素を削除し末尾に追加する
+ * 配列の前方の要素を末尾に移動した新しい配列を返す
  * @param data 対象の配列
  * @param options オプション
- * @returns
+ * @returns ローテーションした新しい配列
  */
 const rotateArray = <I>(data: I[], options?: RotateArrayOptions) =>
   _rotateArray(data, options);
@@ -15,20 +15,6 @@ rotateArray.dataLast =
     _rotateArray(data, options);
 export default rotateArray;
 
-function _rotateArray<I>(data: I[], options: RotateArrayOptions = {}): I[] {
-  const { count = 1, inplace } = options;
-  let offset;
-  if (isEmptyCollection(data) || (offset = count % data.length) === 0) {
-    return inplace ? data : [...data];
-  }
-
-  if (inplace) {
-    const head = data.splice(0, offset);
-    data.push(...head);
-    return data;
-  } else {
-    const head = data.slice(0, offset);
-    const tail = data.slice(offset);
-    return [...tail, ...head];
-  }
+function _rotateArray<I>(data: I[], options?: RotateArrayOptions): I[] {
+  return data ? rotateArrayMutable([...data], options) : data;
 }

@@ -1,10 +1,10 @@
 import * as R from 'remeda';
-import isRegExp from '../../type/isRegExp';
-import unsafeCast from '../../type/unsafeCast';
+import { isRegExp } from '../../type/isRegExp';
+import { unsafeCast } from '../../type/unsafeCast';
 import type {
-  DynamicPattern,
-  FlexiblePattern,
+  MaybeReplaceDynamicPattern,
   MaybeReplaceOptions,
+  MaybeReplacePattern,
 } from './types';
 
 /**
@@ -17,13 +17,13 @@ import type {
  */
 const maybeReplace = <O extends MaybeReplaceOptions = MaybeReplaceOptions>(
   str: string | null | undefined,
-  pattern: FlexiblePattern,
+  pattern: MaybeReplacePattern,
   replacement: string | ((substring: string, ...args: unknown[]) => string),
   options?: O,
 ) => _maybeReplace(str, pattern, replacement, options);
 maybeReplace.dataLast =
   <O extends MaybeReplaceOptions = MaybeReplaceOptions>(
-    pattern: FlexiblePattern,
+    pattern: MaybeReplacePattern,
     replacement: string | ((substring: string, ...args: unknown[]) => string),
     options?: O,
   ) =>
@@ -33,7 +33,7 @@ export default maybeReplace;
 
 function _maybeReplace<O extends MaybeReplaceOptions = MaybeReplaceOptions>(
   str: string | null | undefined,
-  pattern: FlexiblePattern,
+  pattern: MaybeReplacePattern,
   replacement: string | ((substring: string, ...args: unknown[]) => string),
   options?: O,
 ) {
@@ -48,7 +48,7 @@ function _maybeReplace<O extends MaybeReplaceOptions = MaybeReplaceOptions>(
       // パターンが関数の場合
       return _maybeReplace(
         str,
-        (pattern as DynamicPattern)(options),
+        (pattern as MaybeReplaceDynamicPattern)(options),
         replacement,
       );
     }

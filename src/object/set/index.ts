@@ -1,1 +1,1 @@
-export { default } from './set';
+export { default, default as set } from './set';

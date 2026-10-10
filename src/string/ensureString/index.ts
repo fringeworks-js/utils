@@ -1,1 +1,1 @@
-export { default } from './ensureString';
+export { default, default as ensureString } from './ensureString';

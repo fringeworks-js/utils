@@ -1,1 +1,1 @@
-export { default } from './pushAllMutable';
+export { default, default as pushAllMutable } from './pushAllMutable';

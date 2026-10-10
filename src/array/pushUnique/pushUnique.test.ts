@@ -45,16 +45,18 @@ describe('pushUnique', () => {
       expect(pushUnique(undefined, [1])).toBeUndefined();
     });
 
-    it('itemsがnullの場合はdataをそのまま返す', () => {
+    it('itemsがnullの場合はdataのコピーを返す', () => {
       const data = [1, 2, 3];
       const result = pushUnique(data, null);
-      expect(result).toBe(data);
+      expect(result).toEqual(data);
+      expect(result).not.toBe(data);
     });
 
-    it('itemsがundefinedの場合はdataをそのまま返す', () => {
+    it('itemsがundefinedの場合はdataのコピーを返す', () => {
       const data = [1, 2, 3];
       const result = pushUnique(data, undefined);
-      expect(result).toBe(data);
+      expect(result).toEqual(data);
+      expect(result).not.toBe(data);
     });
 
     it('dataもitemsもnullの場合はnullを返す', () => {

@@ -1,1 +1,1 @@
-export { default } from './firstPresent';
+export { default, default as firstPresent } from './firstPresent';

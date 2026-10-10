@@ -1,1 +1,1 @@
-export { default } from './isAsyncIterable';
+export { default, default as isAsyncIterable } from './isAsyncIterable';

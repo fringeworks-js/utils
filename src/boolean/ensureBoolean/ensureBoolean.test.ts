@@ -57,11 +57,15 @@ describe('ensureBoolean', () => {
 
   describe('ignoreCase オプション', () => {
     it('大文字小文字を無視する', () => {
-      expect(ensureBoolean('TRUE', { ignoreCase: true, trueValues: ['true'] })).toBe(true);
+      expect(
+        ensureBoolean('TRUE', { ignoreCase: true, trueValues: ['true'] }),
+      ).toBe(true);
     });
 
     it('大文字小文字を無視しない', () => {
-      expect(ensureBoolean('TRUE', { ignoreCase: false, trueValues: ['true'] })).toBe(false);
+      expect(
+        ensureBoolean('TRUE', { ignoreCase: false, trueValues: ['true'] }),
+      ).toBe(false);
     });
   });
 

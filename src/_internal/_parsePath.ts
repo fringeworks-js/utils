@@ -1,5 +1,5 @@
 import * as R from 'remeda';
-import ensureArray from '../array/ensureArray';
+import { ensureArray } from '../array/ensureArray';
 
 /**
  * 'a.b[0].c' 形式の文字列をPropertyKey[]に変換

@@ -1,6 +1,6 @@
 import type { LooseDictionary } from '@fringeworks/types';
-import get from '../../object/get';
-import escapeRegExp from '../escapeRegExp';
+import { get } from '../../object/get';
+import { escapeRegExp } from '../escapeRegExp';
 import type { ReplacePlaceholdersOptions } from './types';
 
 const getShallow = (values: unknown, key: string) => values[key];
@@ -28,14 +28,17 @@ function _replacePlaceholders(
   options: ReplacePlaceholdersOptions = {},
 ): string {
   const {
-    bracket = ['{{', '}}'],
-    removePlaceholders = false,
+    delimiters = ['{{', '}}'],
+    removeUnresolved = false,
     flatKeys = false,
   } = options;
 
   // 正規表現の構築
-  const left = escapeRegExp(bracket[0]);
-  const right = escapeRegExp(bracket[1]);
+  const [prefix, suffix] = Array.isArray(delimiters)
+    ? delimiters
+    : [delimiters, delimiters];
+  const left = escapeRegExp(prefix);
+  const right = escapeRegExp(suffix);
   // {{ key }} のようなスペース入りにも対応
   const regex = new RegExp(`${left}\\s*(.*?)\\s*${right}`, 'g');
 
@@ -48,7 +51,7 @@ function _replacePlaceholders(
 
     // null または undefined の場合
     if (value == null) {
-      return removePlaceholders ? '' : match;
+      return removeUnresolved ? '' : match;
     }
 
     // 値がオブジェクト等の場合は文字列に変換、基本は string/number を想定

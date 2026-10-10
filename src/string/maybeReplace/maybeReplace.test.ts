@@ -36,7 +36,9 @@ describe('maybeReplace', () => {
 
   describe('dataLast', () => {
     it('基本動作', () => {
-      expect(maybeReplace.dataLast('world', 'there')('hello world')).toBe('hello there');
+      expect(maybeReplace.dataLast('world', 'there')('hello world')).toBe(
+        'hello there',
+      );
     });
   });
 });

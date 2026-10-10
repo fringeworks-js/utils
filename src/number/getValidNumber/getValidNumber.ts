@@ -1,4 +1,4 @@
-import isValidNumber from '../../type/isValidNumber';
+import { isValidNumber } from '../../type/isValidNumber';
 import type { GetValidNumberOptions } from './types';
 
 /**
@@ -21,6 +21,6 @@ function _getValidNumber(
   value: number | null | undefined,
   options: GetValidNumberOptions = {},
 ): number {
-  const { defaultValue = 0, ...rest } = options;
-  return (isValidNumber(value, rest) ? value : defaultValue) as number;
+  const { invalidValue = 0, ...rest } = options;
+  return (isValidNumber(value, rest) ? value : invalidValue) as number;
 }

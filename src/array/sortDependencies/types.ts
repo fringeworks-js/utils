@@ -1,39 +1,39 @@
-export type GetIdFn<I> = (item: I) => unknown;
-export type GetDepsFn<I> = (item: I) => I | I[];
+export type SortDependenciesGetId<I> = (item: I) => unknown;
+export type SortDependenciesGetDependencies<I> = (item: I) => I | I[];
 
 export type SortDependenciesOptions<I> = {
   /**
    * IDにあたるプロパティ
    * 未指定の場合は0
    */
-  idProp?: string | number | GetIdFn<I>;
+  id?: string | number | SortDependenciesGetId<I>;
 
   /**
    * 依存先の情報を持ったプロパティ
    * 未指定の場合は1
    */
-  depsProp?: string | number | GetDepsFn<I>;
+  dependencies?: string | number | SortDependenciesGetDependencies<I>;
 
   /**
    * 依存先のIDにあたるプロパティ
-   * 未指定の場合はidPropと同じ設定になる
+   * 未指定の場合はidと同じ設定になる
    */
-  depsIdProp?: string | number | GetIdFn<I>;
+  dependencyId?: string | number | SortDependenciesGetId<I>;
 
   /**
    * 与えるデータがツリー構造の場合はtrue
    */
-  isTree?: boolean;
+  tree?: boolean;
 
   /**
    * 実体がない依存先は処理対象外とする
    */
-  ignoreNoSubstance?: boolean;
+  ignoreMissing?: boolean;
 
   /**
    * ソート順
    * - false: 末端 -> ルート
    * - true: ルート -> 末端
    */
-  desc?: boolean;
+  reverse?: boolean;
 };

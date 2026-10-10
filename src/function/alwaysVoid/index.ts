@@ -1,1 +1,1 @@
-export { default } from './alwaysVoid';
+export { default as alwaysVoid, default } from './alwaysVoid';

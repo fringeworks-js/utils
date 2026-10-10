@@ -1,4 +1,4 @@
-import pushUniqueMutable from '../pushUniqueMutable';
+import { pushUniqueMutable } from '../pushUniqueMutable';
 import type { PushUniqueOptions } from './types';
 
 /**
@@ -23,7 +23,7 @@ function _pushUnique<T>(
   items: T[] | null | undefined,
   options: PushUniqueOptions<T> = {},
 ): T[] | null | undefined {
-  if (data && items) {
+  if (data) {
     return pushUniqueMutable([...data], items, options);
   }
   return data;

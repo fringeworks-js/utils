@@ -1,23 +1,16 @@
-import { ComparisonOperator, ComparisonStrategies } from './constants';
+import type { ComparisonStrategies } from './_strategies';
+import type { ComparisonOperator } from './constants';
 
 /**
- * 比較関数
+ * 演算子ごとの左辺の値の型
  */
-export type ComparisonStrategy<L = unknown, R = L> = (
-  left: L,
-  right: R,
-) => boolean;
-
-/**
- * 左の値の型
- */
-export type LeftType = {
+export type CompareLeft = {
   [O in ComparisonOperator]: Parameters<ComparisonStrategies[O]>[0];
 };
 
 /**
- * 右の値の型
+ * 演算子ごとの右辺の値の型
  */
-export type RightType = {
+export type CompareRight = {
   [O in ComparisonOperator]: Parameters<ComparisonStrategies[O]>[1];
 };

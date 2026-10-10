@@ -1,1 +1,1 @@
-export { default } from './sleep';
+export { default, default as sleep } from './sleep';

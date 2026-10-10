@@ -1,18 +1,18 @@
-import escapeRegExp from '../escapeRegExp';
-import safeMatchAll from '../safeMatchAll';
+import { escapeRegExp } from '../escapeRegExp';
+import { maybeMatchAll } from '../maybeMatchAll';
 import type { CreateExtractorResult, ExtractorOptions } from './types';
 
 /**
  * 特定のデリミタで囲まれたトークンを抽出する関数を作成する
- * @param delimiter 開始・終了の区切り文字。単一文字列の場合は開始・終了共通。
+ * @param delimiters 開始・終了の囲み文字。単一の文字列の場合は開始・終了共通
  * @returns
  */
 export default function createExtractor(
-  delimiter: string | [string, string] = ['{{', '}}'],
+  delimiters: string | [string, string] = ['{{', '}}'],
 ): CreateExtractorResult {
-  const [prefix, suffix] = Array.isArray(delimiter)
-    ? delimiter
-    : [delimiter, delimiter];
+  const [prefix, suffix] = Array.isArray(delimiters)
+    ? delimiters
+    : [delimiters, delimiters];
 
   const escapedPrefix = escapeRegExp(prefix);
   const escapedSuffix = escapeRegExp(suffix);
@@ -24,7 +24,7 @@ export default function createExtractor(
   const extractor = (str: string, options: ExtractorOptions = {}): string[] => {
     const { keepDelimiters, trim, unique } = options;
 
-    const matches = safeMatchAll(str, regex);
+    const matches = maybeMatchAll(str, regex);
 
     if (matches.length === 0) {
       return [];

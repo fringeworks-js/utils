@@ -1,1 +1,1 @@
-export { default } from './escapeRegExp';
+export { default, default as escapeRegExp } from './escapeRegExp';

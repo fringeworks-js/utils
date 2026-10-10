@@ -1,1 +1,1 @@
-export { default } from './isNullish';
+export { default, default as isNullish } from './isNullish';
