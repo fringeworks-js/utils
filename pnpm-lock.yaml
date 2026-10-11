@@ -132,8 +132,8 @@ importers:
         specifier: ^0.9.1
         version: 0.9.1
       '@fringeworks/rollup-plugin-dist-package':
-        specifier: ^0.8.0
-        version: 0.8.0(rollup@4.64.0)
+        specifier: ^0.8.1
+        version: 0.8.1(rollup@4.64.0)
       '@types/node':
         specifier: ^25.5.0
         version: 25.9.1
@@ -446,8 +446,8 @@ packages:
   '@fringeworks/dev@0.9.1':
     resolution: {integrity: sha512-M5s+iWXKuJ/ysisWZiSdR6mrFZNxUK9d8OFUl1Kf27e2cWJGPcQcDcK4bmnAWZ0cWSQ2KACgw3RYp4QA/WBbcw==}
 
-  '@fringeworks/rollup-plugin-dist-package@0.8.0':
-    resolution: {integrity: sha512-ymifDraR1cZ8dk5gUaE6/CEnXO3sH9s12gHJlSIkyVWh3oDjkkmrB068GZH6Lm0vQnMcAmxsNRDwy9ww5jRROA==}
+  '@fringeworks/rollup-plugin-dist-package@0.8.1':
+    resolution: {integrity: sha512-bowRWF5tCGGDS1oEfrkWviF3+sh+U9AGP611eM4aHYKYKWTE8EXFvoN3/uZo7fc10CTssn/U7yrMpUirAfpB3w==}
     peerDependencies:
       rollup: ^4.0.0
 
@@ -2078,9 +2078,8 @@ snapshots:
       sass: 1.100.0
       type-fest: 5.10.0
 
-  '@fringeworks/rollup-plugin-dist-package@0.8.0(rollup@4.64.0)':
+  '@fringeworks/rollup-plugin-dist-package@0.8.1(rollup@4.64.0)':
     dependencies:
-      fast-glob: 3.3.3
       fs-extra: 11.4.1
       rollup: 4.64.0
       sort-package-json: 3.6.1
