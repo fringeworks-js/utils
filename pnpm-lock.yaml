@@ -110,11 +110,11 @@ importers:
   .:
     dependencies:
       '@fringeworks/constants':
-        specifier: ^0.8.0
-        version: 0.8.0
+        specifier: link:../constants
+        version: link:../constants
       '@fringeworks/types':
-        specifier: ^0.8.0
-        version: 0.8.0
+        specifier: link:../types
+        version: link:../types
       klona:
         specifier: ^2.0.6
         version: 2.0.6
@@ -437,9 +437,6 @@ packages:
     resolution: {integrity: sha512-rZAP3aVgB9ds9KOeUSL+zZ21hPmo8dh6fnIFwRQj5EAZl9gzR7wxYbYXYysAM8CTqGmUGyp2S4kUdV17MnGuWQ==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
-  '@fringeworks/constants@0.8.0':
-    resolution: {integrity: sha512-5p1ezW9x5pwyhMWCk6bdEri3s0F8CsIDXCh8J47n+LaXS6ULyodI0BZx7mnquV6GEgCgN5oDy0q5nknlcon4yA==}
-
   '@fringeworks/dev@0.9.3':
     resolution: {integrity: sha512-dcLp94c/IElHXUx1F+ph8JbKmwFTOy4cHyBuqgQmvWlaP6l1nQiomqJ2ac6D6WsihjN/3vLUZH81jbN3Oyswuw==}
 
@@ -447,9 +444,6 @@ packages:
     resolution: {integrity: sha512-bowRWF5tCGGDS1oEfrkWviF3+sh+U9AGP611eM4aHYKYKWTE8EXFvoN3/uZo7fc10CTssn/U7yrMpUirAfpB3w==}
     peerDependencies:
       rollup: ^4.0.0
-
-  '@fringeworks/types@0.8.0':
-    resolution: {integrity: sha512-p4ix9hCO4ROZO+rn0CN02/0QjTcZl1/sV7CDxQWwC8IxEIZXtFqbbKrdZNWWlNexcGADZSzUZDncUF5/K75NTw==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -2065,8 +2059,6 @@ snapshots:
       '@eslint/core': 1.2.1
       levn: 0.4.1
 
-  '@fringeworks/constants@0.8.0': {}
-
   '@fringeworks/dev@0.9.3':
     dependencies:
       fast-glob: 3.3.3
@@ -2082,8 +2074,6 @@ snapshots:
       sort-package-json: 3.6.1
       tslib: 2.8.1
       type-fest: 5.10.0
-
-  '@fringeworks/types@0.8.0': {}
 
   '@humanfs/core@0.19.2':
     dependencies:

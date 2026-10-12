@@ -1,4 +1,5 @@
 import _setProperty from '../../_internal/_setProperty';
+import { hasOwn } from '../hasOwn';
 
 /**
  * 浅いコピーをする。未対応のものはそのまま返す。
@@ -65,7 +66,7 @@ export default function cloneShallow<T>(value: T): T {
     }
     // 通常のプロパティ
     for (const key of Object.getOwnPropertyNames(original)) {
-      if (!Object.hasOwn(copy, key) || copy[key] !== original[key]) {
+      if (!hasOwn(copy, key) || copy[key] !== original[key]) {
         _setProperty(copy, key, Object.getOwnPropertyDescriptor(original, key));
       }
     }

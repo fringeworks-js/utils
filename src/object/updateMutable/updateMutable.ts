@@ -1,5 +1,6 @@
 import type { LooseRecord } from '@fringeworks/types';
 import { isEqual } from '../../compare/isEqual';
+import { hasOwn } from '../hasOwn';
 import type { UpdateMutableOptions } from './types';
 
 /**
@@ -32,7 +33,7 @@ function _updateMutable<T extends LooseRecord>(
   const oldValues: Partial<T> = {};
   if (object && values) {
     for (const key in values) {
-      if (Object.hasOwn(values, key)) {
+      if (hasOwn(values, key)) {
         const value = values[key];
         const oldValue = object[key];
         if (!isEqual(oldValue, value, options)) {

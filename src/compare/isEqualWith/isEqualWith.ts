@@ -1,3 +1,5 @@
+import { hasOwn } from '../../object/hasOwn';
+
 /**
  * カスタム比較関数。
  * 明示的に結果を返さない(undefined)場合は、デフォルトの再帰比較が行われる
@@ -109,7 +111,7 @@ function _isEqualWith(
     }
 
     for (const k of keys) {
-      if (!Object.hasOwn(other, k)) {
+      if (!hasOwn(other, k)) {
         return false;
       }
       if (

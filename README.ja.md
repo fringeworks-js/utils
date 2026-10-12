@@ -970,34 +970,35 @@ roundToStep(8, 5); // 10
 
 ### object
 
-| 関数                                                   | 説明                                                                    |
-| ------------------------------------------------------ | ----------------------------------------------------------------------- |
-| `assignDefined(target, values, options?)`              | `undefined` でない値だけを代入した新しいオブジェクトを返す              |
-| `assignDefinedMutable(target, values, options?)`       | `undefined` でない値だけを代入する（破壊的）                            |
-| `cloneDeep(value)`                                     | 値を深くコピーする                                                      |
-| `cloneShallow(value)`                                  | 値を浅くコピーする                                                      |
-| `countKeys(obj)`                                       | オブジェクトの列挙可能なプロパティの数を返す                            |
-| `distribute(data, rules, options?)`                    | プロパティをルールに従って複数のオブジェクトに分ける                    |
-| `exactKeys<T>()(keys)`                                 | 型のキーを過不足なく列挙した配列であることをコンパイル時に検査する      |
-| `exactKeysFromRecord<T>(keys)`                         | 型の全てのキーを持つオブジェクトからキーの配列を作る                    |
-| `fillDefaults(target, defaultValues, options?)`        | 値の無いプロパティをデフォルト値で埋めた新しいオブジェクトを返す        |
-| `fillDefaultsMutable(target, defaultValues, options?)` | 値の無いプロパティをデフォルト値で埋める（破壊的）                      |
-| `filterByKeys(target, condition, options?)`            | 条件に合うキーのプロパティだけを残す                                    |
-| `filterByValues(target, condition, options?)`          | 条件に合う値だけを残す                                                  |
-| `flattenObject(data, options?)`                        | ネストしたオブジェクトを1階層にする                                     |
-| `forEachValue(target, callback, options?)`             | 各プロパティの値でコールバックを実行する                                |
-| `get(data, path)`                                      | パスで指定したプロパティの値を返す                                      |
-| `maybeHasOwn(data, key)`                               | オブジェクトが指定のプロパティを自身で持つか判定する（`null` でも安全） |
-| `omit(data, keys)`                                     | 指定のキーのプロパティを除いた新しいオブジェクトを返す                  |
-| `overrideInstance(instance, overrides)`                | インスタンスのプロパティを上書きするプロキシを作る                      |
-| `set(data, path, value)`                               | パスで指定したプロパティに値を設定した新しいオブジェクトを返す          |
-| `setMutable(data, path, value)`                        | パスで指定したプロパティに値を設定する（破壊的）                        |
-| `stableStringify(value, space?)`                       | キーを並べ替えて JSON 文字列にする                                      |
-| `transformObject(source, rules, options?)`             | ルールに従ってオブジェクトの構造を変換する                              |
-| `unset(data, path)`                                    | パスで指定したプロパティを削除した新しいオブジェクトを返す              |
-| `unsetMutable(data, path)`                             | パスで指定したプロパティを削除する（破壊的）                            |
-| `update(object, values, options?)`                     | 値が変わるプロパティだけを更新した新しいオブジェクトを返す              |
-| `updateMutable(object, values, options?)`              | 値が変わるプロパティだけを更新し、更新前の値を返す（破壊的）            |
+| 関数                                                   | 説明                                                                         |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------- |
+| `assignDefined(target, values, options?)`              | `undefined` でない値だけを代入した新しいオブジェクトを返す                   |
+| `assignDefinedMutable(target, values, options?)`       | `undefined` でない値だけを代入する（破壊的）                                 |
+| `cloneDeep(value)`                                     | 値を深くコピーする                                                           |
+| `cloneShallow(value)`                                  | 値を浅くコピーする                                                           |
+| `countKeys(obj)`                                       | オブジェクトの列挙可能なプロパティの数を返す                                 |
+| `distribute(data, rules, options?)`                    | プロパティをルールに従って複数のオブジェクトに分ける                         |
+| `exactKeys<T>()(keys)`                                 | 型のキーを過不足なく列挙した配列であることをコンパイル時に検査する           |
+| `exactKeysFromRecord<T>(keys)`                         | 型の全てのキーを持つオブジェクトからキーの配列を作る                         |
+| `fillDefaults(target, defaultValues, options?)`        | 値の無いプロパティをデフォルト値で埋めた新しいオブジェクトを返す             |
+| `fillDefaultsMutable(target, defaultValues, options?)` | 値の無いプロパティをデフォルト値で埋める（破壊的）                           |
+| `filterByKeys(target, condition, options?)`            | 条件に合うキーのプロパティだけを残す                                         |
+| `filterByValues(target, condition, options?)`          | 条件に合う値だけを残す                                                       |
+| `flattenObject(data, options?)`                        | ネストしたオブジェクトを1階層にする                                          |
+| `forEachValue(target, callback, options?)`             | 各プロパティの値でコールバックを実行する                                     |
+| `get(data, path)`                                      | パスで指定したプロパティの値を返す                                           |
+| `hasOwn(data, key)`                                    | オブジェクトが指定のプロパティを自身で持つか判定する（`Object.hasOwn` 相当） |
+| `maybeHasOwn(data, key)`                               | オブジェクトが指定のプロパティを自身で持つか判定する（`null` でも安全）      |
+| `omit(data, keys)`                                     | 指定のキーのプロパティを除いた新しいオブジェクトを返す                       |
+| `overrideInstance(instance, overrides)`                | インスタンスのプロパティを上書きするプロキシを作る                           |
+| `set(data, path, value)`                               | パスで指定したプロパティに値を設定した新しいオブジェクトを返す               |
+| `setMutable(data, path, value)`                        | パスで指定したプロパティに値を設定する（破壊的）                             |
+| `stableStringify(value, space?)`                       | キーを並べ替えて JSON 文字列にする                                           |
+| `transformObject(source, rules, options?)`             | ルールに従ってオブジェクトの構造を変換する                                   |
+| `unset(data, path)`                                    | パスで指定したプロパティを削除した新しいオブジェクトを返す                   |
+| `unsetMutable(data, path)`                             | パスで指定したプロパティを削除する（破壊的）                                 |
+| `update(object, values, options?)`                     | 値が変わるプロパティだけを更新した新しいオブジェクトを返す                   |
+| `updateMutable(object, values, options?)`              | 値が変わるプロパティだけを更新し、更新前の値を返す（破壊的）                 |
 
 #### `assignDefined`
 
@@ -1217,13 +1218,26 @@ get({ a: { b: [{ c: 1 }] } }, 'a.b[0].c'); // 1
 get({ a: { b: [{ c: 1 }] } }, ['a', 'b', 0, 'c']); // 1
 ```
 
+#### `hasOwn`
+
+```ts
+hasOwn(data: object, key: PropertyKey): boolean
+```
+
+`data` が `key` のプロパティを自身で持つか判定します。`Object.hasOwn` は Safari 15.4 以降の機能のため、`Object.prototype.hasOwnProperty` で同じ判定をします。`hasOwnProperty` を上書きしたオブジェクトや、プロトタイプが `null` のオブジェクトでも使えます。
+
+```ts
+hasOwn({ a: 1 }, 'a'); // true
+hasOwn(Object.create({ a: 1 }), 'a'); // false
+```
+
 #### `maybeHasOwn`
 
 ```ts
 maybeHasOwn(data: object | null | undefined, key: PropertyKey): boolean
 ```
 
-`data` が `key` のプロパティを自身で持つか判定します（`Object.hasOwn`）。`data` が `null` / `undefined` の場合は `false` を返します。
+`data` が `key` のプロパティを自身で持つか判定します（`hasOwn`）。`data` が `null` / `undefined` の場合は `false` を返します。
 
 #### `omit`
 

@@ -1,5 +1,6 @@
 import type { LooseRecord } from '@fringeworks/types';
 import * as R from 'remeda';
+import { hasOwn } from '../hasOwn';
 import type {
   DistributeOptions,
   DistributeResult,
@@ -34,7 +35,7 @@ function _distribute<T extends LooseRecord, DR extends DistributeRules<T>>(
   const { includeInherited, cloneValue } = options;
   const has = includeInherited
     ? (property: PropertyKey) => property in data
-    : (property: PropertyKey) => Object.hasOwn(data, property);
+    : (property: PropertyKey) => hasOwn(data, property);
   const get = cloneValue
     ? (property: PropertyKey) => R.clone(data[property])
     : (property: PropertyKey) => data[property];

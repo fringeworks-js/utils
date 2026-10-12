@@ -987,6 +987,7 @@ roundToStep(8, 5); // 10
 | `flattenObject(data, options?)`                        | Flattens a nested object into a single level                                     |
 | `forEachValue(target, callback, options?)`             | Runs a callback for the value of each property                                   |
 | `get(data, path)`                                      | Returns the value of the property at a path                                      |
+| `hasOwn(data, key)`                                    | Checks whether an object has an own property (equivalent to `Object.hasOwn`)     |
 | `maybeHasOwn(data, key)`                               | Checks whether an object has an own property (safe for `null`)                   |
 | `omit(data, keys)`                                     | Returns a new object without the given keys                                      |
 | `overrideInstance(instance, overrides)`                | Creates a proxy that overrides an instance's properties                          |
@@ -1217,13 +1218,26 @@ get({ a: { b: [{ c: 1 }] } }, 'a.b[0].c'); // 1
 get({ a: { b: [{ c: 1 }] } }, ['a', 'b', 0, 'c']); // 1
 ```
 
+#### `hasOwn`
+
+```ts
+hasOwn(data: object, key: PropertyKey): boolean
+```
+
+Checks whether `data` has `key` as an own property. Since `Object.hasOwn` requires Safari 15.4 or later, the check is done with `Object.prototype.hasOwnProperty`. It also works for objects that override `hasOwnProperty` and objects whose prototype is `null`.
+
+```ts
+hasOwn({ a: 1 }, 'a'); // true
+hasOwn(Object.create({ a: 1 }), 'a'); // false
+```
+
 #### `maybeHasOwn`
 
 ```ts
 maybeHasOwn(data: object | null | undefined, key: PropertyKey): boolean
 ```
 
-Checks whether `data` has `key` as an own property (`Object.hasOwn`). Returns `false` when `data` is `null` or `undefined`.
+Checks whether `data` has `key` as an own property (`hasOwn`). Returns `false` when `data` is `null` or `undefined`.
 
 #### `omit`
 

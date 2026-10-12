@@ -1,5 +1,6 @@
 import type { LooseRecord } from '@fringeworks/types';
 import { isEqual } from '../../compare/isEqual';
+import { hasOwn } from '../hasOwn';
 import type { UpdateOptions } from './types';
 
 /**
@@ -31,7 +32,7 @@ function _update<T extends LooseRecord>(
   }
   let result: T | undefined;
   for (const key in values) {
-    if (Object.hasOwn(values, key)) {
+    if (hasOwn(values, key)) {
       const value = values[key];
       if (!isEqual(object[key], value, options)) {
         // 初めて変更があった時点で複製する

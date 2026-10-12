@@ -1,6 +1,6 @@
 {
   "name": "@fringeworks/utils",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "private": true,
   "description": "A library some will find handy, offering general-purpose utility functions covering a wide range of categories including arrays, objects, strings, numbers, dates, timers, and more.",
   "keywords": [
@@ -28,8 +28,8 @@
     "tidy": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json}\" --config ./prettier.tidy.config.ts"
   },
   "dependencies": {
-    "@fringeworks/constants": "^0.8.0",
-    "@fringeworks/types": "^0.8.0",
+    "@fringeworks/constants": "link:../constants",
+    "@fringeworks/types": "link:../types",
     "klona": "^2.0.6",
     "remeda": "^2.33.6"
   },

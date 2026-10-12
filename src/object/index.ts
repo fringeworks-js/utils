@@ -13,6 +13,7 @@ export * from './filterByValues';
 export * from './flattenObject';
 export * from './forEachValue';
 export * from './get';
+export * from './hasOwn';
 export * from './maybeHasOwn';
 export * from './omit';
 export * from './overrideInstance';
