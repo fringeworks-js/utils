@@ -26,9 +26,7 @@ function _unsetMutable<T extends LooseRecord>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let current: any = data;
 
-  for (let i = 0; i < length; i++) {
-    const key = segments[i];
-
+  for (const [i, key] of segments.entries()) {
     // 値が存在しない、またはプリミティブな値に到達した場合は終わり
     if (current == null || typeof current !== 'object' || !(key in current)) {
       break;
@@ -42,7 +40,7 @@ function _unsetMutable<T extends LooseRecord>(
         if (Number.isInteger(index) && index >= 0 && index < current.length) {
           current.splice(index, 1);
         } else {
-          delete current[key];
+          Reflect.deleteProperty(current, key);
         }
       } else {
         delete current[key];

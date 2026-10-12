@@ -20,18 +20,18 @@ import type { FlattenObjectOptions } from './types';
 const flattenObject = (
   data: LooseRecord,
   options: FlattenObjectOptions = {},
-): LooseRecord => _flattenObject(data, options);
+): LooseRecord => _flattenObject(data, options) as LooseRecord;
 flattenObject.dataLast =
   (options: FlattenObjectOptions = {}) =>
   (data: LooseRecord): LooseRecord =>
-    _flattenObject(data, options);
+    _flattenObject(data, options) as LooseRecord;
 export default flattenObject;
 
 function _flattenObject(
-  data: LooseRecord,
+  data: unknown,
   options: FlattenObjectOptions,
   parentPath?: string,
-): LooseRecord {
+): unknown {
   if (R.isPlainObject(data) || (Array.isArray(data) && !options.keepArrays)) {
     // オブジェクトの場合は配下要素をフラットな状態に変換
     let flatObj: { [key: string]: unknown } = {};
@@ -40,7 +40,7 @@ function _flattenObject(
     const keys = Object.keys(data);
 
     for (const key of keys) {
-      const value: unknown = data[key];
+      const value: unknown = (data as LooseRecord)[key];
       // キー名
       if (parentPath && !leafKeysOnly) {
         // ネストしたキー名

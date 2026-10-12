@@ -1,3 +1,4 @@
+import type { LooseRecord } from '@fringeworks/types';
 import _nestedBy from '../../_internal/_nestedBy';
 import { get } from '../../object/get';
 import { setMutable } from '../../object/setMutable';
@@ -71,7 +72,7 @@ function _nestedGroupBy<I extends object>(
       group.push(value);
     },
     (result, path, value) => {
-      let group: I[] = get(result, path);
+      let group = get<LooseRecord, I[]>(result, path);
       if (!group) {
         group = [];
         setMutable(result, path as PropertyKey[], group);

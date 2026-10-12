@@ -31,19 +31,19 @@ function _set<T extends object>(
       return value;
     }
 
-    const key = segments[index];
+    const key = segments[index]!;
     // 既存の値を保持、なければ新しいコンテナを作成
     const target =
       current && typeof current === 'object' && key in current
-        ? current[key]
+        ? (current as Record<PropertyKey, unknown>)[key]
         : _createContainer(segments[index + 1]);
 
     const updatedValue = setter(target, index + 1);
 
     // 配列かオブジェクトかでコピー処理を分岐
     if (Array.isArray(current) || typeof key === 'number') {
-      const clone = Array.isArray(current) ? [...current] : [];
-      clone[key as PropertyKey] = updatedValue;
+      const clone: unknown[] = Array.isArray(current) ? [...current] : [];
+      Reflect.set(clone, key, updatedValue);
       return clone;
     } else {
       return { ...(current as object), [key]: updatedValue };

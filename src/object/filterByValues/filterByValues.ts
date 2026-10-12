@@ -15,10 +15,10 @@ const filterByValues = <T = unknown>(
   target: T,
   condition: unknown,
   options: FilterByValuesOptions = {},
-): T => _filterByValues(target, condition, options);
+): T | null => _filterByValues(target, condition, options);
 filterByValues.dataLast =
   (condition: unknown, options: FilterByValuesOptions = {}) =>
-  <T = unknown>(target: T): T =>
+  <T = unknown>(target: T): T | null =>
     _filterByValues(target, condition, options);
 export default filterByValues;
 
@@ -26,7 +26,7 @@ function _filterByValues<T = unknown>(
   target: T,
   condition: unknown,
   options: FilterByValuesOptions = {},
-): T {
+): T | null {
   const { normalize } = options;
 
   let normalizeFn: (value: string) => string = alwaysInput;
@@ -44,7 +44,7 @@ function _filter<T = unknown>(
   target: T,
   condition: unknown,
   normalizeFn: (value: string) => string,
-): T {
+): T | undefined {
   if (Array.isArray(target)) {
     // array
     const array: unknown[] = [];
@@ -86,4 +86,5 @@ function _filter<T = unknown>(
       return target;
     }
   }
+  return undefined;
 }

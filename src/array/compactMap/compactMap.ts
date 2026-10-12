@@ -32,9 +32,8 @@ function _compactMap<V, R = V>(
   if (data) {
     const isTarget = IS_TARGET[options.exclude || 'undefined'];
     const result: R[] = [];
-    const length = data.length;
-    for (let i = 0; i < length; i++) {
-      const mapped = callback(data[i], i, data);
+    for (const [i, item] of data.entries()) {
+      const mapped = callback(item, i, data);
       if (isTarget(mapped)) {
         result.push(mapped);
       }

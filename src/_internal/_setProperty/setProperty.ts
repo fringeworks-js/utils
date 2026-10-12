@@ -18,6 +18,6 @@ export default function setProperty(
   if (needsDefineProperty(key, descriptor)) {
     Object.defineProperty(obj, key, descriptor);
   } else {
-    obj[key] = descriptor.value;
+    (obj as Record<string | symbol, unknown>)[key] = descriptor.value;
   }
 }

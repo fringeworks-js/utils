@@ -23,8 +23,8 @@ describe('maybeMatchAll', () => {
 
   it('キャプチャグループを含むマッチ', () => {
     const result = [...maybeMatchAll('2024-01-15', /(\d{4})-(\d{2})-(\d{2})/g)];
-    expect(result[0][1]).toBe('2024');
-    expect(result[0][2]).toBe('01');
-    expect(result[0][3]).toBe('15');
+    expect(result[0]?.[1]).toBe('2024');
+    expect(result[0]?.[2]).toBe('01');
+    expect(result[0]?.[3]).toBe('15');
   });
 });

@@ -19,8 +19,9 @@ export default function overrideInstance<
 ): I & { [K in keyof O]: ReturnType<O[K]> } {
   return new Proxy(instance, {
     get: (target, property, receiver) => {
-      if (property in overrides) {
-        return overrides[property as keyof O](target, property, receiver);
+      const override = overrides[property as keyof O];
+      if (property in overrides && override) {
+        return override(target, property, receiver);
       }
       return Reflect.get(target, property, receiver);
     },

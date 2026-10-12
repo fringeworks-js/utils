@@ -6,5 +6,9 @@
 export default function isAsyncIterable(
   value: unknown,
 ): value is AsyncIterable<unknown> {
-  return value != null && typeof value[Symbol.asyncIterator] === 'function';
+  return (
+    value != null &&
+    typeof (value as Record<symbol, unknown>)[Symbol.asyncIterator] ===
+      'function'
+  );
 }

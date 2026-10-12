@@ -11,7 +11,11 @@ export default function measure<A extends unknown[] = unknown[], R = unknown>(
   fn: (...args: A) => R,
   options: MeasureOptions<A> = {},
 ): MeasureResult<R> {
-  const { iterations = 10, args = [] as A, getArgs = () => args } = options;
+  const {
+    iterations = 10,
+    args = [] as unknown as A,
+    getArgs = () => args,
+  } = options;
   // 指定回数分実行
   let returnValue;
   // 所要時間

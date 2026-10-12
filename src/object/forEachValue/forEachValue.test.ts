@@ -18,7 +18,7 @@ describe('forEachValue', () => {
     const calls: unknown[] = [];
     const result = forEachValue({ a: 1, b: 2, c: 3 }, (value) => {
       calls.push(value);
-      if (value === 2) return false;
+      return value !== 2;
     });
     expect(result).toBe(false);
     expect(calls).toEqual([1, 2]);

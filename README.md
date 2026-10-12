@@ -649,12 +649,12 @@ result.order.map((target) => target.id); // fastest first
 | `id?`         | `string`                           | An ID included in the result as is. Defaults to the start time in milliseconds   |
 
 | Property       | Type                            | Description                                       |
-| -------------- | ------------------------------- | ------------------------------------------------- |
+| -------------- | ------------------------------- | ------------------------------------------------- | -------------------------------------- |
 | `average`      | `ElapsedTimes`                  | The average time per round for each function (ms) |
 | `totalAverage` | `number`                        | The average time over all functions (ms)          |
 | `order`        | `ComparePerformanceTarget<A>[]` | The targets sorted from the shortest average time |
 | `results`      | `ElapsedTimes[]`                | The time of each function in each round           |
-| `returnValues` | `{ [id: string]: R }`           | The last return value of each function            |
+| `returnValues` | `{ [id: string]: R              | undefined }`                                      | The last return value of each function |
 | `start`        | `Date`                          | When the measurement started                      |
 | `end`          | `Date`                          | When the measurement ended                        |
 | `id?`          | `string`                        | The measurement ID                                |
@@ -1002,8 +1002,8 @@ roundToStep(8, 5); // 10
 #### `assignDefined`
 
 ```ts
-assignDefined<T extends LooseRecord, V extends LooseRecord>(target: T, values: V, options?: AssignDefinedOptions): T & V
-assignDefined.dataLast<V extends LooseRecord>(values: V, options?: AssignDefinedOptions): <T extends LooseRecord>(target: T) => T & V
+assignDefined<T extends LooseRecord, V extends LooseRecord>(target: T, values: V, options?: AssignDefinedOptions): AssignDefinedResult<T, V>
+assignDefined.dataLast<V extends LooseRecord>(values: V, options?: AssignDefinedOptions): <T extends LooseRecord>(target: T) => AssignDefinedResult<T, V>
 ```
 
 Returns a new object with only the properties of `values` that are not `undefined` assigned to `target`. Returns `target` as is when `target` or `values` is `null` or `undefined`.
@@ -1021,7 +1021,7 @@ assignDefined({ a: 1, b: 2 }, { b: null }, { skipNull: true }); // { a: 1, b: 2 
 #### `assignDefinedMutable`
 
 ```ts
-assignDefinedMutable<T extends LooseRecord, V extends LooseRecord>(target: T, values: V, options?: AssignDefinedMutableOptions): T & V
+assignDefinedMutable<T extends LooseRecord, V extends LooseRecord>(target: T, values: V, options?: AssignDefinedMutableOptions): AssignDefinedResult<T, V>
 ```
 
 The mutating version of `assignDefined`. Assigns to `target` directly and returns the same object. The options are the same as `assignDefined`.
@@ -1104,8 +1104,8 @@ const userKeys = exactKeysFromRecord<User>({ id: true, name: true, age: true });
 #### `fillDefaults`
 
 ```ts
-fillDefaults<T extends LooseRecord, V extends LooseRecord>(target: T, defaultValues: V, options?: FillDefaultsOptions): T & V
-fillDefaults.dataLast<V extends LooseRecord>(defaultValues: V, options?: FillDefaultsOptions): <T extends LooseRecord>(target: T) => T & V
+fillDefaults<T extends LooseRecord, V extends LooseRecord>(target: T, defaultValues: V, options?: FillDefaultsOptions): FillDefaultsResult<T, V>
+fillDefaults.dataLast<V extends LooseRecord>(defaultValues: V, options?: FillDefaultsOptions): <T extends LooseRecord>(target: T) => FillDefaultsResult<T, V>
 ```
 
 Returns a new object with the values of `defaultValues` set on the properties of `target` whose values are `undefined`. Values in `defaultValues` that are `undefined` are not set. Returns `target` as is when `target` or `defaultValues` is `null` or `undefined`.
@@ -1124,7 +1124,7 @@ fillDefaults({ b: null }, { b: 2 }, { overwriteNull: true }); // { b: 2 }
 #### `fillDefaultsMutable`
 
 ```ts
-fillDefaultsMutable<T extends LooseRecord, V extends LooseRecord>(target: T, defaultValues: V, options?: FillDefaultsMutableOptions): T & V
+fillDefaultsMutable<T extends LooseRecord, V extends LooseRecord>(target: T, defaultValues: V, options?: FillDefaultsMutableOptions): FillDefaultsResult<T, V>
 ```
 
 The mutating version of `fillDefaults`. Sets the values on `target` directly and returns the same object. The options are the same as `fillDefaults`.
@@ -1132,8 +1132,8 @@ The mutating version of `fillDefaults`. Sets the values on `target` directly and
 #### `filterByKeys`
 
 ```ts
-filterByKeys<T = unknown>(target: T, condition: PropertyKey, options?: FilterByKeysOptions): T
-filterByKeys.dataLast(condition: PropertyKey, options?: FilterByKeysOptions): <T = unknown>(target: T) => T
+filterByKeys<T = unknown>(target: T, condition: PropertyKey, options?: FilterByKeysOptions): T | null
+filterByKeys.dataLast(condition: PropertyKey, options?: FilterByKeysOptions): <T = unknown>(target: T) => T | null
 ```
 
 Walks objects and arrays recursively and returns a new value that keeps only the properties whose keys match the condition. When `condition` is a string, a key matches if it contains `condition` (substring match); otherwise the key must equal `condition`. A matching property is kept with its whole value, and a non-matching property is searched further. Returns `null` when nothing matches. Arrays keep their original indexes, leaving holes where nothing matched.
@@ -1154,8 +1154,8 @@ filterByKeys({ UserName: 'A', age: 1 }, 'username', {
 #### `filterByValues`
 
 ```ts
-filterByValues<T = unknown>(target: T, condition: unknown, options?: FilterByValuesOptions): T
-filterByValues.dataLast(condition: unknown, options?: FilterByValuesOptions): <T = unknown>(target: T) => T
+filterByValues<T = unknown>(target: T, condition: unknown, options?: FilterByValuesOptions): T | null
+filterByValues.dataLast(condition: unknown, options?: FilterByValuesOptions): <T = unknown>(target: T) => T | null
 ```
 
 Walks objects and arrays recursively and returns a new value that keeps only the values matching the condition. When `condition` is a string, a string value matches if it contains `condition` (substring match); otherwise the value must equal `condition` (`===`). What is kept, when `null` is returned, and how arrays are handled are the same as `filterByKeys`.
@@ -1220,7 +1220,7 @@ get({ a: { b: [{ c: 1 }] } }, ['a', 'b', 0, 'c']); // 1
 #### `maybeHasOwn`
 
 ```ts
-maybeHasOwn(data: object, key: PropertyKey): boolean
+maybeHasOwn(data: object | null | undefined, key: PropertyKey): boolean
 ```
 
 Checks whether `data` has `key` as an own property (`Object.hasOwn`). Returns `false` when `data` is `null` or `undefined`.
@@ -1379,24 +1379,26 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 } (state becomes { a: 9, b: 2 })
 
 #### Types
 
-| Type                          | Description                                                              |
-| ----------------------------- | ------------------------------------------------------------------------ |
-| `AssignDefinedMutableOptions` | Options for `assignDefinedMutable`                                       |
-| `AssignDefinedOptions`        | Same as `AssignDefinedMutableOptions`                                    |
-| `DistributeOptions`           | Options for `distribute`                                                 |
-| `DistributeRules<T>`          | The rules of `distribute` `{ [group]: array of property names \| null }` |
-| `DistributePropertyList<T>`   | An array of property names in the rules of `distribute`                  |
-| `DistributeResult<T, R>`      | The return value of `distribute`                                         |
-| `FillDefaultsMutableOptions`  | Options for `fillDefaultsMutable`                                        |
-| `FillDefaultsOptions`         | Same as `FillDefaultsMutableOptions`                                     |
-| `FilterByKeysOptions`         | Options for `filterByKeys`                                               |
-| `FilterByValuesOptions`       | Options for `filterByValues`                                             |
-| `FlattenObjectOptions`        | Options for `flattenObject`                                              |
-| `ForEachValueOptions`         | Options for `forEachValue`                                               |
-| `TransformObjectOptions`      | Options for `transformObject`                                            |
-| `TransformObjectRule<S, T>`   | A rule of `transformObject`                                              |
-| `UpdateMutableOptions`        | Options for `updateMutable` (same as `IsEqualOptions`)                   |
-| `UpdateOptions`               | Same as `UpdateMutableOptions`                                           |
+| Type                          | Description                                                                                                                                                                                      |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `AssignDefinedMutableOptions` | Options for `assignDefinedMutable`                                                                                                                                                               |
+| `AssignDefinedOptions`        | Same as `AssignDefinedMutableOptions`                                                                                                                                                            |
+| `AssignDefinedResult<T, V>`   | The return type of `assignDefined` and `assignDefinedMutable`. Keys whose values in `values` may be skipped as `undefined` (also `null` with `skipNull`) keep the type of the value in `target`  |
+| `DistributeOptions`           | Options for `distribute`                                                                                                                                                                         |
+| `DistributeRules<T>`          | The rules of `distribute` `{ [group]: array of property names \| null }`                                                                                                                         |
+| `DistributePropertyList<T>`   | An array of property names in the rules of `distribute`                                                                                                                                          |
+| `DistributeResult<T, R>`      | The return value of `distribute`                                                                                                                                                                 |
+| `FillDefaultsMutableOptions`  | Options for `fillDefaultsMutable`                                                                                                                                                                |
+| `FillDefaultsOptions`         | Same as `FillDefaultsMutableOptions`                                                                                                                                                             |
+| `FillDefaultsResult<T, V>`    | The return type of `fillDefaults` and `fillDefaultsMutable`. Keys whose values in `target` are `undefined` (also `null` with `overwriteNull`) get the type of the value in `defaultValues` added |
+| `FilterByKeysOptions`         | Options for `filterByKeys`                                                                                                                                                                       |
+| `FilterByValuesOptions`       | Options for `filterByValues`                                                                                                                                                                     |
+| `FlattenObjectOptions`        | Options for `flattenObject`                                                                                                                                                                      |
+| `ForEachValueOptions`         | Options for `forEachValue`                                                                                                                                                                       |
+| `TransformObjectOptions`      | Options for `transformObject`                                                                                                                                                                    |
+| `TransformObjectRule<S, T>`   | A rule of `transformObject`                                                                                                                                                                      |
+| `UpdateMutableOptions`        | Options for `updateMutable` (same as `IsEqualOptions`)                                                                                                                                           |
+| `UpdateOptions`               | Same as `UpdateMutableOptions`                                                                                                                                                                   |
 
 ### string
 

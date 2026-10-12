@@ -14,7 +14,11 @@ export default function measureAsync<
   fn: (...args: A) => Promise<R>,
   options: MeasureAsyncOptions<A> = {},
 ): Promise<MeasureAsyncResult<R>> {
-  const { iterations = 10, args = [] as A, getArgs = () => args } = options;
+  const {
+    iterations = 10,
+    args = [] as unknown as A,
+    getArgs = () => args,
+  } = options;
   // 指定回数分実行
   let promise = Promise.resolve<MeasureAsyncResult<R>>({
     time: 0,

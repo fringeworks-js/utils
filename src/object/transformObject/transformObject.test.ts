@@ -48,7 +48,7 @@ describe('transformObject', () => {
 
   it('fromが関数でtoが未指定の場合は設定しない', () => {
     const result = transformObject({ a: 1, b: 2 }, [
-      { from: (s) => s.a + s.b },
+      { from: (s: { a: number; b: number }) => s.a + s.b },
     ] as any);
     expect(result).toEqual({});
   });

@@ -36,7 +36,7 @@ function _updateMutable<T extends LooseRecord>(
         const value = values[key];
         const oldValue = object[key];
         if (!isEqual(oldValue, value, options)) {
-          object[key] = value;
+          object[key] = value as T[typeof key];
           oldValues[key] = oldValue;
         }
       }

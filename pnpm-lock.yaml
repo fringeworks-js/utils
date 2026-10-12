@@ -121,16 +121,13 @@ importers:
       remeda:
         specifier: ^2.33.6
         version: 2.37.0
-      tslib:
-        specifier: ^2.8.1
-        version: 2.8.1
     devDependencies:
       '@eslint/js':
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.4.0(supports-color@7.2.0))
       '@fringeworks/dev':
-        specifier: ^0.9.1
-        version: 0.9.1
+        specifier: ^0.9.3
+        version: 0.9.3
       '@fringeworks/rollup-plugin-dist-package':
         specifier: ^0.8.1
         version: 0.8.1(rollup@4.64.0)
@@ -443,8 +440,8 @@ packages:
   '@fringeworks/constants@0.8.0':
     resolution: {integrity: sha512-5p1ezW9x5pwyhMWCk6bdEri3s0F8CsIDXCh8J47n+LaXS6ULyodI0BZx7mnquV6GEgCgN5oDy0q5nknlcon4yA==}
 
-  '@fringeworks/dev@0.9.1':
-    resolution: {integrity: sha512-M5s+iWXKuJ/ysisWZiSdR6mrFZNxUK9d8OFUl1Kf27e2cWJGPcQcDcK4bmnAWZ0cWSQ2KACgw3RYp4QA/WBbcw==}
+  '@fringeworks/dev@0.9.3':
+    resolution: {integrity: sha512-dcLp94c/IElHXUx1F+ph8JbKmwFTOy4cHyBuqgQmvWlaP6l1nQiomqJ2ac6D6WsihjN/3vLUZH81jbN3Oyswuw==}
 
   '@fringeworks/rollup-plugin-dist-package@0.8.1':
     resolution: {integrity: sha512-bowRWF5tCGGDS1oEfrkWviF3+sh+U9AGP611eM4aHYKYKWTE8EXFvoN3/uZo7fc10CTssn/U7yrMpUirAfpB3w==}
@@ -2070,7 +2067,7 @@ snapshots:
 
   '@fringeworks/constants@0.8.0': {}
 
-  '@fringeworks/dev@0.9.1':
+  '@fringeworks/dev@0.9.3':
     dependencies:
       fast-glob: 3.3.3
       fs-extra: 11.4.1

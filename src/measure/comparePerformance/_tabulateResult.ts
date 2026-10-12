@@ -21,9 +21,9 @@ export default function _tabulateResult<
   // 各測定対象毎の平均値
   const rounds = results.length;
   // 各測定対象の処理時間の合計
-  const total = results.reduce((ttl, result) => {
-    for (const targetId in result) {
-      ttl[targetId] = (ttl[targetId] || 0) + result[targetId];
+  const total = results.reduce<ElapsedTimes>((ttl, result) => {
+    for (const [targetId, time] of Object.entries(result)) {
+      ttl[targetId] = (ttl[targetId] || 0) + time;
     }
     return ttl;
   }, {});
@@ -33,7 +33,7 @@ export default function _tabulateResult<
   for (const target of targets) {
     const targetId = target.id;
     // 測定対象毎の平均
-    average[targetId] = total[targetId] / rounds;
+    average[targetId] = (total[targetId] ?? 0) / rounds;
   }
 
   // 全体の平均(全測定結果の合計 / (測定対象数 * 測定回数))

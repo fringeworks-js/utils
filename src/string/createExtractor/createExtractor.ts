@@ -33,7 +33,7 @@ export default function createExtractor(
     let results = matches.map((match) => {
       // - match[0]: 全体
       // - match[1]: 中身
-      const token = keepDelimiters ? match[0] : match[1];
+      const token = (keepDelimiters ? match[0] : match[1]) ?? '';
       return trim ? token.trim() : token;
     });
 

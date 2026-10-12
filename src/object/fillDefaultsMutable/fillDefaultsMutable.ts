@@ -1,6 +1,6 @@
 import type { LooseRecord } from '@fringeworks/types';
 import { forEachValue } from '../forEachValue';
-import type { FillDefaultsMutableOptions } from './types';
+import type { FillDefaultsMutableOptions, FillDefaultsResult } from './types';
 
 /**
  * 対象のオブジェクトのプロパティ値がundefinedのとき、デフォルト値のプロパティ値がundefinedでなければ設定する。
@@ -17,7 +17,7 @@ export default function fillDefaultsMutable<
   target: T,
   defaultValues: V,
   options: FillDefaultsMutableOptions = {},
-): T & V {
+): FillDefaultsResult<T, V> {
   if (target && defaultValues) {
     const { skipNull, overwriteNull, ...opts } = options;
     const isValidValue = skipNull
@@ -30,11 +30,11 @@ export default function fillDefaultsMutable<
       defaultValues,
       (value, key) => {
         if (isValidValue(value) && isOverwritedValue(target[key])) {
-          (target[key] as LooseRecord) = value;
+          (target as LooseRecord)[key] = value;
         }
       },
       opts,
     );
   }
-  return target as T & V;
+  return target as FillDefaultsResult<T, V>;
 }

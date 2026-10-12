@@ -3,7 +3,8 @@ import { get } from '../../object/get';
 import { escapeRegExp } from '../escapeRegExp';
 import type { ReplacePlaceholdersOptions } from './types';
 
-const getShallow = (values: unknown, key: string) => values[key];
+const getShallow = (values: unknown, key: string) =>
+  (values as Record<string, unknown>)[key];
 
 /**
  * テンプレート内のプレイスホルダーを指定された値で置換する

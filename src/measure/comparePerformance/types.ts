@@ -95,7 +95,7 @@ export type ComparePerformanceResult<
   /**
    * 測定結果毎の戻り値(最後の処理分のみ)
    */
-  returnValues: { [targetId: string]: R };
+  returnValues: { [targetId: string]: R | undefined };
 
   /**
    * 測定開始日時

@@ -22,7 +22,7 @@ describe('pushAll', () => {
 
   it('sourceがnullの場合は元の配列のコピーを返す', () => {
     const array = [1, 2, 3];
-    const result = pushAll(array, null);
+    const result = pushAll(array, null as any);
     expect(result).toEqual([1, 2, 3]);
   });
 

@@ -26,7 +26,12 @@ function _unset<T extends LooseRecord>(
     const key = segments[index];
 
     // 値が存在しない、またはプリミティブな値に到達した場合はそのまま返す
-    if (current == null || typeof current !== 'object' || !(key in current)) {
+    if (
+      key === undefined ||
+      current == null ||
+      typeof current !== 'object' ||
+      !(key in current)
+    ) {
       return current;
     }
 
@@ -45,7 +50,7 @@ function _unset<T extends LooseRecord>(
     }
 
     // 直下の値を取得し再帰的に進む
-    const oldValue = current[key];
+    const oldValue = (current as LooseRecord)[key];
     const newValue = unsetter(oldValue, index + 1);
 
     if (oldValue === newValue) {
@@ -54,7 +59,7 @@ function _unset<T extends LooseRecord>(
     } else if (Array.isArray(current)) {
       // 直下に変更あり(配列)
       const next = [...current];
-      next[key] = newValue;
+      Reflect.set(next, key, newValue);
       return next;
     } else {
       // 直下に変更あり(オブジェクト)

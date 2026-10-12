@@ -1,3 +1,4 @@
+import type { LooseRecord } from '@fringeworks/types';
 import _nestedBy from '../../_internal/_nestedBy';
 import { get } from '../../object/get';
 import { setMutable } from '../../object/setMutable';
@@ -53,12 +54,18 @@ function _nestedKeyBy<I extends object>(
   options: NestedKeyByOptions = {},
 ): NestedKeyByResult<I> {
   const { overwrite, ...rest } = options;
-  const [setByFlatKey, setByNestedKey] = overwrite
+  const [setByFlatKey, setByNestedKey]: [
+    (result: LooseRecord, key: string, value: I) => void,
+    (result: LooseRecord, path: string[], value: I) => void,
+  ] = overwrite
     ? // 後勝ち
       [
-        (result, key, value) => (result[key] = value),
-        (result, path, value) =>
-          setMutable(result, path as PropertyKey[], value),
+        (result, key, value) => {
+          result[key] = value;
+        },
+        (result, path, value) => {
+          setMutable(result, path as PropertyKey[], value);
+        },
       ]
     : // 先勝ち
       [

@@ -3,6 +3,11 @@ import { isEqualWith } from '../isEqualWith';
 import { CompareMode } from './constants';
 import type { IsEqualOptions } from './types';
 
+/**
+ * 独自の比較関数
+ */
+type Customizer = NonNullable<IsEqualOptions['customizer']>;
+
 const EQUAL = {
   // 厳密な比較
   [CompareMode.strict]: (value1: unknown, value2: unknown) => {
@@ -31,9 +36,8 @@ const EQUAL_WITH_CUSTOMIZER = {
   [CompareMode.strict]: (
     value1: unknown,
     value2: unknown,
-    options: IsEqualOptions,
+    customizer: Customizer,
   ) => {
-    const customizer = options.customizer;
     const result = customizer(value1, value2);
     if (result == null) {
       return value1 === value2;
@@ -45,9 +49,8 @@ const EQUAL_WITH_CUSTOMIZER = {
   [CompareMode.loose]: (
     value1: unknown,
     value2: unknown,
-    options: IsEqualOptions,
+    customizer: Customizer,
   ) => {
-    const customizer = options.customizer;
     const result = customizer(value1, value2);
     if (result == null) {
       return value1 == value2;
@@ -59,9 +62,8 @@ const EQUAL_WITH_CUSTOMIZER = {
   [CompareMode.deep]: (
     value1: unknown,
     value2: unknown,
-    options: IsEqualOptions,
+    customizer: Customizer,
   ) => {
-    const customizer = options.customizer;
     return isEqualWith(value1, value2, customizer);
   },
 };
@@ -92,7 +94,7 @@ function _isEqual(
   const { mode = CompareMode.strict, customizer } = options;
   if (customizer) {
     // customizerありの比較
-    return EQUAL_WITH_CUSTOMIZER[mode](value1, value2, options);
+    return EQUAL_WITH_CUSTOMIZER[mode](value1, value2, customizer);
   } else {
     // 比較
     return EQUAL[mode](value1, value2, options);

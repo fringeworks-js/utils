@@ -112,7 +112,16 @@ function _isEqualWith(
       if (!Object.hasOwn(other, k)) {
         return false;
       }
-      if (!_isEqualWith(value[k], other[k], customizer, k, value, other)) {
+      if (
+        !_isEqualWith(
+          (value as Record<string, unknown>)[k],
+          (other as Record<string, unknown>)[k],
+          customizer,
+          k,
+          value,
+          other,
+        )
+      ) {
         return false;
       }
     }

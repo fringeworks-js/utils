@@ -32,19 +32,19 @@ function _sortDependencies<I>(
     id = 0,
     dependencies = 1,
     dependencyId = id,
-    ignoreMissing,
-    tree,
-    reverse,
+    ignoreMissing = false,
+    tree = false,
+    reverse = false,
   } = options;
   const getId: SortDependenciesGetId<I> = R.isFunction(id)
     ? id
-    : (item: I) => item[id];
+    : (item: I) => getProperty(item, id);
   const getDeps: SortDependenciesGetDependencies<I> = R.isFunction(dependencies)
     ? dependencies
-    : (item: I) => item[dependencies];
+    : (item: I) => getProperty(item, dependencies) as I | I[];
   const getDepId: SortDependenciesGetId<I> = R.isFunction(dependencyId)
     ? dependencyId
-    : (item: I) => item[dependencyId];
+    : (item: I) => getProperty(item, dependencyId);
   const itemsMap = getUniqItems(
     new Map<unknown, I>(),
     data,
@@ -57,6 +57,16 @@ function _sortDependencies<I>(
   const sorted = sort(itemsMap, getId, getDeps, getDepId, ignoreMissing);
 
   return reverse ? sorted.reverse() : sorted;
+}
+
+/**
+ * 要素のプロパティの値を取得する
+ * @param item
+ * @param key
+ * @returns
+ */
+function getProperty<I>(item: I, key: string | number): unknown {
+  return (item as Record<string | number, unknown>)[key];
 }
 
 /**
@@ -122,9 +132,8 @@ function sort<I>(
   ignoreMissing: boolean,
 ) {
   const distinctArray = new Array(...itemsMap.values());
-  const length = distinctArray.length;
-  const sorted = [];
-  const visited = {};
+  const sorted: I[] = [];
+  const visited: Record<number, boolean> = {};
   const dependenciesMap = makeDependenciesMap(itemsMap, getDeps, getDepId);
   const reverseLookupMap = makeReverseLookupMap(distinctArray, getId);
   const visit = createVisit(
@@ -135,9 +144,9 @@ function sort<I>(
     ignoreMissing,
   );
 
-  for (let i = 0; i < length; i++) {
+  for (const [i, item] of distinctArray.entries()) {
     if (!visited[i]) {
-      visit(distinctArray[i], i, new Set<I>(), sorted, visited);
+      visit(item, i, new Set<I>(), sorted, visited);
     }
   }
 
@@ -170,25 +179,18 @@ function createVisit<I>(
     visited[index] = true;
 
     // 処理対象の依存先を取得
-    const dependencyIds = Array.from(dependenciesMap.get(getId(item)));
+    const dependencyIds = Array.from(dependenciesMap.get(getId(item)) ?? []);
 
     // 現在処理中の依存関係(パス)に対象を追加
     dependents.add(item);
 
     // 対象の依存先を全て処理
-    const length = dependencyIds.length;
-    for (let i = 0; i < length; i++) {
-      const dependencyId = dependencyIds[i];
+    for (const dependencyId of dependencyIds) {
       // 依存先のvisitedの更新用にdistinctArrayn内でのindexも渡す
       const distinctArrayIndex = reverseLookupMap.get(dependencyId);
-      if (distinctArrayIndex != null) {
-        visit(
-          itemsMap.get(dependencyId),
-          distinctArrayIndex,
-          dependents,
-          sorted,
-          visited,
-        );
+      const dependency = itemsMap.get(dependencyId);
+      if (distinctArrayIndex != null && dependency !== undefined) {
+        visit(dependency, distinctArrayIndex, dependents, sorted, visited);
       } else if (!ignoreMissing) {
         throw new Error('No substance: ' + dependencyId);
       }
@@ -218,14 +220,16 @@ function makeDependenciesMap<I>(
 ): Map<unknown, Set<unknown>> {
   const map = new Map<unknown, Set<unknown>>();
   itemsMap.forEach((item, id) => {
-    if (!map.has(id)) {
-      map.set(id, new Set<unknown>());
+    let depIds = map.get(id);
+    if (!depIds) {
+      depIds = new Set<unknown>();
+      map.set(id, depIds);
     }
     // 依存している要素を収集する
     const deps = ensureArray(getDeps(item));
     for (const depItem of deps) {
       // 対象要素に依存している要素を追加する
-      map.get(id).add(getDepId(depItem));
+      depIds.add(getDepId(depItem));
     }
   });
   return map;

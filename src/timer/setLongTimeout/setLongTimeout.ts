@@ -25,7 +25,9 @@ export default function setLongTimeout(
 }
 
 function _setLongTimeout(callback: () => void, delay: number, rest: number) {
-  const idRef: { current: NodeJS.Timeout } = { current: null };
+  const idRef: { current: ReturnType<typeof setTimeout> | undefined } = {
+    current: undefined,
+  };
   idRef.current = setTimeout(() => {
     if (rest > MAX_DELAY) {
       const { current } = _setLongTimeout(

@@ -649,12 +649,12 @@ result.order.map((target) => target.id); // 速い順
 | `id?`         | `string`                           | 測定の ID。結果にそのまま含める。デフォルトは開始時刻のミリ秒    |
 
 | プロパティ     | 型                              | 説明                                    |
-| -------------- | ------------------------------- | --------------------------------------- |
+| -------------- | ------------------------------- | --------------------------------------- | ---------------------- |
 | `average`      | `ElapsedTimes`                  | 関数ごとの1周あたりの平均時間（ミリ秒） |
 | `totalAverage` | `number`                        | 全関数の平均時間（ミリ秒）              |
 | `order`        | `ComparePerformanceTarget<A>[]` | 平均時間が短い順に並べた測定対象        |
 | `results`      | `ElapsedTimes[]`                | 周ごとの関数ごとの時間                  |
-| `returnValues` | `{ [id: string]: R }`           | 関数ごとの最後の戻り値                  |
+| `returnValues` | `{ [id: string]: R              | undefined }`                            | 関数ごとの最後の戻り値 |
 | `start`        | `Date`                          | 測定の開始日時                          |
 | `end`          | `Date`                          | 測定の終了日時                          |
 | `id?`          | `string`                        | 測定の ID                               |
@@ -1002,8 +1002,8 @@ roundToStep(8, 5); // 10
 #### `assignDefined`
 
 ```ts
-assignDefined<T extends LooseRecord, V extends LooseRecord>(target: T, values: V, options?: AssignDefinedOptions): T & V
-assignDefined.dataLast<V extends LooseRecord>(values: V, options?: AssignDefinedOptions): <T extends LooseRecord>(target: T) => T & V
+assignDefined<T extends LooseRecord, V extends LooseRecord>(target: T, values: V, options?: AssignDefinedOptions): AssignDefinedResult<T, V>
+assignDefined.dataLast<V extends LooseRecord>(values: V, options?: AssignDefinedOptions): <T extends LooseRecord>(target: T) => AssignDefinedResult<T, V>
 ```
 
 `values` の各プロパティのうち、値が `undefined` でないものだけを `target` に代入した新しいオブジェクトを返します。`target` か `values` が `null` / `undefined` の場合は `target` をそのまま返します。
@@ -1021,7 +1021,7 @@ assignDefined({ a: 1, b: 2 }, { b: null }, { skipNull: true }); // { a: 1, b: 2 
 #### `assignDefinedMutable`
 
 ```ts
-assignDefinedMutable<T extends LooseRecord, V extends LooseRecord>(target: T, values: V, options?: AssignDefinedMutableOptions): T & V
+assignDefinedMutable<T extends LooseRecord, V extends LooseRecord>(target: T, values: V, options?: AssignDefinedMutableOptions): AssignDefinedResult<T, V>
 ```
 
 `assignDefined` の破壊的な版です。`target` に直接代入し、同じオブジェクトを返します。オプションは `assignDefined` と同じです。
@@ -1104,8 +1104,8 @@ const userKeys = exactKeysFromRecord<User>({ id: true, name: true, age: true });
 #### `fillDefaults`
 
 ```ts
-fillDefaults<T extends LooseRecord, V extends LooseRecord>(target: T, defaultValues: V, options?: FillDefaultsOptions): T & V
-fillDefaults.dataLast<V extends LooseRecord>(defaultValues: V, options?: FillDefaultsOptions): <T extends LooseRecord>(target: T) => T & V
+fillDefaults<T extends LooseRecord, V extends LooseRecord>(target: T, defaultValues: V, options?: FillDefaultsOptions): FillDefaultsResult<T, V>
+fillDefaults.dataLast<V extends LooseRecord>(defaultValues: V, options?: FillDefaultsOptions): <T extends LooseRecord>(target: T) => FillDefaultsResult<T, V>
 ```
 
 `target` のプロパティの値が `undefined` の場合に、`defaultValues` の値を設定した新しいオブジェクトを返します。`defaultValues` の値が `undefined` の場合は設定しません。`target` か `defaultValues` が `null` / `undefined` の場合は `target` をそのまま返します。
@@ -1124,7 +1124,7 @@ fillDefaults({ b: null }, { b: 2 }, { overwriteNull: true }); // { b: 2 }
 #### `fillDefaultsMutable`
 
 ```ts
-fillDefaultsMutable<T extends LooseRecord, V extends LooseRecord>(target: T, defaultValues: V, options?: FillDefaultsMutableOptions): T & V
+fillDefaultsMutable<T extends LooseRecord, V extends LooseRecord>(target: T, defaultValues: V, options?: FillDefaultsMutableOptions): FillDefaultsResult<T, V>
 ```
 
 `fillDefaults` の破壊的な版です。`target` に直接設定し、同じオブジェクトを返します。オプションは `fillDefaults` と同じです。
@@ -1132,8 +1132,8 @@ fillDefaultsMutable<T extends LooseRecord, V extends LooseRecord>(target: T, def
 #### `filterByKeys`
 
 ```ts
-filterByKeys<T = unknown>(target: T, condition: PropertyKey, options?: FilterByKeysOptions): T
-filterByKeys.dataLast(condition: PropertyKey, options?: FilterByKeysOptions): <T = unknown>(target: T) => T
+filterByKeys<T = unknown>(target: T, condition: PropertyKey, options?: FilterByKeysOptions): T | null
+filterByKeys.dataLast(condition: PropertyKey, options?: FilterByKeysOptions): <T = unknown>(target: T) => T | null
 ```
 
 オブジェクトや配列を再帰的にたどり、キーが条件に合うプロパティだけを残した新しい値を返します。`condition` が文字列の場合はキーに含まれるか（部分一致）、それ以外の場合はキーと等しいかで判定します。条件に合ったプロパティは値ごと残し、合わなかったプロパティは値の中をさらにたどります。条件に合うものが1つもない場合は `null` を返します。配列は元のインデックスを保ち、条件に合わなかった位置は空き要素になります。
@@ -1154,8 +1154,8 @@ filterByKeys({ UserName: 'A', age: 1 }, 'username', {
 #### `filterByValues`
 
 ```ts
-filterByValues<T = unknown>(target: T, condition: unknown, options?: FilterByValuesOptions): T
-filterByValues.dataLast(condition: unknown, options?: FilterByValuesOptions): <T = unknown>(target: T) => T
+filterByValues<T = unknown>(target: T, condition: unknown, options?: FilterByValuesOptions): T | null
+filterByValues.dataLast(condition: unknown, options?: FilterByValuesOptions): <T = unknown>(target: T) => T | null
 ```
 
 オブジェクトや配列を再帰的にたどり、値が条件に合う要素だけを残した新しい値を返します。`condition` が文字列の場合は文字列の値に含まれるか（部分一致）、それ以外の場合は値と等しいか（`===`）で判定します。残す要素や `null` を返す条件、配列の扱いは `filterByKeys` と同じです。
@@ -1220,7 +1220,7 @@ get({ a: { b: [{ c: 1 }] } }, ['a', 'b', 0, 'c']); // 1
 #### `maybeHasOwn`
 
 ```ts
-maybeHasOwn(data: object, key: PropertyKey): boolean
+maybeHasOwn(data: object | null | undefined, key: PropertyKey): boolean
 ```
 
 `data` が `key` のプロパティを自身で持つか判定します（`Object.hasOwn`）。`data` が `null` / `undefined` の場合は `false` を返します。
@@ -1379,24 +1379,26 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 }（state は { a: 9, b: 2 }）
 
 #### 型
 
-| 型                            | 説明                                                            |
-| ----------------------------- | --------------------------------------------------------------- |
-| `AssignDefinedMutableOptions` | `assignDefinedMutable` のオプション                             |
-| `AssignDefinedOptions`        | `AssignDefinedMutableOptions` と同じ                            |
-| `DistributeOptions`           | `distribute` のオプション                                       |
-| `DistributeRules<T>`          | `distribute` のルール `{ [group]: プロパティ名の配列 \| null }` |
-| `DistributePropertyList<T>`   | `distribute` のルールに指定するプロパティ名の配列               |
-| `DistributeResult<T, R>`      | `distribute` の戻り値                                           |
-| `FillDefaultsMutableOptions`  | `fillDefaultsMutable` のオプション                              |
-| `FillDefaultsOptions`         | `FillDefaultsMutableOptions` と同じ                             |
-| `FilterByKeysOptions`         | `filterByKeys` のオプション                                     |
-| `FilterByValuesOptions`       | `filterByValues` のオプション                                   |
-| `FlattenObjectOptions`        | `flattenObject` のオプション                                    |
-| `ForEachValueOptions`         | `forEachValue` のオプション                                     |
-| `TransformObjectOptions`      | `transformObject` のオプション                                  |
-| `TransformObjectRule<S, T>`   | `transformObject` のルール                                      |
-| `UpdateMutableOptions`        | `updateMutable` のオプション（`IsEqualOptions` と同じ）         |
-| `UpdateOptions`               | `UpdateMutableOptions` と同じ                                   |
+| 型                            | 説明                                                                                                                                                                    |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AssignDefinedMutableOptions` | `assignDefinedMutable` のオプション                                                                                                                                     |
+| `AssignDefinedOptions`        | `AssignDefinedMutableOptions` と同じ                                                                                                                                    |
+| `AssignDefinedResult<T, V>`   | `assignDefined`・`assignDefinedMutable` の戻り値。`values` の値が `undefined`（`skipNull` の場合は `null` も）で反映されない可能性があるキーは、`target` の値の型も残る |
+| `DistributeOptions`           | `distribute` のオプション                                                                                                                                               |
+| `DistributeRules<T>`          | `distribute` のルール `{ [group]: プロパティ名の配列 \| null }`                                                                                                         |
+| `DistributePropertyList<T>`   | `distribute` のルールに指定するプロパティ名の配列                                                                                                                       |
+| `DistributeResult<T, R>`      | `distribute` の戻り値                                                                                                                                                   |
+| `FillDefaultsMutableOptions`  | `fillDefaultsMutable` のオプション                                                                                                                                      |
+| `FillDefaultsOptions`         | `FillDefaultsMutableOptions` と同じ                                                                                                                                     |
+| `FillDefaultsResult<T, V>`    | `fillDefaults`・`fillDefaultsMutable` の戻り値。`target` の値が `undefined`（`overwriteNull` の場合は `null` も）のキーには、`defaultValues` の値の型が加わる           |
+| `FilterByKeysOptions`         | `filterByKeys` のオプション                                                                                                                                             |
+| `FilterByValuesOptions`       | `filterByValues` のオプション                                                                                                                                           |
+| `FlattenObjectOptions`        | `flattenObject` のオプション                                                                                                                                            |
+| `ForEachValueOptions`         | `forEachValue` のオプション                                                                                                                                             |
+| `TransformObjectOptions`      | `transformObject` のオプション                                                                                                                                          |
+| `TransformObjectRule<S, T>`   | `transformObject` のルール                                                                                                                                              |
+| `UpdateMutableOptions`        | `updateMutable` のオプション（`IsEqualOptions` と同じ）                                                                                                                 |
+| `UpdateOptions`               | `UpdateMutableOptions` と同じ                                                                                                                                           |
 
 ### string
 

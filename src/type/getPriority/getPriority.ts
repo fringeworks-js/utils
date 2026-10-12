@@ -20,7 +20,8 @@ getPriority.dataLast = (options?: GetPriorityOptions) => (data: unknown) =>
 export default getPriority;
 
 function _getPriority(data: unknown, options: GetPriorityOptions = {}): number {
-  const priorityMap = options.priorityMap ?? DEFAULT_PRIORITY_MAP;
+  const priorityMap: NonNullable<GetPriorityOptions['priorityMap']> =
+    options.priorityMap ?? DEFAULT_PRIORITY_MAP;
   if (data === undefined) {
     return priorityMap['undefined'] ?? 0;
   } else if (data === null) {

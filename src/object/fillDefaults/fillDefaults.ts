@@ -1,4 +1,5 @@
 import type { LooseRecord } from '@fringeworks/types';
+import type { FillDefaultsResult } from '../fillDefaultsMutable';
 import { fillDefaultsMutable } from '../fillDefaultsMutable';
 import type { FillDefaultsOptions } from './types';
 
@@ -14,13 +15,13 @@ const fillDefaults = <T extends LooseRecord, V extends LooseRecord>(
   target: T,
   defaultValues: V,
   options: FillDefaultsOptions = {},
-): T & V => _fillDefaults(target, defaultValues, options);
+): FillDefaultsResult<T, V> => _fillDefaults(target, defaultValues, options);
 fillDefaults.dataLast =
   <V extends LooseRecord>(
     defaultValues: V,
     options: FillDefaultsOptions = {},
   ) =>
-  <T extends LooseRecord>(target: T): T & V =>
+  <T extends LooseRecord>(target: T): FillDefaultsResult<T, V> =>
     _fillDefaults(target, defaultValues, options);
 export default fillDefaults;
 
@@ -28,9 +29,9 @@ function _fillDefaults<T extends LooseRecord, V extends LooseRecord>(
   target: T,
   defaultValues: V,
   options: FillDefaultsOptions = {},
-): T & V {
+): FillDefaultsResult<T, V> {
   if (target && defaultValues) {
     return fillDefaultsMutable({ ...target }, defaultValues, options);
   }
-  return target as T & V;
+  return target as FillDefaultsResult<T, V>;
 }

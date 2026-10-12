@@ -93,7 +93,7 @@ describe('sortDependencies', () => {
   });
 
   it('nullを渡した場合はそのまま返す', () => {
-    expect(sortDependencies(null)).toBeNull();
+    expect(sortDependencies(null as any)).toBeNull();
   });
 
   it('共有依存ノードがある場合でも正しくソートされる', () => {

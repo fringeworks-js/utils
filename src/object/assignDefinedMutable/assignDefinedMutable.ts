@@ -1,6 +1,6 @@
 import type { LooseRecord } from '@fringeworks/types';
 import { forEachValue } from '../forEachValue';
-import type { AssignDefinedMutableOptions } from './types';
+import type { AssignDefinedMutableOptions, AssignDefinedResult } from './types';
 
 /**
  * valuesにあるundefinedでない値のみtargetへ適用する
@@ -12,12 +12,16 @@ import type { AssignDefinedMutableOptions } from './types';
 export default function assignDefinedMutable<
   T extends LooseRecord,
   V extends LooseRecord,
->(target: T, values: V, options: AssignDefinedMutableOptions = {}): T & V {
+>(
+  target: T,
+  values: V,
+  options: AssignDefinedMutableOptions = {},
+): AssignDefinedResult<T, V> {
   if (target && values) {
     const { skipNull, ...opts } = options;
     const isValidValue = skipNull
-      ? (value) => value != null
-      : (value) => value !== undefined;
+      ? (value: unknown) => value != null
+      : (value: unknown) => value !== undefined;
     forEachValue(
       values,
       (value, key) => {
@@ -28,5 +32,5 @@ export default function assignDefinedMutable<
       opts,
     );
   }
-  return target as T & V;
+  return target as AssignDefinedResult<T, V>;
 }

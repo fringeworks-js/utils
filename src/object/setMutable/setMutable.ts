@@ -29,8 +29,7 @@ function _setMutable<T extends object>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let current: any = data;
 
-  for (let i = 0; i < length; i++) {
-    const key = segments[i];
+  for (const [i, key] of segments.entries()) {
     if (i === length - 1) {
       current[key] = value;
     } else {

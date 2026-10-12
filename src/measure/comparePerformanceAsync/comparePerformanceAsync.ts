@@ -16,7 +16,7 @@ export default async function comparePerformanceAsync<
   A extends unknown[] = unknown[],
   R = unknown,
 >(
-  agenda: ComparePerformanceAsyncOptions<A>,
+  agenda: ComparePerformanceAsyncOptions<A, R>,
 ): Promise<ComparePerformanceAsyncResult<A, R>> {
   // 開始日時
   const start = new Date();
@@ -34,7 +34,7 @@ export default async function comparePerformanceAsync<
   // 各測定回の結果
   const results: ElapsedTimes[] = [];
   // 各測定対象の戻り値
-  const returnValues = {};
+  const returnValues: Record<string, R | undefined> = {};
 
   if (warmUp) {
     // ウォーミングアップ
@@ -49,7 +49,7 @@ export default async function comparePerformanceAsync<
   for (let i = 0; i < rounds; i++) {
     // 指定回数分測定する
     // このループ1回分が測定結果を一覧にした際の1行分
-    const result = {};
+    const result: ElapsedTimes = {};
     for (const target of processingOrder) {
       // 計測
       const { time, returnValue } = await measureAsync(target.fn, opts);

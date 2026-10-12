@@ -15,10 +15,10 @@ const filterByKeys = <T = unknown>(
   target: T,
   condition: PropertyKey,
   options: FilterByKeysOptions = {},
-): T => _filterByKeys(target, condition, options);
+): T | null => _filterByKeys(target, condition, options);
 filterByKeys.dataLast =
   (condition: PropertyKey, options: FilterByKeysOptions = {}) =>
-  <T = unknown>(target: T): T =>
+  <T = unknown>(target: T): T | null =>
     _filterByKeys(target, condition, options);
 export default filterByKeys;
 
@@ -26,7 +26,7 @@ function _filterByKeys<T = unknown>(
   target: T,
   condition: PropertyKey,
   options: FilterByKeysOptions = {},
-): T {
+): T | null {
   const { normalize } = options;
 
   let normalizeFn: (value: string) => string = alwaysInput;
@@ -44,7 +44,7 @@ function _filter<T = unknown>(
   target: T,
   condition: PropertyKey,
   normalizeFn: (value: string) => string,
-): T {
+): T | undefined {
   if (Array.isArray(target)) {
     // array
     const array: unknown[] = [];
@@ -84,7 +84,8 @@ function _filter<T = unknown>(
       }
     }
     if (countKeys(obj)) {
-      return obj;
+      return obj as T;
     }
   }
+  return undefined;
 }

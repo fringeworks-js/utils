@@ -36,7 +36,7 @@ function _update<T extends LooseRecord>(
       if (!isEqual(object[key], value, options)) {
         // 初めて変更があった時点で複製する
         result ??= { ...object };
-        result[key] = value;
+        result[key] = value as T[typeof key];
       }
     }
   }

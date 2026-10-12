@@ -53,7 +53,7 @@ describe('isEqual', () => {
         if (typeof a === 'string' && typeof b === 'string') {
           return a.toLowerCase() === b.toLowerCase();
         }
-        return null;
+        return undefined;
       };
       expect(isEqual('Hello', 'hello', { customizer })).toBe(true);
     });

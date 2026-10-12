@@ -22,11 +22,11 @@ describe('recaseCamel', () => {
   });
 
   it('null', () => {
-    expect(recaseCamel(null)).toBeNull();
+    expect(recaseCamel(null as any)).toBeNull();
   });
 
   it('undefined', () => {
-    expect(recaseCamel(undefined)).toBeUndefined();
+    expect(recaseCamel(undefined as any)).toBeUndefined();
   });
 
   describe('dataLast', () => {

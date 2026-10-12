@@ -14,15 +14,15 @@ export default function _nestedBy<I extends object, R = NestedByResult<I>>(
   }
   const { flat = false, keySeparator = '.' } = options;
   const propNames = ensureArray(properties);
-  const set: (result: R, keyArray: string[], item: I) => void = flat
+  const set: (result: LooseRecord, keyArray: string[], item: I) => void = flat
     ? (result, keyArray, item) =>
         setByFlatKey(result, keyArray.join(keySeparator), item)
     : setByNestedKey;
 
-  return data.reduce((result, item) => {
+  return data.reduce<LooseRecord>((result, item) => {
     // 指定のプロパティの値を配列に取得
     const keyArray = propNames.map((propName) => String(item[propName]));
     set(result, keyArray, item);
     return result;
-  }, {} as R);
+  }, {}) as R;
 }

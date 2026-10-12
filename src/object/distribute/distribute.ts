@@ -33,11 +33,11 @@ function _distribute<T extends LooseRecord, DR extends DistributeRules<T>>(
 ): DistributeResult<T, DR> {
   const { includeInherited, cloneValue } = options;
   const has = includeInherited
-    ? (property) => property in data
-    : (property) => Object.hasOwn(data, property);
+    ? (property: PropertyKey) => property in data
+    : (property: PropertyKey) => Object.hasOwn(data, property);
   const get = cloneValue
-    ? (property) => R.clone(data[property])
-    : (property) => data[property];
+    ? (property: PropertyKey) => R.clone(data[property])
+    : (property: PropertyKey) => data[property];
   // 分配結果
   const result: Record<string, Record<PropertyKey, unknown>> = {};
   // 対象をrestにコピーし、分配できたものはrestから削除していく

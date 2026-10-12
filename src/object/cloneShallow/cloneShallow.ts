@@ -30,14 +30,14 @@ export default function cloneShallow<T>(value: T): T {
     copy = Array(original.length);
   } else if (type === '[object Set]') {
     copy = new Set();
-    original.forEach((val) => {
+    (original as Set<unknown>).forEach((val) => {
       copy.add(val);
     });
     // Setは要素を追加するだけでOK
     return copy;
   } else if (type === '[object Map]') {
     copy = new Map();
-    original.forEach((val, key) => {
+    (original as Map<unknown, unknown>).forEach((val, key) => {
       copy.set(key, val);
     });
     // Mapは要素を追加するだけでOK
@@ -56,18 +56,15 @@ export default function cloneShallow<T>(value: T): T {
 
   if (copy) {
     // シンボルのプロパティ
-    const symbols = Object.getOwnPropertySymbols(original);
-    for (let i = 0; i < symbols.length; i++) {
+    for (const symbol of Object.getOwnPropertySymbols(original)) {
       _setProperty(
         copy,
-        symbols[i],
-        Object.getOwnPropertyDescriptor(original, symbols[i]),
+        symbol,
+        Object.getOwnPropertyDescriptor(original, symbol),
       );
     }
     // 通常のプロパティ
-    const names = Object.getOwnPropertyNames(original);
-    for (let i = 0; i < names.length; i++) {
-      const key = names[i];
+    for (const key of Object.getOwnPropertyNames(original)) {
       if (!Object.hasOwn(copy, key) || copy[key] !== original[key]) {
         _setProperty(copy, key, Object.getOwnPropertyDescriptor(original, key));
       }
