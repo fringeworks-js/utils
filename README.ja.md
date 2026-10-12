@@ -725,6 +725,8 @@ measureAsync<A extends unknown[] = unknown[], R = unknown>(fn: (...args: A) => P
 | `isWithinRange(value, min, max)`                  | 値が範囲内か判定する（境界を含む）                 |
 | `keepInRange(value, min, max, options?)`          | 範囲外の場合の扱いを指定して、値を範囲内に収める   |
 | `lerpNumber(value, ratio, options?)`              | 基準値と目標値の間を割合で補間する                 |
+| `limitNaturalNumber(value, options?)`             | 値を自然数（1 以上の整数）に制限する               |
+| `limitPositiveNumber(value, options?)`            | 値を正の数に制限する                               |
 | `loopInRange(value, min, max)`                    | 範囲がループしているものとして、値を範囲内に収める |
 | `pingpongInRange(value, min, max)`                | 範囲の端で折り返すものとして、値を範囲内に収める   |
 | `replaceOutOfRange(value, min, max, replacement)` | 範囲外の場合に指定の値に置き換える                 |
@@ -859,6 +861,44 @@ lerpNumber(200, 0.25, { baseValue: 100 }); // 125
 | ------------ | -------- | ------------------------------ |
 | `baseValue?` | `number` | 補間の基準値。デフォルトは `0` |
 
+#### `limitNaturalNumber`
+
+```ts
+limitNaturalNumber(value: number | null | undefined, options?: LimitNaturalNumberOptions): number | null | undefined
+```
+
+値を自然数（1 以上の整数）にします。小数は切り捨てます。切り捨てた結果が `0` になる場合は `zeroValue` を返します。それ以外のオプションは `limitPositiveNumber` と同じです。オプションで指定した値は切り捨てずにそのまま返します。
+
+```ts
+limitNaturalNumber(3.7); // 3
+limitNaturalNumber(0.5); // null
+limitNaturalNumber(0, { zeroValue: 0 }); // 0
+limitNaturalNumber(-3.5, { negativeValue: 'abs' }); // 3
+```
+
+#### `limitPositiveNumber`
+
+```ts
+limitPositiveNumber(value: number | null | undefined, options?: LimitPositiveNumberOptions): number | null | undefined
+limitPositiveNumber.dataLast(options?: LimitPositiveNumberOptions): (value: number | null | undefined) => number | null | undefined
+```
+
+値を正の数（0 より大きい数）にします。正の数はそのまま返し、それ以外の場合はオプションで指定した値を返します。
+
+```ts
+limitPositiveNumber(1.5); // 1.5
+limitPositiveNumber(-1); // null
+limitPositiveNumber(-1, { negativeValue: 'abs' }); // 1
+limitPositiveNumber(0, { zeroValue: 0 }); // 0
+```
+
+| オプション       | 型                                     | 説明                                                                        |
+| ---------------- | -------------------------------------- | --------------------------------------------------------------------------- |
+| `negativeValue?` | `number \| null \| undefined \| 'abs'` | 値が負の数の場合に返す値。`'abs'` の場合は絶対値を返す。デフォルトは `null` |
+| `zeroValue?`     | `number \| null \| undefined`          | 値が `0` の場合に返す値。デフォルトは `null`                                |
+| `nanValue?`      | `number \| null \| undefined`          | 値が `NaN` の場合に返す値。デフォルトは `null`                              |
+| `defaultValue?`  | `number`                               | 値が `null` / `undefined` の場合に返す値。デフォルトは値をそのまま返す      |
+
 #### `loopInRange`
 
 ```ts
@@ -918,13 +958,15 @@ roundToStep(8, 5); // 10
 
 #### 型
 
-| 型                      | 説明                                   |
-| ----------------------- | -------------------------------------- |
-| `GetValidMinMaxOptions` | `getValidMinMax` のオプション          |
-| `GetValidNumberOptions` | `getValidNumber` のオプション          |
-| `KeepInRangeOptions`    | `keepInRange` のオプション             |
-| `LerpNumberOptions`     | `lerpNumber` のオプション              |
-| `RangeMode`             | `keepInRange` の範囲外の場合の扱いの値 |
+| 型                           | 説明                                   |
+| ---------------------------- | -------------------------------------- |
+| `GetValidMinMaxOptions`      | `getValidMinMax` のオプション          |
+| `GetValidNumberOptions`      | `getValidNumber` のオプション          |
+| `KeepInRangeOptions`         | `keepInRange` のオプション             |
+| `LerpNumberOptions`          | `lerpNumber` のオプション              |
+| `LimitNaturalNumberOptions`  | `LimitPositiveNumberOptions` と同じ    |
+| `LimitPositiveNumberOptions` | `limitPositiveNumber` のオプション     |
+| `RangeMode`                  | `keepInRange` の範囲外の場合の扱いの値 |
 
 ### object
 

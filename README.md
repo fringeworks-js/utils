@@ -725,6 +725,8 @@ The async-function version of `measure`. Runs `fn` one call at a time, waiting f
 | `isWithinRange(value, min, max)`                  | Checks whether a value is within a range (inclusive)                       |
 | `keepInRange(value, min, max, options?)`          | Keeps a value within a range, choosing how out-of-range values are handled |
 | `lerpNumber(value, ratio, options?)`              | Interpolates between a base value and a target value by a ratio            |
+| `limitNaturalNumber(value, options?)`             | Limits a value to a natural number (an integer of 1 or more)               |
+| `limitPositiveNumber(value, options?)`            | Limits a value to a positive number                                        |
 | `loopInRange(value, min, max)`                    | Keeps a value within a range by treating the range as a loop               |
 | `pingpongInRange(value, min, max)`                | Keeps a value within a range by bouncing back at the ends                  |
 | `replaceOutOfRange(value, min, max, replacement)` | Replaces a value outside a range with a given value                        |
@@ -859,6 +861,44 @@ lerpNumber(200, 0.25, { baseValue: 100 }); // 125
 | ------------ | -------- | ------------------------------- |
 | `baseValue?` | `number` | The base value. Defaults to `0` |
 
+#### `limitNaturalNumber`
+
+```ts
+limitNaturalNumber(value: number | null | undefined, options?: LimitNaturalNumberOptions): number | null | undefined
+```
+
+Converts a value to a natural number (an integer of 1 or more). Decimals are truncated, and `zeroValue` is returned when the result is `0`. The other options are the same as `limitPositiveNumber`. Values set in the options are returned as is without truncation.
+
+```ts
+limitNaturalNumber(3.7); // 3
+limitNaturalNumber(0.5); // null
+limitNaturalNumber(0, { zeroValue: 0 }); // 0
+limitNaturalNumber(-3.5, { negativeValue: 'abs' }); // 3
+```
+
+#### `limitPositiveNumber`
+
+```ts
+limitPositiveNumber(value: number | null | undefined, options?: LimitPositiveNumberOptions): number | null | undefined
+limitPositiveNumber.dataLast(options?: LimitPositiveNumberOptions): (value: number | null | undefined) => number | null | undefined
+```
+
+Limits a value to a positive number (greater than 0). Positive numbers are returned as is; otherwise the value set in the options is returned.
+
+```ts
+limitPositiveNumber(1.5); // 1.5
+limitPositiveNumber(-1); // null
+limitPositiveNumber(-1, { negativeValue: 'abs' }); // 1
+limitPositiveNumber(0, { zeroValue: 0 }); // 0
+```
+
+| Option           | Type                                   | Description                                                                                      |
+| ---------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `negativeValue?` | `number \| null \| undefined \| 'abs'` | The value returned for a negative number. `'abs'` returns the absolute value. Defaults to `null` |
+| `zeroValue?`     | `number \| null \| undefined`          | The value returned for `0`. Defaults to `null`                                                   |
+| `nanValue?`      | `number \| null \| undefined`          | The value returned for `NaN`. Defaults to `null`                                                 |
+| `defaultValue?`  | `number`                               | The value returned for `null` or `undefined`. The value is returned as is by default             |
+
 #### `loopInRange`
 
 ```ts
@@ -918,13 +958,15 @@ roundToStep(8, 5); // 10
 
 #### Types
 
-| Type                    | Description                                                  |
-| ----------------------- | ------------------------------------------------------------ |
-| `GetValidMinMaxOptions` | Options for `getValidMinMax`                                 |
-| `GetValidNumberOptions` | Options for `getValidNumber`                                 |
-| `KeepInRangeOptions`    | Options for `keepInRange`                                    |
-| `LerpNumberOptions`     | Options for `lerpNumber`                                     |
-| `RangeMode`             | The values for how `keepInRange` handles out-of-range values |
+| Type                         | Description                                                  |
+| ---------------------------- | ------------------------------------------------------------ |
+| `GetValidMinMaxOptions`      | Options for `getValidMinMax`                                 |
+| `GetValidNumberOptions`      | Options for `getValidNumber`                                 |
+| `KeepInRangeOptions`         | Options for `keepInRange`                                    |
+| `LerpNumberOptions`          | Options for `lerpNumber`                                     |
+| `LimitNaturalNumberOptions`  | Same as `LimitPositiveNumberOptions`                         |
+| `LimitPositiveNumberOptions` | Options for `limitPositiveNumber`                            |
+| `RangeMode`                  | The values for how `keepInRange` handles out-of-range values |
 
 ### object
 

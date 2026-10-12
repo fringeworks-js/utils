@@ -6,6 +6,8 @@ export * from './isStrictlyWithinRange';
 export * from './isWithinRange';
 export * from './keepInRange';
 export * from './lerpNumber';
+export * from './limitNaturalNumber';
+export * from './limitPositiveNumber';
 export * from './loopInRange';
 export * from './pingpongInRange';
 export * from './replaceOutOfRange';
