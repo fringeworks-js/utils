@@ -1425,9 +1425,9 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 } (state becomes { a: 9, b: 2 })
 | `lowerFirst(str)`                                   | Converts the first character to lowercase                       |
 | `maybeMatchAll(str, regexp)`                        | Returns the results of `matchAll` as an array (safe for `null`) |
 | `maybeReplace(str, pattern, replacement, options?)` | Replaces text in a string (safe for `null`)                     |
-| `recaseCamel(data)`, ...                            | Converts the case of a string                                   |
 | `replaceByMap(str, map)`                            | Replaces text according to a map                                |
 | `replacePlaceholders(template, values, options?)`   | Replaces placeholders in a template with values                 |
+| `toCamelCase(data)`, ...                            | Converts the case of a string                                   |
 | `upperFirst(str)`                                   | Converts the first character to uppercase                       |
 
 #### `createExtractor`
@@ -1527,33 +1527,6 @@ maybeReplace('a-b-c', /-/, '_'); // 'a_b-c'
 maybeReplace(null, '-', '_'); // null
 ```
 
-#### Case conversion
-
-```ts
-recaseCamel(data: string): string
-recaseKebab(data: string): string
-recaseLower(data: string): string
-recasePascal(data: string): string
-recaseScreamingSnake(data: string): string
-recaseSnake(data: string): string
-recaseTitle(data: string): string
-recaseUpper(data: string): string
-// each also has dataLast(): (data: string) => string
-```
-
-Converts the case of a string. `recaseLower` and `recaseUpper` convert the whole string without splitting words; the others detect word boundaries (whitespace, `_`, `-`, uppercase letters, and so on). An empty string, `null`, or `undefined` is returned as is.
-
-| Function               | Result for `'hello world'` |
-| ---------------------- | -------------------------- |
-| `recaseCamel`          | `helloWorld`               |
-| `recasePascal`         | `HelloWorld`               |
-| `recaseSnake`          | `hello_world`              |
-| `recaseScreamingSnake` | `HELLO_WORLD`              |
-| `recaseKebab`          | `hello-world`              |
-| `recaseTitle`          | `Hello World`              |
-| `recaseLower`          | `hello world`              |
-| `recaseUpper`          | `HELLO WORLD`              |
-
 #### `replaceByMap`
 
 ```ts
@@ -1590,6 +1563,41 @@ replacePlaceholders('{{0}} and {{1}}', ['Alice', 'Bob']); // 'Alice and Bob'
 | `delimiters?`       | `string \| [string, string]` | The placeholder delimiters. A single string is used for both ends. Defaults to `['{{', '}}']` |
 | `removeUnresolved?` | `boolean`                    | If `true`, removes placeholders that have no value                                            |
 | `flatKeys?`         | `boolean`                    | If `true`, keys are not treated as paths but as property names directly under `values`        |
+
+#### Case conversion
+
+```ts
+toCamelCase(data: string): string
+toDotCase(data: string): string
+toFlatCase(data: string): string
+toKebabCase(data: string): string
+toLowerCase(data: string): string
+toPascalCase(data: string): string
+toScreamingSnakeCase(data: string): string
+toSentenceCase(data: string): string
+toSnakeCase(data: string): string
+toTitleCase(data: string): string
+toTrainCase(data: string): string
+toUpperCase(data: string): string
+// each also has dataLast(): (data: string) => string
+```
+
+Converts the case of a string. `toLowerCase` and `toUpperCase` convert the whole string without splitting words; the others detect word boundaries (whitespace, `_`, `-`, `.`, uppercase letters, and so on), so any case in the table below except flat case can be used as input. Consecutive uppercase letters (acronyms) are kept as is only by `toTitleCase`; the others treat them as a single word. An empty string, `null`, or `undefined` is returned as is.
+
+| Function               | Result for `'hello world'` | Result for `'XMLParser'` |
+| ---------------------- | -------------------------- | ------------------------ |
+| `toCamelCase`          | `helloWorld`               | `xmlParser`              |
+| `toPascalCase`         | `HelloWorld`               | `XmlParser`              |
+| `toSnakeCase`          | `hello_world`              | `xml_parser`             |
+| `toScreamingSnakeCase` | `HELLO_WORLD`              | `XML_PARSER`             |
+| `toKebabCase`          | `hello-world`              | `xml-parser`             |
+| `toTrainCase`          | `Hello-World`              | `Xml-Parser`             |
+| `toDotCase`            | `hello.world`              | `xml.parser`             |
+| `toFlatCase`           | `helloworld`               | `xmlparser`              |
+| `toTitleCase`          | `Hello World`              | `XML Parser`             |
+| `toSentenceCase`       | `Hello world`              | `Xml parser`             |
+| `toLowerCase`          | `hello world`              | `xmlparser`              |
+| `toUpperCase`          | `HELLO WORLD`              | `XMLPARSER`              |
 
 #### Types
 

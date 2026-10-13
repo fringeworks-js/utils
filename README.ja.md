@@ -1425,9 +1425,9 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 }（state は { a: 9, b: 2 }）
 | `lowerFirst(str)`                                   | 先頭の文字を小文字にする                         |
 | `maybeMatchAll(str, regexp)`                        | `matchAll` の結果を配列で返す（`null` でも安全） |
 | `maybeReplace(str, pattern, replacement, options?)` | 文字列を置換する（`null` でも安全）              |
-| `recaseCamel(data)` など                            | 文字列のケースを変換する                         |
 | `replaceByMap(str, map)`                            | マップに従って文字列を置換する                   |
 | `replacePlaceholders(template, values, options?)`   | テンプレートのプレースホルダーを値で置換する     |
+| `toCamelCase(data)` など                            | 文字列のケースを変換する                         |
 | `upperFirst(str)`                                   | 先頭の文字を大文字にする                         |
 
 #### `createExtractor`
@@ -1527,33 +1527,6 @@ maybeReplace('a-b-c', /-/, '_'); // 'a_b-c'
 maybeReplace(null, '-', '_'); // null
 ```
 
-#### ケース変換
-
-```ts
-recaseCamel(data: string): string
-recaseKebab(data: string): string
-recaseLower(data: string): string
-recasePascal(data: string): string
-recaseScreamingSnake(data: string): string
-recaseSnake(data: string): string
-recaseTitle(data: string): string
-recaseUpper(data: string): string
-// いずれも dataLast(): (data: string) => string を持つ
-```
-
-文字列のケースを変換します。`recaseLower` / `recaseUpper` は単語を区切らずに全体を小文字・大文字にし、それ以外は単語の区切り（空白、`_`、`-`、大文字の位置など）を判断して変換します。`data` が空文字・`null`・`undefined` の場合はそのまま返します。
-
-| 関数                   | `'hello world'` の変換結果 |
-| ---------------------- | -------------------------- |
-| `recaseCamel`          | `helloWorld`               |
-| `recasePascal`         | `HelloWorld`               |
-| `recaseSnake`          | `hello_world`              |
-| `recaseScreamingSnake` | `HELLO_WORLD`              |
-| `recaseKebab`          | `hello-world`              |
-| `recaseTitle`          | `Hello World`              |
-| `recaseLower`          | `hello world`              |
-| `recaseUpper`          | `HELLO WORLD`              |
-
 #### `replaceByMap`
 
 ```ts
@@ -1590,6 +1563,41 @@ replacePlaceholders('{{0}}と{{1}}', ['Alice', 'Bob']); // 'AliceとBob'
 | `delimiters?`       | `string \| [string, string]` | プレースホルダーの囲み文字。1つの文字列の場合は開始・終了で共通にする。デフォルトは `['{{', '}}']` |
 | `removeUnresolved?` | `boolean`                    | `true` の場合、値が無いプレースホルダーを削除する                                                  |
 | `flatKeys?`         | `boolean`                    | `true` の場合、キーをパスとして解釈せず、`values` の直下のプロパティ名として扱う                   |
+
+#### ケース変換
+
+```ts
+toCamelCase(data: string): string
+toDotCase(data: string): string
+toFlatCase(data: string): string
+toKebabCase(data: string): string
+toLowerCase(data: string): string
+toPascalCase(data: string): string
+toScreamingSnakeCase(data: string): string
+toSentenceCase(data: string): string
+toSnakeCase(data: string): string
+toTitleCase(data: string): string
+toTrainCase(data: string): string
+toUpperCase(data: string): string
+// いずれも dataLast(): (data: string) => string を持つ
+```
+
+文字列のケースを変換します。`toLowerCase` / `toUpperCase` は単語を区切らずに全体を小文字・大文字にし、それ以外は単語の区切り（空白、`_`、`-`、`.`、大文字の位置など）を判断して変換します。そのため、表のケースはフラットケース以外どれも入力として扱えます。連続する大文字（略語）は `toTitleCase` だけがそのまま残し、それ以外は1つの単語として扱います。`data` が空文字・`null`・`undefined` の場合はそのまま返します。
+
+| 関数                   | `'hello world'` の変換結果 | `'XMLParser'` の変換結果 |
+| ---------------------- | -------------------------- | ------------------------ |
+| `toCamelCase`          | `helloWorld`               | `xmlParser`              |
+| `toPascalCase`         | `HelloWorld`               | `XmlParser`              |
+| `toSnakeCase`          | `hello_world`              | `xml_parser`             |
+| `toScreamingSnakeCase` | `HELLO_WORLD`              | `XML_PARSER`             |
+| `toKebabCase`          | `hello-world`              | `xml-parser`             |
+| `toTrainCase`          | `Hello-World`              | `Xml-Parser`             |
+| `toDotCase`            | `hello.world`              | `xml.parser`             |
+| `toFlatCase`           | `helloworld`               | `xmlparser`              |
+| `toTitleCase`          | `Hello World`              | `XML Parser`             |
+| `toSentenceCase`       | `Hello world`              | `Xml parser`             |
+| `toLowerCase`          | `hello world`              | `xmlparser`              |
+| `toUpperCase`          | `HELLO WORLD`              | `XMLPARSER`              |
 
 #### 型
 
