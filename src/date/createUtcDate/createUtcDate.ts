@@ -1,5 +1,6 @@
 /**
- * UTCの日時を指定してDate型のインスタンスを作成する
+ * UTCの日時を指定してDate型のインスタンスを作成する\
+ * `Date.UTC` と異なり、0〜99 の年もそのままの年として扱う
  * @param year UTC年
  * @param month UTC月(0～11)
  * @param date UTC日
@@ -18,7 +19,9 @@ export default function createUtcDate(
   seconds: number = 0,
   milliseconds: number = 0,
 ): Date {
-  return new Date(
-    Date.UTC(year, month, date, hours, minutes, seconds, milliseconds),
-  );
+  // Date.UTC は 0〜99 年を 1900 年代として扱うため、各値を個別に設定する
+  const result = new Date(0);
+  result.setUTCFullYear(year, month, date);
+  result.setUTCHours(hours, minutes, seconds, milliseconds);
+  return result;
 }

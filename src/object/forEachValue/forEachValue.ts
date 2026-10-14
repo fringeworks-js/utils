@@ -1,46 +1,43 @@
-import type { LooseRecord } from '@fringeworks/types';
-import { hasOwn } from '../hasOwn';
+import type { StrictRecord } from '@fringeworks/types';
 import type { ForEachValueOptions } from './types';
 
 /**
- * 配下の要素をcallbackで処理する
+ * 自身の列挙可能なプロパティをcallbackで処理する
+ * スプレッド構文やObject.assignと同じく、symbolのキーも対象にする
  * callbackがfalseを返した場合、処理を中断する
- * @param target
- * @param callback
- * @param options
+ * @param target 対象のオブジェクト
+ * @param callback 各プロパティで呼ぶ関数
+ * @param options オプション
  * @returns 処理が最後まで行われた場合にtrue、処理が中断された場合にfalse
  */
-const forEachValue = <T extends LooseRecord>(
+export default function forEachValue<T extends object>(
   target: T,
-  callback: (value: unknown, key: PropertyKey, obj: T) => void | boolean,
-  options: ForEachValueOptions = {},
-): boolean => _forEachValue(target, callback, options);
-forEachValue.dataLast =
-  <T extends LooseRecord>(
-    callback: (value: unknown, key: PropertyKey, obj: T) => void | boolean,
-    options: ForEachValueOptions = {},
-  ) =>
-  (target: T): boolean =>
-    _forEachValue(target, callback, options);
-export default forEachValue;
-
-function _forEachValue<T extends LooseRecord>(
-  target: T,
-  callback: (value: unknown, key: PropertyKey, obj: T) => void | boolean,
+  callback: (value: T[keyof T], key: string | symbol, obj: T) => void | boolean,
   options: ForEachValueOptions = {},
 ): boolean {
-  const { includeInherited } = options;
-  if (target) {
-    const has = includeInherited
-      ? (target: T, key: PropertyKey) => key in target
-      : (target: T, key: PropertyKey) => hasOwn(target, key);
+  const record = target as StrictRecord;
+  const visit = (key: string | symbol) =>
+    callback(record[key] as T[keyof T], key, target) !== false;
+
+  if (options.includeInherited) {
+    // for...inは継承した列挙可能なプロパティも列挙する
     for (const key in target) {
-      if (has(target, key)) {
-        const value = target[key];
-        const result = callback(value, key, target);
-        if (result === false) {
-          return false;
-        }
+      if (!visit(key)) {
+        return false;
+      }
+    }
+  } else {
+    for (const key of Object.keys(target)) {
+      if (!visit(key)) {
+        return false;
+      }
+    }
+  }
+  // symbolのキーはfor...inやObject.keysで列挙されないため、自身のものを別に処理する
+  for (const symbol of Object.getOwnPropertySymbols(target)) {
+    if (Object.prototype.propertyIsEnumerable.call(target, symbol)) {
+      if (!visit(symbol)) {
+        return false;
       }
     }
   }

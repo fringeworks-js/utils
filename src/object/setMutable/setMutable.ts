@@ -1,42 +1,39 @@
+import type { StrictRecord } from '@fringeworks/types';
 import _createContainer from '../../_internal/_createContainer';
-import _parsePath from '../../_internal/_parsePath';
+import _isUnsafeKey from '../../_internal/_isUnsafeKey';
+import { hasOwn } from '../hasOwn';
+import { parsePropertyPath, type PropertyPath } from '../parsePropertyPath';
 
 /**
  * オブジェクトを更新して同じオブジェクトを返す（破壊的変更）
  * @param data 更新対象のオブジェクト
- * @param path 更新するプロパティのパス（例: 'a.b.0' または ['a', 'b', 0]）
+ * @param path 更新するプロパティのパス（例: 'a.b[0]' または ['a', 'b', 0]）
  * @param value 設定する値
  * @returns 更新された同じオブジェクト
  */
-const setMutable = <T extends object>(
+export default function setMutable<T extends object>(
   data: T,
-  path: string | PropertyKey[],
-  value: unknown,
-) => _setMutable(data, path, value);
-setMutable.dataLast =
-  <T extends object>(path: string | PropertyKey[], value: unknown) =>
-  (data: T) =>
-    _setMutable(data, path, value);
-export default setMutable;
-
-function _setMutable<T extends object>(
-  data: T,
-  path: string | PropertyKey[],
+  path: PropertyPath,
   value: unknown,
 ): T {
-  const segments = _parsePath(path);
+  const segments = parsePropertyPath(path);
+  if (segments.some(_isUnsafeKey)) {
+    return data;
+  }
   const length = segments.length;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let current: any = data;
+  let current = data as StrictRecord;
 
   for (const [i, key] of segments.entries()) {
     if (i === length - 1) {
       current[key] = value;
     } else {
-      if (current[key] === null || typeof current[key] !== 'object') {
-        current[key] = _createContainer(segments[i + 1]);
+      // プロトタイプ上のオブジェクトを書き換えないよう、自身のプロパティだけを辿る
+      let next = hasOwn(current, key) ? current[key] : undefined;
+      if (next === null || typeof next !== 'object') {
+        next = _createContainer(segments[i + 1]);
+        current[key] = next;
       }
-      current = current[key];
+      current = next as StrictRecord;
     }
   }
   return data;

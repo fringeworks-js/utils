@@ -1,90 +1,79 @@
-import type { LooseRecord } from '@fringeworks/types';
+import type { StrictRecord } from '@fringeworks/types';
 import * as R from 'remeda';
+import _isUnsafeKey from '../../_internal/_isUnsafeKey';
 import { alwaysInput } from '../../function/alwaysInput';
 import { countKeys } from '../countKeys';
 import type { FilterByKeysOptions } from './types';
 
 /**
- * 指定の文字列が含まれるキー以外をフィルタリングする
- * @param target
- * @param condition
- * @param options
- * @returns
+ * 条件に合うキーのプロパティだけを残す
+ * 文字列の条件はキーに含まれるか（部分一致）、数値の条件はキーと等しいかで判定する
+ * 残る構造は実行時に決まるため、戻り値は unknown とする
+ * @param target 対象の値
+ * @param condition 条件
+ * @param options オプション
+ * @returns 条件に合うものだけを残した新しい値。1つも無い場合は null
  */
-const filterByKeys = <T = unknown>(
-  target: T,
-  condition: PropertyKey,
+export default function filterByKeys(
+  target: unknown,
+  condition: string | number,
   options: FilterByKeysOptions = {},
-): T | null => _filterByKeys(target, condition, options);
-filterByKeys.dataLast =
-  (condition: PropertyKey, options: FilterByKeysOptions = {}) =>
-  <T = unknown>(target: T): T | null =>
-    _filterByKeys(target, condition, options);
-export default filterByKeys;
-
-function _filterByKeys<T = unknown>(
-  target: T,
-  condition: PropertyKey,
-  options: FilterByKeysOptions = {},
-): T | null {
-  const { normalize } = options;
-
-  let normalizeFn: (value: string) => string = alwaysInput;
-  if (condition !== undefined) {
-    if (normalize && R.isString(condition)) {
-      normalizeFn = normalize;
-      condition = normalizeFn(condition);
-    }
+): unknown {
+  let isMatch: (key: string) => boolean;
+  if (typeof condition === 'string') {
+    const normalize: (value: string) => string =
+      options.normalize ?? alwaysInput;
+    const normalizedCondition = normalize(condition);
+    isMatch = (key) => {
+      const normalizedKey = normalize(key);
+      return (
+        normalizedKey !== '' && normalizedKey.includes(normalizedCondition)
+      );
+    };
+  } else {
+    // オブジェクトのキーは文字列なので、数値は文字列にして完全一致で比較する
+    const conditionKey = String(condition);
+    isMatch = (key) => key === conditionKey;
   }
 
-  return _filter(target, condition, normalizeFn) ?? null;
+  return _filter(target, isMatch) ?? null;
 }
 
-function _filter<T = unknown>(
-  target: T,
-  condition: PropertyKey,
-  normalizeFn: (value: string) => string,
-): T | undefined {
+function _filter(target: unknown, isMatch: (key: string) => boolean): unknown {
   if (Array.isArray(target)) {
     // array
     const array: unknown[] = [];
     for (let i = 0; i < target.length; i++) {
       const item = target[i];
-      const result = _filter(item, condition, normalizeFn);
+      const result = _filter(item, isMatch);
       if (result != null) {
         array[i] = result;
       }
     }
     if (array.length) {
-      return array as T;
+      return array;
     }
   } else if (R.isPlainObject(target)) {
     // object
-    const obj: LooseRecord = {};
+    const obj: StrictRecord = {};
     for (const key in target) {
-      const value = target[key];
-      if (R.isString(condition) && R.isString(key)) {
-        // 文字列の場合
-        const normalizedKey = normalizeFn(key);
-        if (normalizedKey !== '' && normalizedKey.includes(condition)) {
-          // conditionが含まれる
-          obj[key] = value;
-        }
-      } else if (condition === key) {
-        // 文字列以外の場合
-        obj[key] = value;
+      if (_isUnsafeKey(key)) {
+        continue;
       }
-
-      if (key in obj === false) {
-        // keyが不一致の場合は子要素を処理
-        const result = _filter(value, condition, normalizeFn);
+      const value = target[key];
+      if (isMatch(key)) {
+        // 条件に合うキーは値ごと残す
+        obj[key] = value;
+      } else {
+        // 条件に合わないキーは子要素を処理
+        const result = _filter(value, isMatch);
         if (result != null) {
           obj[key] = result;
         }
       }
     }
     if (countKeys(obj)) {
-      return obj as T;
+      return obj;
     }
   }
   return undefined;

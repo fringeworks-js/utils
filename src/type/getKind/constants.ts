@@ -1,10 +1,42 @@
-import { TypeOfResult } from '@fringeworks/constants';
-
 /**
- * 型種別
+ * 型種別。\
+ * `typeof` の結果のうち `'object'` を除いたものに、オブジェクトの詳細な種別を加えたもの
  */
 export const Kind = {
-  ...TypeOfResult,
+  /**
+   * undefined
+   */
+  undefined: 'undefined',
+
+  /**
+   * 真偽値
+   */
+  boolean: 'boolean',
+
+  /**
+   * 数値
+   */
+  number: 'number',
+
+  /**
+   * BigInt
+   */
+  bigint: 'bigint',
+
+  /**
+   * 文字列
+   */
+  string: 'string',
+
+  /**
+   * シンボル
+   */
+  symbol: 'symbol',
+
+  /**
+   * 関数
+   */
+  function: 'function',
 
   /**
    * null
@@ -12,19 +44,19 @@ export const Kind = {
   null: 'null',
 
   /**
-   * 日付
-   */
-  date: 'date',
-
-  /**
    * 配列
    */
   array: 'array',
 
   /**
-   * 単純なオブジェクト
+   * 単純なオブジェクト（プロトタイプが `Object.prototype` または `null`）
    */
   plainobject: 'plainobject',
+
+  /**
+   * 日付
+   */
+  date: 'date',
 
   /**
    * 正規表現
@@ -72,9 +104,9 @@ export const Kind = {
   sharedarraybuffer: 'sharedarraybuffer',
 
   /**
-   * 任意の型
+   * 上記のどれにも当たらないオブジェクト（クラスのインスタンス、DOM、TypedArray など）
    */
-  any: 'any',
+  instance: 'instance',
 } as const;
 
 /**

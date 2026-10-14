@@ -37,9 +37,13 @@ describe('toCamelCase', () => {
     expect(toCamelCase(undefined as any)).toBeUndefined();
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(toCamelCase.dataLast()('hello_world')).toBe('helloWorld');
-    });
+  it('英字・数字以外の文字はすべて単語の区切りとして扱う', () => {
+    expect(toCamelCase('--main-color')).toBe('mainColor');
+    expect(toCamelCase('user:first name')).toBe('userFirstName');
+  });
+
+  it('数字を含む', () => {
+    expect(toCamelCase('version 2 beta')).toBe('version2Beta');
+    expect(toCamelCase('HTML5_PARSER')).toBe('html5Parser');
   });
 });

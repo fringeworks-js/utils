@@ -24,12 +24,4 @@ describe('toScreamingSnakeCase', () => {
   it('空文字', () => {
     expect(toScreamingSnakeCase('')).toBe('');
   });
-
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(toScreamingSnakeCase.dataLast()('hello world')).toBe(
-        'HELLO_WORLD',
-      );
-    });
-  });
 });

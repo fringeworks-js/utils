@@ -28,10 +28,4 @@ describe('lerpNumber', () => {
   it('負の値の補間', () => {
     expect(lerpNumber(-100, 0.5)).toBe(-50);
   });
-
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(lerpNumber.dataLast(0.5)(100)).toBe(50);
-    });
-  });
 });

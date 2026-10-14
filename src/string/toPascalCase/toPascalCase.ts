@@ -1,24 +1,17 @@
-import * as R from 'remeda';
-import { isBlank } from '../../type/isBlank';
-import _normalizeSeparators from '../_internal/_normalizeSeparators';
+import _splitWords from '../_internal/_splitWords';
 import { upperFirst } from '../upperFirst';
 
 /**
- * hello world -> HelloWorld
- * @param data
- * @returns
+ * 文字列をパスカルケースに変換する（`'hello world'` → `'HelloWorld'`）\
+ * 単語の区切り方は README の「ケース変換」を参照
+ * @param data 対象の文字列。空文字・null・undefined はそのまま返す
+ * @returns パスカルケースに変換した文字列
  */
-const toPascalCase = (data: string) => _toPascalCase(data);
-toPascalCase.dataLast = () => (data: string) => _toPascalCase(data);
-export default toPascalCase;
-
-function _toPascalCase(data: string): string {
-  if (isBlank(data)) {
+export default function toPascalCase(data: string): string {
+  if (!data) {
     return data;
   }
-  return upperFirst(
-    R.toCamelCase(_normalizeSeparators(data), {
-      preserveConsecutiveUppercase: false,
-    }),
-  );
+  return _splitWords(data)
+    .map((word) => upperFirst(word.toLowerCase()))
+    .join('');
 }

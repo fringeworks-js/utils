@@ -6,17 +6,7 @@ import type { EnsureArrayOptions } from './types';
  * @param options オプション
  * @returns 配列に変換された値
  */
-const ensureArray = <T>(
-  data: T | T[] | null | undefined,
-  options?: EnsureArrayOptions,
-): T[] => _ensureArray(data, options);
-ensureArray.dataLast = (options: EnsureArrayOptions = {}) => {
-  return <T>(data: T | T[] | null | undefined): T[] =>
-    _ensureArray(data, options);
-};
-export default ensureArray;
-
-function _ensureArray<T>(
+export default function ensureArray<T>(
   data: T | T[] | null | undefined,
   options: EnsureArrayOptions = {},
 ): T[] {

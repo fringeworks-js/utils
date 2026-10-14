@@ -37,12 +37,12 @@ describe('pushUnique', () => {
   });
 
   describe('null / undefined', () => {
-    it('dataがnullの場合はnullを返す', () => {
-      expect(pushUnique(null, [1])).toBeNull();
+    it('dataがnullの場合は空配列として扱う', () => {
+      expect(pushUnique(null, [1, 1, 2])).toEqual([1, 2]);
     });
 
-    it('dataがundefinedの場合はundefinedを返す', () => {
-      expect(pushUnique(undefined, [1])).toBeUndefined();
+    it('dataがundefinedの場合は空配列として扱う', () => {
+      expect(pushUnique(undefined, [1])).toEqual([1]);
     });
 
     it('itemsがnullの場合はdataのコピーを返す', () => {
@@ -59,8 +59,8 @@ describe('pushUnique', () => {
       expect(result).not.toBe(data);
     });
 
-    it('dataもitemsもnullの場合はnullを返す', () => {
-      expect(pushUnique(null, null)).toBeNull();
+    it('dataもitemsもnullの場合は空配列を返す', () => {
+      expect(pushUnique(null, null)).toEqual([]);
     });
   });
 
@@ -94,26 +94,6 @@ describe('pushUnique', () => {
       const data = [{ id: 1 }];
       pushUnique(data, [{ id: 2 }], { comparator: (a, b) => a.id === b.id });
       expect(data).toEqual([{ id: 1 }]);
-    });
-  });
-
-  describe('dataLast', () => {
-    it('dataLastでカリー化して使用できる', () => {
-      const result = pushUnique.dataLast([4, 5])([1, 2, 3]);
-      expect(result).toEqual([1, 2, 3, 4, 5]);
-    });
-
-    it('dataLastでもdataを破壊的に変更しない', () => {
-      const data = [1, 2, 3];
-      pushUnique.dataLast([4])(data);
-      expect(data).toEqual([1, 2, 3]);
-    });
-
-    it('dataLastでoptionsを渡せる', () => {
-      const result = pushUnique.dataLast([{ id: 1 }, { id: 2 }], {
-        comparator: (a, b) => a.id === b.id,
-      })([{ id: 1 }]);
-      expect(result).toEqual([{ id: 1 }, { id: 2 }]);
     });
   });
 });

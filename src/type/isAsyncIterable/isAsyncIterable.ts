@@ -1,7 +1,7 @@
 /**
- * 非同期のイテレーターを持つインスタンスか判定する
- * @param value
- * @returns
+ * 非同期のイテレーターを持つ値か判定する
+ * @param value 判定する値
+ * @returns `Symbol.asyncIterator` のメソッドを持つ場合は true
  */
 export default function isAsyncIterable(
   value: unknown,

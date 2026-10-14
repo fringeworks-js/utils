@@ -8,37 +8,27 @@ const IS_TARGET = {
 };
 
 /**
- * callbackの戻り値がundefined以外のものだけで構成された配列を返す
- * @param data
- * @param callback
- * @returns
+ * 各要素をcallbackで変換し、optionsのexcludeで指定した値を除いた配列を返す
+ * @param data 配列。null・undefinedは空配列として扱う
+ * @param callback 変換する関数
+ * @param options オプション
+ * @returns 変換した値の配列
  */
-const compactMap = <V, R = V>(
-  data: V[] | null | undefined,
-  callback: CompactMapIteratee<V, R>,
-  options?: CompactMapOptions,
-): R[] | null | undefined => _compactMap(data, callback, options);
-compactMap.dataLast =
-  <V, R = V>(callback: CompactMapIteratee<V, R>, options?: CompactMapOptions) =>
-  (data: V[] | null | undefined) =>
-    compactMap(data, callback, options);
-export default compactMap;
-
-function _compactMap<V, R = V>(
+export default function compactMap<V, R = V>(
   data: V[] | null | undefined,
   callback: CompactMapIteratee<V, R>,
   options: CompactMapOptions = {},
-): R[] | null | undefined {
-  if (data) {
-    const isTarget = IS_TARGET[options.exclude || 'undefined'];
-    const result: R[] = [];
-    for (const [i, item] of data.entries()) {
-      const mapped = callback(item, i, data);
-      if (isTarget(mapped)) {
-        result.push(mapped);
-      }
-    }
+): R[] {
+  const result: R[] = [];
+  if (!data) {
     return result;
   }
-  return undefined;
+  const isTarget = IS_TARGET[options.exclude || 'undefined'];
+  for (const [i, item] of data.entries()) {
+    const mapped = callback(item, i, data);
+    if (isTarget(mapped)) {
+      result.push(mapped);
+    }
+  }
+  return result;
 }

@@ -32,10 +32,8 @@ describe('firstDefined', () => {
   it('falseはundefinedではないので返す', () => {
     expect(firstDefined([false, true])).toBe(false);
   });
-
-  describe('dataLast', () => {
-    it('最初のundefined以外の値を返す', () => {
-      expect(firstDefined.dataLast()([undefined, 1, 2])).toBe(1);
-    });
+  it('nullを渡した場合はundefinedを返す', () => {
+    expect(firstDefined(null)).toBeUndefined();
+    expect(firstDefined(undefined)).toBeUndefined();
   });
 });

@@ -1,102 +1,17 @@
-import * as R from 'remeda';
 import { isEqualWith } from '../isEqualWith';
-import { CompareMode } from './constants';
-import type { IsEqualOptions } from './types';
 
 /**
- * 独自の比較関数
+ * 既定の比較を行う（isEqualWith の customizer として使う）
  */
-type Customizer = NonNullable<IsEqualOptions['customizer']>;
-
-const EQUAL = {
-  // 厳密な比較
-  [CompareMode.strict]: (value1: unknown, value2: unknown) => {
-    return value1 === value2;
-  },
-  // 緩い比較
-  [CompareMode.loose]: (value1: unknown, value2: unknown) => {
-    return value1 == value2;
-  },
-  // 構造の比較
-  [CompareMode.deep]: (
-    value1: unknown,
-    value2: unknown,
-    options: IsEqualOptions,
-  ) => {
-    if (options.customizer) {
-      // customizerがある場合
-      return isEqualWith(value1, value2, options.customizer);
-    } else {
-      return R.isDeepEqual(value1, value2);
-    }
-  },
-};
-const EQUAL_WITH_CUSTOMIZER = {
-  // 厳密な比較
-  [CompareMode.strict]: (
-    value1: unknown,
-    value2: unknown,
-    customizer: Customizer,
-  ) => {
-    const result = customizer(value1, value2);
-    if (result == null) {
-      return value1 === value2;
-    } else {
-      return result;
-    }
-  },
-  // 緩い比較
-  [CompareMode.loose]: (
-    value1: unknown,
-    value2: unknown,
-    customizer: Customizer,
-  ) => {
-    const result = customizer(value1, value2);
-    if (result == null) {
-      return value1 == value2;
-    } else {
-      return result;
-    }
-  },
-  // 構造の比較
-  [CompareMode.deep]: (
-    value1: unknown,
-    value2: unknown,
-    customizer: Customizer,
-  ) => {
-    return isEqualWith(value1, value2, customizer);
-  },
-};
+const deferToDefault = () => undefined;
 
 /**
- * 2つの値が等しいことを判定する
+ * 2つの値の構造が等しいかを深く比較する\
+ * 比較の基準は `isEqualWith` の既定の比較と同じ
  * @param value1 比較する値1
  * @param value2 比較する値2
- * @param options オプション
  * @returns 比較結果
  */
-const isEqual = (
-  value1: unknown,
-  value2: unknown,
-  options: IsEqualOptions = {},
-): boolean => _isEqual(value1, value2, options);
-isEqual.dataLast =
-  (value2: unknown, options: IsEqualOptions = {}) =>
-  (value1: unknown): boolean =>
-    _isEqual(value1, value2, options);
-export default isEqual;
-
-function _isEqual(
-  value1: unknown,
-  value2: unknown,
-  options: IsEqualOptions = {},
-): boolean {
-  const { mode = CompareMode.strict, customizer } = options;
-  if (customizer) {
-    // customizerありの比較
-    return EQUAL_WITH_CUSTOMIZER[mode](value1, value2, customizer);
-  } else {
-    // 比較
-    return EQUAL[mode](value1, value2, options);
-  }
+export default function isEqual(value1: unknown, value2: unknown): boolean {
+  return isEqualWith(value1, value2, deferToDefault);
 }

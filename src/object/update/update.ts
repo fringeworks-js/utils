@@ -1,6 +1,6 @@
-import type { LooseRecord } from '@fringeworks/types';
-import { isEqual } from '../../compare/isEqual';
-import { hasOwn } from '../hasOwn';
+import type { StrictRecord } from '@fringeworks/types';
+import _isUnsafeKey from '../../_internal/_isUnsafeKey';
+import { forEachValue } from '../forEachValue';
 import type { UpdateOptions } from './types';
 
 /**
@@ -11,35 +11,20 @@ import type { UpdateOptions } from './types';
  * @param options オプション
  * @returns 更新された新しいオブジェクト
  */
-const update = <T extends LooseRecord>(
-  object: T,
-  values: Partial<T>,
-  options?: UpdateOptions,
-): T => _update(object, values, options);
-update.dataLast =
-  (values: LooseRecord, options?: UpdateOptions) =>
-  <T extends LooseRecord>(object: T): T =>
-    _update(object, values as Partial<T>, options);
-export default update;
-
-function _update<T extends LooseRecord>(
+export default function update<T extends object>(
   object: T,
   values: Partial<T>,
   options?: UpdateOptions,
 ): T {
-  if (!object || !values) {
-    return object;
-  }
-  let result: T | undefined;
-  for (const key in values) {
-    if (hasOwn(values, key)) {
-      const value = values[key];
-      if (!isEqual(object[key], value, options)) {
-        // 初めて変更があった時点で複製する
-        result ??= { ...object };
-        result[key] = value as T[typeof key];
-      }
+  const isEqual = options?.isEqual ?? Object.is;
+  const record = object as StrictRecord;
+  let result: StrictRecord | undefined;
+  forEachValue(values, (value, key) => {
+    if (!_isUnsafeKey(key) && !isEqual(record[key], value)) {
+      // 初めて変更があった時点で複製する
+      result ??= { ...record };
+      result[key] = value;
     }
-  }
-  return result ?? object;
+  });
+  return (result as T | undefined) ?? object;
 }

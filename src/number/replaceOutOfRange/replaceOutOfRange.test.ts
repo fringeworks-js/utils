@@ -21,9 +21,8 @@ describe('replaceOutOfRange', () => {
     expect(replaceOutOfRange(11, 0, 10, 99)).toBe(99);
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(replaceOutOfRange.dataLast(0, 10, -1)(5)).toBe(5);
-    });
+  it('min が max より大きい場合は入れ替えて扱う', () => {
+    expect(replaceOutOfRange(5, 10, 0, -1)).toBe(5);
+    expect(replaceOutOfRange(15, 10, 0, -1)).toBe(-1);
   });
 });

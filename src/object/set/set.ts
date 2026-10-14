@@ -1,30 +1,25 @@
 import _createContainer from '../../_internal/_createContainer';
-import _parsePath from '../../_internal/_parsePath';
+import _isUnsafeKey from '../../_internal/_isUnsafeKey';
+import { hasOwn } from '../hasOwn';
+import { parsePropertyPath, type PropertyPath } from '../parsePropertyPath';
 
 /**
  * オブジェクトを更新して新しいオブジェクトを返す（非破壊的変更）
  * @param data 更新対象のオブジェクト
- * @param path 更新するプロパティのパス（例: 'a.b.0' または ['a', 'b', 0]）
+ * @param path 更新するプロパティのパス（例: 'a.b[0]' または ['a', 'b', 0]）
  * @param value 設定する値
  * @returns 更新された新しいオブジェクト
  */
-const set = <T extends object>(
+export default function set<T extends object>(
   data: T,
-  path: string | PropertyKey[],
-  value: unknown,
-) => _set(data, path, value);
-set.dataLast =
-  (path: string | PropertyKey[], value: unknown) =>
-  <T extends object>(data: T) =>
-    _set(data, path, value);
-export default set;
-
-function _set<T extends object>(
-  data: T,
-  path: string | PropertyKey[],
+  path: PropertyPath,
   value: unknown,
 ): T {
-  const segments = _parsePath(path);
+  const segments = parsePropertyPath(path);
+  // 空のパスは設定先が無いため、何もしない
+  if (segments.length === 0 || segments.some(_isUnsafeKey)) {
+    return data;
+  }
 
   const setter = (current: unknown, index: number): unknown => {
     if (index === segments.length) {
@@ -32,21 +27,24 @@ function _set<T extends object>(
     }
 
     const key = segments[index]!;
-    // 既存の値を保持、なければ新しいコンテナを作成
+    const isObject = current !== null && typeof current === 'object';
+    // 既存の値を保持する。なければ undefined のまま進め、次の階層で作る
+    // 結果はスプレッドで複製し自身のプロパティだけを引き継ぐため、読み取りも自身のプロパティに限る
     const target =
-      current && typeof current === 'object' && key in current
+      isObject && hasOwn(current, key)
         ? (current as Record<PropertyKey, unknown>)[key]
-        : _createContainer(segments[index + 1]);
+        : undefined;
 
     const updatedValue = setter(target, index + 1);
 
-    // 配列かオブジェクトかでコピー処理を分岐
-    if (Array.isArray(current) || typeof key === 'number') {
-      const clone: unknown[] = Array.isArray(current) ? [...current] : [];
+    // 既存の値がオブジェクト・配列でなければ、キーに合わせて作る（数値なら配列）
+    const base = isObject ? current : _createContainer(key);
+    if (Array.isArray(base)) {
+      const clone = [...base];
       Reflect.set(clone, key, updatedValue);
       return clone;
     } else {
-      return { ...(current as object), [key]: updatedValue };
+      return { ...base, [key]: updatedValue };
     }
   };
 

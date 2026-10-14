@@ -36,20 +36,19 @@ import keepInRange from '@fringeworks/utils/number/keepInRange';
 
 Functions whose names end with `Mutable` (`setMutable`, `pushAllMutable`, and so on) modify the object or array passed to them. Functions without `Mutable` leave their arguments untouched and return a new value.
 
-### Data Last
+### Function names
 
-Many functions have a `dataLast` property. `dataLast` takes every argument except the data first and returns a function that receives the data. It is useful in pipelines and as a callback for methods such as `Array.prototype.map`.
+When the verb alone does not tell which type a function works on, the name includes the type name (`rotateArray`, `flattenObject`, `lerpNumber`). When the verb alone makes the type clear, like `push` in `pushAll`, the type name is omitted. Mutating versions append `Mutable` to that name (`rotateArrayMutable`, `clearArrayMutable`).
 
-```ts
-import { clampInRange } from '@fringeworks/utils';
+### Handling null / undefined
 
-clampInRange(150, 0, 100); // 100
+The `array` functions handle `null` / `undefined` passed as an array argument as follows.
 
-const clamp = clampInRange.dataLast(0, 100);
-[150, -10, 50].map(clamp); // [100, 0, 50]
-```
+- Functions that return a new value treat it as an empty array. The return value is never `null` / `undefined` (e.g. `pushAll(null, [1])` returns `[1]`)
+- Functions that return a single element (such as `firstDefined`) return `undefined`
+- Mutating functions do not accept `null` / `undefined` as the array to modify (`data`). Arrays of elements to add (`source`, `items`) are treated as empty arrays
 
-Functions that have `dataLast` show it alongside their signatures.
+`null` / `undefined` as array elements are out of scope here (they are handled by `compactMap`'s `exclude`, `firstPresent`, and so on).
 
 ---
 
@@ -57,44 +56,43 @@ Functions that have `dataLast` show it alongside their signatures.
 
 ### array
 
-| Function                                    | Description                                                             |
-| ------------------------------------------- | ----------------------------------------------------------------------- |
-| `clearArray(data)`                          | Removes all elements from an array and returns the removed elements     |
-| `compactMap(data, callback, options?)`      | Maps each element and returns an array without unwanted values          |
-| `ensureArray(data, options?)`               | Wraps a non-array value in an array                                     |
-| `firstDefined(data)`                        | Returns the first element that is not `undefined`                       |
-| `firstPresent(data)`                        | Returns the first element that is neither `null` nor `undefined`        |
-| `insertAt(data, index, items)`              | Returns a new array with elements inserted at an index                  |
-| `insertAtMutable(data, index, items)`       | Inserts elements at an index (mutating)                                 |
-| `nestedGroupBy(data, properties, options?)` | Groups elements under keys taken from property values                   |
-| `nestedKeyBy(data, properties, options?)`   | Stores one element per key taken from property values                   |
-| `pushAll(data, source)`                     | Returns a new array with all elements of another array appended         |
-| `pushAllMutable(data, source)`              | Appends all elements of another array (mutating)                        |
-| `pushUnique(data, items, options?)`         | Returns a new array with only elements not yet included appended        |
-| `pushUniqueMutable(data, items, options?)`  | Appends only elements not yet included (mutating)                       |
-| `repeatToLength(data, length)`              | Returns a new array that repeats the array up to a length               |
-| `rotateArray(data, options?)`               | Returns a new array with leading elements moved to the end              |
-| `rotateArrayMutable(data, options?)`        | Moves leading elements to the end (mutating)                            |
-| `sortDependencies(data, options?)`          | Sorts elements by their dependencies (topological sort)                 |
-| `swapPairs(pairs)`                          | Swaps the two elements of each pair in an array of pairs                |
-| `toArray(data, options?)`                   | Spreads an iterable into an array and wraps any other value in an array |
+| Function                                    | Description                                                                    |
+| ------------------------------------------- | ------------------------------------------------------------------------------ |
+| `clearArrayMutable(data)`                   | Removes all elements from an array and returns the removed elements (mutating) |
+| `compactMap(data, callback, options?)`      | Maps each element and returns an array without unwanted values                 |
+| `ensureArray(data, options?)`               | Wraps a non-array value in an array                                            |
+| `firstDefined(data)`                        | Returns the first element that is not `undefined`                              |
+| `firstPresent(data)`                        | Returns the first element that is neither `null` nor `undefined`               |
+| `insertAt(data, index, items)`              | Returns a new array with elements inserted at an index                         |
+| `insertAtMutable(data, index, items)`       | Inserts elements at an index (mutating)                                        |
+| `nestedGroupBy(data, properties, options?)` | Groups elements under keys taken from property values                          |
+| `nestedKeyBy(data, properties, options?)`   | Stores one element per key taken from property values                          |
+| `pushAll(data, source)`                     | Returns a new array with all elements of another array appended                |
+| `pushAllMutable(data, source)`              | Appends all elements of another array (mutating)                               |
+| `pushUnique(data, items, options?)`         | Returns a new array with only elements not yet included appended               |
+| `pushUniqueMutable(data, items, options?)`  | Appends only elements not yet included (mutating)                              |
+| `repeatToLength(data, length)`              | Returns a new array that repeats the array up to a length                      |
+| `rotateArray(data, options?)`               | Returns a new array with leading elements moved to the end                     |
+| `rotateArrayMutable(data, options?)`        | Moves leading elements to the end (mutating)                                   |
+| `sortDependencies(data, options?)`          | Sorts elements by their dependencies (topological sort)                        |
+| `swapPairs(pairs)`                          | Swaps the two elements of each pair in an array of pairs                       |
+| `toArray(data, options?)`                   | Spreads an iterable into an array and wraps any other value in an array        |
 
-#### `clearArray`
+#### `clearArrayMutable`
 
 ```ts
-clearArray<T>(data: T[] | null | undefined): T[]
+clearArrayMutable<T>(data: T[]): T[]
 ```
 
-Removes all elements from the array (mutating) and returns an array of the removed elements. Returns an empty array when `data` is `null` or `undefined`.
+Removes all elements from the array (mutating) and returns an array of the removed elements.
 
 #### `compactMap`
 
 ```ts
-compactMap<V, R = V>(data: V[] | null | undefined, callback: CompactMapIteratee<V, R>, options?: CompactMapOptions): R[] | null | undefined
-compactMap.dataLast<V, R = V>(callback: CompactMapIteratee<V, R>, options?: CompactMapOptions): (data: V[] | null | undefined) => R[]
+compactMap<V, R = V>(data: V[] | null | undefined, callback: CompactMapIteratee<V, R>, options?: CompactMapOptions): R[]
 ```
 
-Maps each element with `callback` and returns an array without the values specified by `options.exclude`. Returns `undefined` when `data` is `null` or `undefined`.
+Maps each element with `callback` and returns an array without the values specified by `options.exclude`.
 
 ```ts
 compactMap([1, 2, 3], (v) => (v === 2 ? undefined : v * 10)); // [10, 30]
@@ -109,7 +107,6 @@ compactMap(['a', '', null], (v) => v, { exclude: 'empty' }); // ['a']
 
 ```ts
 ensureArray<T>(data: T | T[] | null | undefined, options?: EnsureArrayOptions): T[]
-ensureArray.dataLast(options?: EnsureArrayOptions): <T>(data: T | T[] | null | undefined) => T[]
 ```
 
 Wraps a non-array value in a single-element array. `null` and `undefined` become an empty array, and an array is returned as a copy. Iterables such as `Set` are not spread (use `toArray` for that).
@@ -127,8 +124,7 @@ ensureArray(null); // []
 #### `firstDefined`
 
 ```ts
-firstDefined<V>(data: V[]): V | undefined
-firstDefined.dataLast<V>(): (data: V[]) => V | undefined
+firstDefined<V>(data: V[] | null | undefined): V | undefined
 ```
 
 Returns the first element that is not `undefined`. `null` counts as a match.
@@ -136,8 +132,7 @@ Returns the first element that is not `undefined`. `null` counts as a match.
 #### `firstPresent`
 
 ```ts
-firstPresent<V>(data: V[]): V | undefined
-firstPresent.dataLast<V>(): (data: V[]) => V | undefined
+firstPresent<V>(data: V[] | null | undefined): V | undefined
 ```
 
 Returns the first element that is neither `null` nor `undefined`.
@@ -145,8 +140,7 @@ Returns the first element that is neither `null` nor `undefined`.
 #### `insertAt`
 
 ```ts
-insertAt<T, U = T>(data: T[], index: number, items: U[]): (T | U)[]
-insertAt.dataLast<U>(index: number, items: U[]): <T>(data: T[]) => (T | U)[]
+insertAt<T, U = T>(data: T[] | null | undefined, index: number, items: U[] | null | undefined): (T | U)[]
 ```
 
 Returns a new array with the elements of `items` inserted at `index`. `index` is kept between 0 and the array length (a negative index inserts at the start, and an index beyond the length inserts at the end).
@@ -158,8 +152,7 @@ insertAt([1, 2, 3], 1, ['a', 'b']); // [1, 'a', 'b', 2, 3]
 #### `insertAtMutable`
 
 ```ts
-insertAtMutable<T, U = T>(data: T[], index: number, items: U[]): (T | U)[]
-insertAtMutable.dataLast<U>(index: number, items: U[]): <T>(data: T[]) => (T | U)[]
+insertAtMutable<T, U = T>(data: T[], index: number, items: U[] | null | undefined): (T | U)[]
 ```
 
 The mutating version of `insertAt`. Inserts into `data` directly and returns the same array.
@@ -167,8 +160,7 @@ The mutating version of `insertAt`. Inserts into `data` directly and returns the
 #### `nestedGroupBy`
 
 ```ts
-nestedGroupBy<I extends object>(data: I[], properties: keyof I | (keyof I)[], options?: NestedGroupByOptions): NestedGroupByResult<I>
-nestedGroupBy.dataLast<I extends object>(properties: keyof I | (keyof I)[], options?: NestedGroupByOptions): (data: I[]) => NestedGroupByResult<I>
+nestedGroupBy<I extends object>(data: I[] | null | undefined, properties: keyof I | (keyof I)[], options?: NestedGroupByOptions): NestedGroupByResult<I>
 ```
 
 Builds a nested object keyed by the values of `properties` and collects elements with the same keys into arrays. Keys are the property values converted to strings.
@@ -193,8 +185,7 @@ nestedGroupBy(items, ['pref', 'city'], { flat: true });
 #### `nestedKeyBy`
 
 ```ts
-nestedKeyBy<I extends object>(data: I[], properties: keyof I | (keyof I)[], options?: NestedKeyByOptions): NestedKeyByResult<I>
-nestedKeyBy.dataLast<I extends object>(properties: keyof I | (keyof I)[], options?: NestedKeyByOptions): (data: I[]) => NestedKeyByResult<I>
+nestedKeyBy<I extends object>(data: I[] | null | undefined, properties: keyof I | (keyof I)[], options?: NestedKeyByOptions): NestedKeyByResult<I>
 ```
 
 Builds the same shape of object as `nestedGroupBy`, but stores a single element under each key. When several elements share the same keys, the first one is kept by default.
@@ -208,17 +199,15 @@ Builds the same shape of object as `nestedGroupBy`, but stores a single element 
 #### `pushAll`
 
 ```ts
-pushAll<T>(data: T[], source: T[]): T[]
-pushAll.dataLast<T>(source: T[]): (data: T[]) => T[]
+pushAll<T>(data: T[] | null | undefined, source: T[] | null | undefined): T[]
 ```
 
-Returns a new array with all elements of `source` appended to `data`. Returns `data` as is when it is `null` or `undefined`, and returns a copy of `data` when `source` is `null` or `undefined`.
+Returns a new array with all elements of `source` appended to `data`.
 
 #### `pushAllMutable`
 
 ```ts
-pushAllMutable<T>(data: T[], source: T[]): T[]
-pushAllMutable.dataLast<T>(source: T[]): (data: T[]) => T[]
+pushAllMutable<T>(data: T[], source: T[] | null | undefined): T[]
 ```
 
 The mutating version of `pushAll`. Appends to `data` directly and returns the same array.
@@ -227,10 +216,9 @@ The mutating version of `pushAll`. Appends to `data` directly and returns the sa
 
 ```ts
 pushUnique<T>(data: T[] | null | undefined, items: T[] | null | undefined, options?: PushUniqueOptions<T>): T[]
-pushUnique.dataLast<T>(items: T[] | null | undefined, options?: PushUniqueOptions<T>): (data: T[] | null | undefined) => T[]
 ```
 
-Returns a new array with only the elements of `items` that `data` does not contain yet. Duplicates within `items` are not added either. Returns `data` as is when it is `null` or `undefined`.
+Returns a new array with only the elements of `items` that `data` does not contain yet. Duplicates within `items` are not added either.
 
 ```ts
 pushUnique([1, 2], [2, 3, 3]); // [1, 2, 3]
@@ -244,8 +232,7 @@ pushUnique([1, 2], [2, 3, 3]); // [1, 2, 3]
 #### `pushUniqueMutable`
 
 ```ts
-pushUniqueMutable<T>(data: T[] | null | undefined, items: T[] | null | undefined, options?: PushUniqueMutableOptions<T>): T[]
-pushUniqueMutable.dataLast<T>(items: T[] | null | undefined, options?: PushUniqueMutableOptions<T>): (data: T[] | null | undefined) => T[]
+pushUniqueMutable<T>(data: T[], items: T[] | null | undefined, options?: PushUniqueMutableOptions<T>): T[]
 ```
 
 The mutating version of `pushUnique`. Appends to `data` directly and returns the same array. The options are the same as `pushUnique`.
@@ -253,11 +240,10 @@ The mutating version of `pushUnique`. Appends to `data` directly and returns the
 #### `repeatToLength`
 
 ```ts
-repeatToLength<T>(data: T[], length: number): T[]
-repeatToLength.dataLast(length: number): <T>(data: T[]) => T[]
+repeatToLength<T>(data: T[] | null | undefined, length: number): T[]
 ```
 
-Returns a new array of length `length` made by repeating the elements of `data`. When `length` is negative, the reversed array is repeated. Returns an empty array when `data` is empty.
+Returns a new array of length `length` made by repeating the elements of `data`. When `length` is negative, the reversed array is repeated. A fractional `length` is truncated, and `NaN` / `Infinity` are treated as `0`. Returns an empty array when `data` is empty.
 
 ```ts
 repeatToLength([1, 2, 3], 7); // [1, 2, 3, 1, 2, 3, 1]
@@ -267,8 +253,7 @@ repeatToLength([1, 2, 3], -5); // [3, 2, 1, 3, 2]
 #### `rotateArray`
 
 ```ts
-rotateArray<I>(data: I[], options?: RotateArrayOptions): I[]
-rotateArray.dataLast(options?: RotateArrayOptions): <I>(data: I[]) => I[]
+rotateArray<I>(data: I[] | null | undefined, options?: RotateArrayOptions): I[]
 ```
 
 Returns a new array with the first `count` elements moved to the end.
@@ -286,7 +271,6 @@ rotateArray([1, 2, 3, 4, 5], { count: -1 }); // [5, 1, 2, 3, 4]
 
 ```ts
 rotateArrayMutable<I>(data: I[], options?: RotateArrayMutableOptions): I[]
-rotateArrayMutable.dataLast(options?: RotateArrayMutableOptions): <I>(data: I[]) => I[]
 ```
 
 The mutating version of `rotateArray`. Modifies `data` directly and returns the same array. The options are the same as `rotateArray`.
@@ -294,13 +278,12 @@ The mutating version of `rotateArray`. Modifies `data` directly and returns the 
 #### `sortDependencies`
 
 ```ts
-sortDependencies<I>(data: I[], options?: SortDependenciesOptions<I>): I[]
-sortDependencies.dataLast<I>(options?: SortDependenciesOptions<I>): (data: I[]) => I[]
+sortDependencies<I>(data: I[] | null | undefined, options?: SortDependenciesOptions<I>): I[]
 ```
 
 Returns a new array sorted so that each element comes after the elements it depends on (topological sort). Elements with the same ID are merged into one. Throws an `Error` (`Cyclic dependency: <ID>`) when the dependencies form a cycle.
 
-By default, each element is treated as an `[ID, array of dependency elements]` tuple. The ID of a dependency is taken from the dependency element in the same way as `id`. Specify `dependencyId` when dependencies are held as IDs.
+By default, each element is treated as an `[ID, array of dependencies]` tuple. Dependencies may be held either as elements or as IDs. When a dependency is an object (an element), its ID is taken in the same way as `id`; otherwise the dependency value itself is used as the ID.
 
 ```ts
 const c = ['c', []];
@@ -314,25 +297,24 @@ sortDependencies(
     { id: 'a', deps: ['b'] },
     { id: 'b', deps: [] },
   ],
-  { id: 'id', dependencies: 'deps', dependencyId: (dep) => dep },
+  { id: 'id', dependencies: 'deps' },
 );
 // [{ id: 'b', ... }, { id: 'a', ... }]
 ```
 
-| Option           | Type                                                     | Description                                                                                                                  |
-| ---------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `id?`            | `string \| number \| SortDependenciesGetId<I>`           | The property holding an element's ID, or a function returning it. Defaults to `0`                                            |
-| `dependencies?`  | `string \| number \| SortDependenciesGetDependencies<I>` | The property holding an element's dependencies, or a function returning them. Defaults to `1`                                |
-| `dependencyId?`  | `string \| number \| SortDependenciesGetId<I>`           | The property holding a dependency's ID, or a function returning it. Defaults to the same as `id`                             |
-| `tree?`          | `boolean`                                                | If `true`, follows dependencies recursively and also sorts dependency elements that are not in `data` (for tree-shaped data) |
-| `ignoreMissing?` | `boolean`                                                | If `true`, ignores dependencies not found in `data`. Otherwise throws an `Error` (`No substance: <ID>`). Defaults to `false` |
-| `reverse?`       | `boolean`                                                | If `true`, reverses the order (dependents first). Defaults to `false`                                                        |
+| Option           | Type                                                     | Description                                                                                                                                                                                         |
+| ---------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id?`            | `string \| number \| SortDependenciesGetId<I>`           | The property holding an element's ID, or a function returning it. Defaults to `0`                                                                                                                   |
+| `dependencies?`  | `string \| number \| SortDependenciesGetDependencies<I>` | The property holding an element's dependencies, or a function returning them. Defaults to `1`                                                                                                       |
+| `dependencyId?`  | `string \| number \| SortDependenciesGetId<I>`           | The property holding a dependency's ID, or a function returning it. By default, an object dependency's ID is taken in the same way as `id`, and any other dependency value is used as the ID itself |
+| `tree?`          | `boolean`                                                | If `true`, follows dependencies recursively and also sorts dependency elements that are not in `data` (for tree-shaped data)                                                                        |
+| `ignoreMissing?` | `boolean`                                                | If `true`, ignores dependencies not found in `data`. Otherwise throws an `Error` (`No substance: <ID>`). Defaults to `false`                                                                        |
+| `reverse?`       | `boolean`                                                | If `true`, reverses the order (dependents first). Defaults to `false`                                                                                                                               |
 
 #### `swapPairs`
 
 ```ts
-swapPairs<const T extends [unknown, unknown][]>(pairs: T): SwapPairsResult<T>
-swapPairs.dataLast(): <const T extends [unknown, unknown][]>(pairs: T) => SwapPairsResult<T>
+swapPairs<const T extends [unknown, unknown][]>(pairs: T | null | undefined): SwapPairsResult<T>
 ```
 
 Takes an array of two-element tuples and returns a new array with `[0]` and `[1]` of each tuple swapped. The types are swapped as well.
@@ -348,7 +330,6 @@ swapPairs([
 
 ```ts
 toArray<T>(data: unknown, options?: ToArrayOptions): T[]
-toArray.dataLast(options?: ToArrayOptions): <T>(data: unknown) => T[]
 ```
 
 Converts a value to an array. Iterables other than strings (`Set`, `Map`, and so on) are spread, and any other value is wrapped in a single-element array. `null` and `undefined` become an empty array, and an array is returned as a copy.
@@ -395,22 +376,22 @@ toArray(1); // [1]
 
 ```ts
 ensureBoolean(data: unknown, options?: EnsureBooleanOptions): boolean
-ensureBoolean.dataLast(options?: EnsureBooleanOptions): (data: unknown) => boolean
 ```
 
-Converts a value to a boolean. Booleans are returned as is, and strings become `true` only when they are in `trueValues` (by default `'true'`, `'True'`, and `'TRUE'`). Any other value is converted with `!!data`.
+Converts a value to a boolean. Booleans are returned as is, and strings become `true` only when, with surrounding whitespace removed, they are in `trueValues` (by default `'true'`, `'True'`, `'TRUE'`, and `'1'`). Any other value is converted with `!!data`.
 
 ```ts
 ensureBoolean('true'); // true
+ensureBoolean(' 1 '); // true
 ensureBoolean('yes'); // false
 ensureBoolean('YES', { trueValues: ['yes'], ignoreCase: true }); // true
 ensureBoolean(1); // true
 ```
 
-| Option        | Type       | Description                                                       |
-| ------------- | ---------- | ----------------------------------------------------------------- |
-| `trueValues?` | `string[]` | Strings treated as `true`. Defaults to `['true', 'True', 'TRUE']` |
-| `ignoreCase?` | `boolean`  | If `true`, compares strings case-insensitively                    |
+| Option        | Type                | Description                                                                                         |
+| ------------- | ------------------- | --------------------------------------------------------------------------------------------------- |
+| `trueValues?` | `readonly string[]` | Strings treated as `true`. Used only for string values. Defaults to `['true', 'True', 'TRUE', '1']` |
+| `ignoreCase?` | `boolean`           | If `true`, compares strings case-insensitively                                                      |
 
 #### Types
 
@@ -420,67 +401,69 @@ ensureBoolean(1); // true
 
 ### compare
 
-| Function                                | Description                                                        |
-| --------------------------------------- | ------------------------------------------------------------------ |
-| `compare(left, operator, right)`        | Compares two values with an operator                               |
-| `isEqual(value1, value2, options?)`     | Checks whether two values are equal using a chosen comparison mode |
-| `isEqualWith(value, other, customizer)` | Compares two values recursively with a custom comparison function  |
+| Function                                | Description                                                       |
+| --------------------------------------- | ----------------------------------------------------------------- |
+| `compare(left, operator, right)`        | Compares two values with an operator                              |
+| `isEqual(value1, value2)`               | Checks recursively whether two values have the same structure     |
+| `isEqualWith(value, other, customizer)` | Compares two values recursively with a custom comparison function |
 
 #### `compare`
 
 ```ts
 compare<O extends ComparisonOperator>(left: CompareLeft[O], operator: O, right: CompareRight[O]): boolean
-compare.dataLast<O extends ComparisonOperator>(operator: O, right: CompareRight[O]): (left: CompareLeft[O]) => boolean
 ```
 
-Compares `left` and `right` with `operator`. Throws an `Error` for an unsupported operator.
+Compares `left` and `right` with `operator`. The types of `left` and `right` depend on the operator (`CompareLeft` / `CompareRight`). It is meant for switching comparisons from settings, and the values of `ComparisonOperator` (such as `'>='`) can be passed as is.
+
+Throws an `Error` for an unsupported operator. Returns `false`, even for negated operators, when a value does not have the expected shape (such as a non-array `right` for `'between'`, a non-string value for `'startsWith'`, or an invalid regular expression pattern for `'matches'`).
 
 ```ts
 compare(5, '>', 3); // true
 compare(5, 'between', [1, 10]); // true (inclusive)
-compare('a', 'in', ['a', 'b']); // true
-compare('hello', 'like', 'ell'); // true (substring match)
+compare('a', 'oneOf', ['a', 'b']); // true
+compare('hello', 'includes', 'ell'); // true (substring match)
+compare(['a', 'b', 'c'], 'includesAll', ['a', 'c']); // true
+compare('hello', 'matches', /^h/); // true
 ```
 
-| Operator                        | Meaning                                                      |
-| ------------------------------- | ------------------------------------------------------------ |
-| `'==='` / `'!=='`               | Strict equality / inequality                                 |
-| `'=='` / `'!='`                 | Loose equality / inequality                                  |
-| `'>'` / `'<'` / `'>='` / `'<='` | Relational comparison                                        |
-| `'between'`                     | Whether `left` is within `right` as `[min, max]` (inclusive) |
-| `'in'`                          | Whether the array `right` contains `left`                    |
-| `'like'`                        | Whether the string `left` contains `right`                   |
+| Operator                         | `left`          | `right`                         | Meaning                                                                                                                                              |
+| -------------------------------- | --------------- | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `'==='` / `'!=='`                | Any             | Any                             | Strict equality / inequality                                                                                                                         |
+| `'=='` / `'!='`                  | Any             | Any                             | Loose equality / inequality                                                                                                                          |
+| `'>'` / `'>='` / `'<'` / `'<='`  | Any             | Any                             | Relational comparison (numbers, strings, `Date`, and so on, following JavaScript's comparison operators)                                             |
+| `'deepEqual'` / `'notDeepEqual'` | Any             | Any                             | Whether the structures are equal / not equal (`isEqual`)                                                                                             |
+| `'between'` / `'notBetween'`     | Any             | `[min, max]`                    | Whether `left` is inside / outside the range (inclusive)                                                                                             |
+| `'oneOf'` / `'notOneOf'`         | Any             | Array                           | Whether `left` equals one / none of `right` (`Array.includes`)                                                                                       |
+| `'includes'` / `'notIncludes'`   | String or array | Substring or element            | Whether `left` contains / does not contain `right` (`String.includes` / `Array.includes`)                                                            |
+| `'includesAll'`                  | String or array | Array of substrings or elements | Whether `left` contains all of `right` (`true` when `right` is empty)                                                                                |
+| `'includesAny'`                  | String or array | Array of substrings or elements | Whether `left` contains any of `right` (`false` when `right` is empty)                                                                               |
+| `'startsWith'` / `'endsWith'`    | String          | String                          | Prefix / suffix match                                                                                                                                |
+| `'matches'`                      | String          | Regular expression or string    | Whether `left` matches the regular expression. A string is converted to a `RegExp`. The `lastIndex` of `g` or `y` regular expressions is not changed |
 
 #### `isEqual`
 
 ```ts
-isEqual(value1: unknown, value2: unknown, options?: IsEqualOptions): boolean
-isEqual.dataLast(value2: unknown, options?: IsEqualOptions): (value1: unknown) => boolean
+isEqual(value1: unknown, value2: unknown): boolean
 ```
 
-Checks whether two values are equal. The comparison is chosen with `mode`.
+Checks recursively whether two values have the same structure, using the same criteria as the default comparison of `isEqualWith`.
 
 ```ts
-isEqual(1, '1'); // false
-isEqual(1, '1', { mode: 'loose' }); // true
-isEqual({ a: [1] }, { a: [1] }, { mode: 'deep' }); // true
+isEqual({ a: [1] }, { a: [1] }); // true
+isEqual([1], { 0: 1 }); // false
 ```
-
-| Option        | Type                                                                                  | Description                                                                                                                                                                                                     |
-| ------------- | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `mode?`       | `CompareMode`                                                                         | The comparison. `'strict'`: `===`; `'loose'`: `==`; `'deep'`: whether the structures are the same. Defaults to `'strict'`                                                                                       |
-| `customizer?` | `(value1, value2, indexOrKey?, value1Parent?, value2Parent?) => boolean \| undefined` | A custom comparison function. With `'deep'`, it is used as the `customizer` of `isEqualWith`. Otherwise it receives only `value1` and `value2`, and returning a non-boolean falls back to the normal comparison |
 
 #### `isEqualWith`
 
 ```ts
-isEqualWith(value: unknown, other: unknown, customizer: (value1, value2, indexOrKey?, value1Parent?, value2Parent?) => boolean | undefined): boolean
-isEqualWith.dataLast(other: unknown, customizer: ...): (value: unknown) => boolean
+isEqualWith(value: unknown, other: unknown, customizer: IsEqualWithCustomizer): boolean
 ```
 
 Compares two values recursively. `customizer` is called at each step; a returned `boolean` is used as the result, and `undefined` falls back to the default comparison.
 
-The default comparison compares arrays element by element, plain objects by their own enumerable properties, `Date` by time, `Map` by keys and values, and `Set` by whether they hold the same elements (SameValueZero).
+`customizer` receives `(value1, value2, indexOrKey, value1Parent, value2Parent)`. `indexOrKey` is the index when the parent is an array, the key when it is an object, and the `Map` key (of any type) when it is a `Map`. It is `undefined` for the top-level values and for `Set` elements.
+
+The default comparison treats objects with different prototypes as unequal (an object with a `null` prototype and a plain object are treated as the same). It compares arrays element by element, `Map` by keys and values, `Set` by whether they hold structurally equal elements, `Date` by time, `RegExp` by pattern and flags, and other objects by their own enumerable properties. `NaN` equals `NaN`, and `0` equals `-0`. Circular references are treated as equal when the same pair is reached again.
 
 ```ts
 // Compare strings case-insensitively
@@ -493,20 +476,18 @@ isEqualWith({ a: 'Hello' }, { a: 'hello' }, (v1, v2) =>
 
 #### Constants
 
-| Constant             | Description                                                                                                      |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `ComparisonOperator` | The operators for `compare`: `EQ`, `NE`, `GT`, `LT`, `GE`, `LE`, `LOOSE_EQ`, `LOOSE_NE`, `BETWEEN`, `IN`, `LIKE` |
-| `CompareMode`        | The comparison modes for `isEqual`: `strict`, `loose`, `deep`                                                    |
+| Constant             | Description                                                                                                                                                                                                                       |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ComparisonOperator` | The operators for `compare`. Symbol operators use short keys (`eq`, `ne`, `looseEq`, `looseNe`, `gt`, `gte`, `lt`, `lte`), and word operators use their value as the key (`deepEqual`, `between`, `oneOf`, `includes`, and so on) |
 
 #### Types
 
-| Type                 | Description                                                |
-| -------------------- | ---------------------------------------------------------- |
-| `ComparisonOperator` | The operator values for `compare`                          |
-| `CompareLeft`        | The type of the left-hand value of `compare` per operator  |
-| `CompareRight`       | The type of the right-hand value of `compare` per operator |
-| `CompareMode`        | The comparison mode values for `isEqual`                   |
-| `IsEqualOptions`     | Options for `isEqual`                                      |
+| Type                    | Description                                                |
+| ----------------------- | ---------------------------------------------------------- |
+| `ComparisonOperator`    | The operator values for `compare`                          |
+| `CompareLeft`           | The type of the left-hand value of `compare` per operator  |
+| `CompareRight`          | The type of the right-hand value of `compare` per operator |
+| `IsEqualWithCustomizer` | The type of the `customizer` of `isEqualWith`              |
 
 ### date
 
@@ -535,20 +516,19 @@ asUtcDate(new Date(2024, 0, 15, 12, 0)).toISOString(); // '2024-01-15T12:00:00.0
 createUtcDate(year: number, month?: number, date?: number, hours?: number, minutes?: number, seconds?: number, milliseconds?: number): Date
 ```
 
-Creates a `Date` from UTC date and time values. As with `Date.UTC`, `month` is 0 to 11. Omitted arguments default to `0` for `month`, `1` for `date`, and `0` for the rest.
+Creates a `Date` from UTC date and time values. As with `Date.UTC`, `month` is 0 to 11, but unlike `Date.UTC`, years 0 to 99 are used as is (not as 1900 to 1999). Omitted arguments default to `0` for `month`, `1` for `date`, and `0` for the rest.
 
 #### `lerpDate`
 
 ```ts
 lerpDate(value: Date, ratio: number, options?: LerpDateOptions): Date
-lerpDate.dataLast(ratio: number, options?: LerpDateOptions): (value: Date) => Date
 ```
 
-Returns the date linearly interpolated by `ratio` between the base date (`baseValue`) and the target date (`value`). A `ratio` of `0` gives the base date and `1` gives the target date.
+Returns the date linearly interpolated by `ratio` between the base date (`baseValue`) and the target date (`value`). A `ratio` of `0` gives the base date and `1` gives the target date. A `ratio` outside 0 to 1 extrapolates.
 
-| Option       | Type   | Description                                          |
-| ------------ | ------ | ---------------------------------------------------- |
-| `baseValue?` | `Date` | The base date. Defaults to the current date and time |
+| Option       | Type   | Description                                                       |
+| ------------ | ------ | ----------------------------------------------------------------- |
+| `baseValue?` | `Date` | The base date. Defaults to the current date and time at each call |
 
 #### Types
 
@@ -568,8 +548,8 @@ Returns the date linearly interpolated by `ratio` between the base date (`baseVa
 #### `alwaysFalse` / `alwaysTrue` / `alwaysInput` / `alwaysVoid`
 
 ```ts
-alwaysFalse(...args: unknown[]): boolean
-alwaysTrue(...args: unknown[]): boolean
+alwaysFalse(...args: unknown[]): false
+alwaysTrue(...args: unknown[]): true
 alwaysInput<T>(value: T, ...args: unknown[]): T
 alwaysVoid(...args: unknown[]): void
 ```
@@ -585,17 +565,20 @@ Functions that return a fixed result regardless of their arguments, useful as ca
 #### `ensureMap`
 
 ```ts
-ensureMap<K, V>(data: EnsureMapSource<K, V> | null | undefined, options?: EnsureMapOptions): Map<K, V>
-ensureMap.dataLast(options?: EnsureMapOptions): <K, V>(data: EnsureMapSource<K, V> | null | undefined) => Map<K, V>
+ensureMap<K, V>(data: Iterable<readonly [K, V]> | null | undefined, options?: EnsureMapOptions): Map<K, V>
+ensureMap<V>(data: Record<string, V> | null | undefined, options?: EnsureMapOptions): Map<string, V>
+ensureMap<K, V>(data: EnsureMapSource<K, V> | null | undefined, options?: EnsureMapOptions): Map<K | string, V>
 ```
 
-Converts a value to a `Map`. A `Map` is returned as a copy, and an object's properties become entries. An array is treated as `[key, value]` pairs when its first element is a two-element array; otherwise its indexes become the keys. `null`, `undefined`, and other values become an empty `Map`.
+Converts a value to a `Map`. A `Map` is returned as a copy. Any other iterable (an array of entries, a `Set`, and so on) is treated like the `Map` constructor does, with each element as a `[key, value]` pair. Any other object has its properties turned into entries. `null`, `undefined`, and primitive values become an empty `Map`.
 
 ```ts
 ensureMap({ a: 1 }); // Map { 'a' => 1 }
 ensureMap([['a', 1]]); // Map { 'a' => 1 }
-ensureMap(['x', 'y']); // Map { 0 => 'x', 1 => 'y' }
+ensureMap(['x', 'y'].entries()); // Map { 0 => 'x', 1 => 'y' }
 ```
+
+If an iterable has elements that are not entries (such as `[1, 2]`), a `TypeError` is thrown, just like the `Map` constructor.
 
 | Option | Type      | Description                                                                                   |
 | ------ | --------- | --------------------------------------------------------------------------------------------- |
@@ -603,10 +586,10 @@ ensureMap(['x', 'y']); // Map { 0 => 'x', 1 => 'y' }
 
 #### Types
 
-| Type                    | Description                                                                       |
-| ----------------------- | --------------------------------------------------------------------------------- |
-| `EnsureMapOptions`      | Options for `ensureMap`                                                           |
-| `EnsureMapSource<K, V>` | The values `ensureMap` accepts (`Map`, object, array of entries, array of values) |
+| Type                    | Description                                                                                                        |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `EnsureMapOptions`      | Options for `ensureMap`                                                                                            |
+| `EnsureMapSource<K, V>` | The values `ensureMap` accepts (an iterable of `[key, value]` pairs, or an object whose properties become entries) |
 
 ### measure
 
@@ -620,10 +603,12 @@ ensureMap(['x', 'y']); // Map { 0 => 'x', 1 => 'y' }
 #### `comparePerformance`
 
 ```ts
-comparePerformance<A extends unknown[] = unknown[], R = unknown>(options: ComparePerformanceOptions<A>): ComparePerformanceResult<A, R>
+comparePerformance<A extends unknown[] = unknown[], R = unknown>(options: ComparePerformanceOptions<A, R>): ComparePerformanceResult<A, R>
 ```
 
-Measures and compares the execution time of the functions in `targets`. Each round runs every function `iterations` times and records the time, and this is repeated for `rounds` rounds. The order of the functions changes every round to reduce bias from running order.
+Measures and compares the execution time of the functions in `targets`. Each round runs every function `iterations` times and records the time, and this is repeated for `rounds` rounds. The order of the functions changes every round to reduce bias from running order. Within a round, every function receives the same arguments.
+
+An error is thrown if two `targets` share the same `id`.
 
 ```ts
 const result = comparePerformance({
@@ -638,80 +623,85 @@ const result = comparePerformance({
 result.order.map((target) => target.id); // fastest first
 ```
 
-| Option        | Type                               | Description                                                                      |
-| ------------- | ---------------------------------- | -------------------------------------------------------------------------------- |
-| `targets`     | `ComparePerformanceTarget<A, R>[]` | The functions to measure, as `{ id, fn }`                                        |
-| `iterations?` | `number`                           | How many times each function runs per round. Defaults to `10`                    |
-| `rounds?`     | `number`                           | How many rounds to measure. Defaults to `10`                                     |
-| `args?`       | `A`                                | The arguments passed to the functions                                            |
-| `getArgs?`    | `() => A`                          | A function that creates the arguments for each run. Takes precedence over `args` |
-| `warmUp?`     | `boolean`                          | If `true`, runs each function once before measuring                              |
-| `id?`         | `string`                           | An ID included in the result as is. Defaults to the start time in milliseconds   |
+| Option              | Type                               | Description                                                                                                              |
+| ------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `targets`           | `ComparePerformanceTarget<A, R>[]` | The functions to measure, as `{ id, fn }`. Each `id` must be unique                                                      |
+| `iterations?`       | `number`                           | How many times each function runs per round. Decimals are truncated, and values below 1 become 1. Defaults to `10`       |
+| `rounds?`           | `number`                           | How many rounds to measure. Decimals are truncated, and values below 1 become 1. Defaults to `10`                        |
+| `args?`             | `A`                                | The arguments passed to the functions                                                                                    |
+| `getArgs?`          | `() => A`                          | A function that creates the arguments for each run. Takes precedence over `args`. Same as `measure`                      |
+| `warmUpIterations?` | `number`                           | How many times each function runs before measuring. Decimals are truncated, and values below 0 become 0. Defaults to `0` |
+| `id?`               | `string`                           | An ID included in the result as is. Defaults to the start time in milliseconds                                           |
 
-| Property       | Type                            | Description                                       |
-| -------------- | ------------------------------- | ------------------------------------------------- | -------------------------------------- |
-| `average`      | `ElapsedTimes`                  | The average time per round for each function (ms) |
-| `totalAverage` | `number`                        | The average time over all functions (ms)          |
-| `order`        | `ComparePerformanceTarget<A>[]` | The targets sorted from the shortest average time |
-| `results`      | `ElapsedTimes[]`                | The time of each function in each round           |
-| `returnValues` | `{ [id: string]: R              | undefined }`                                      | The last return value of each function |
-| `start`        | `Date`                          | When the measurement started                      |
-| `end`          | `Date`                          | When the measurement ended                        |
-| `id?`          | `string`                        | The measurement ID                                |
+| Property       | Type                               | Description                                                         |
+| -------------- | ---------------------------------- | ------------------------------------------------------------------- |
+| `average`      | `ElapsedTimes`                     | The average time per round for each function (ms)                   |
+| `totalAverage` | `number`                           | The average time over all functions (ms). `0` if `targets` is empty |
+| `order`        | `ComparePerformanceTarget<A, R>[]` | The targets sorted from the shortest average time                   |
+| `results`      | `ElapsedTimes[]`                   | The time of each function in each round                             |
+| `returnValues` | `{ [id: string]: R }`              | The last return value of each function                              |
+| `start`        | `Date`                             | When the measurement started                                        |
+| `end`          | `Date`                             | When the measurement ended                                          |
+| `id`           | `string`                           | The measurement ID                                                  |
 
 #### `comparePerformanceAsync`
 
 ```ts
-comparePerformanceAsync<A extends unknown[] = unknown[], R = unknown>(options: ComparePerformanceAsyncOptions<A>): Promise<ComparePerformanceAsyncResult<A, R>>
+comparePerformanceAsync<A extends unknown[] = unknown[], R = unknown>(options: ComparePerformanceAsyncOptions<A, R>): Promise<ComparePerformanceAsyncResult<A, R>>
 ```
 
-The async-function version of `comparePerformance`. The functions are measured one at a time. The options and the result are the same as `comparePerformance`.
+The async-function version of `comparePerformance`. The functions are run one at a time, including the warm-up. The options and the result are the same as `comparePerformance`.
 
 #### `measure`
 
 ```ts
-measure<A extends unknown[] = unknown[], R = unknown>(fn: (...args: A) => R, options?: MeasureOptions<A>): MeasureResult<R>
+measure<R>(fn: () => R, options?: MeasureOptions<[]>): MeasureResult<R>
+measure<A extends unknown[], R>(fn: (...args: A) => R, options: MeasureOptions<A>): MeasureResult<R>
 ```
 
-Runs `fn` `iterations` times and returns the total execution time (ms) and the last return value. The time is measured with `performance.now()`.
+Runs `fn` `iterations` times and returns the total execution time (ms) and the last return value. The time is measured with `performance.now()`. Because some environments reduce the precision of `performance.now()`, all runs are measured together rather than one by one.
+
+If `fn` has required parameters, either `args` or `getArgs` is required.
 
 ```ts
 const { time, returnValue } = measure(() => heavyCalc(), { iterations: 100 });
 ```
 
-| Option        | Type      | Description                                                                      |
-| ------------- | --------- | -------------------------------------------------------------------------------- |
-| `iterations?` | `number`  | How many times to run. Defaults to `10`                                          |
-| `args?`       | `A`       | The arguments passed to the function                                             |
-| `getArgs?`    | `() => A` | A function that creates the arguments for each run. Takes precedence over `args` |
+| Option        | Type      | Description                                                                                                                                      |
+| ------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `iterations?` | `number`  | How many times to run. Decimals are truncated, and values below 1 become 1. Defaults to `10`                                                     |
+| `args?`       | `A`       | The arguments passed to the function                                                                                                             |
+| `getArgs?`    | `() => A` | A function that creates the arguments for each run. Takes precedence over `args`. It is called for all runs before measuring, so it is not timed |
 
-| Property      | Type             | Description                      |
-| ------------- | ---------------- | -------------------------------- |
-| `time`        | `number`         | The total execution time (ms)    |
-| `returnValue` | `R \| undefined` | The return value of the last run |
+| Property      | Type     | Description                      |
+| ------------- | -------- | -------------------------------- |
+| `time`        | `number` | The total execution time (ms)    |
+| `returnValue` | `R`      | The return value of the last run |
 
 #### `measureAsync`
 
 ```ts
-measureAsync<A extends unknown[] = unknown[], R = unknown>(fn: (...args: A) => Promise<R>, options?: MeasureAsyncOptions<A>): Promise<MeasureAsyncResult<R>>
+measureAsync<R>(fn: () => Promise<R>, options?: MeasureAsyncOptions<[]>): Promise<MeasureAsyncResult<R>>
+measureAsync<A extends unknown[], R>(fn: (...args: A) => Promise<R>, options: MeasureAsyncOptions<A>): Promise<MeasureAsyncResult<R>>
 ```
 
 The async-function version of `measure`. Runs `fn` one call at a time, waiting for each to finish. The options and the result are the same as `measure`.
 
 #### Types
 
-| Type                                   | Description                                        |
-| -------------------------------------- | -------------------------------------------------- |
-| `ComparePerformanceOptions<A, R>`      | Options for `comparePerformance`                   |
-| `ComparePerformanceResult<A, R>`       | The return value of `comparePerformance`           |
-| `ComparePerformanceTarget<A, R>`       | A function to measure `{ id, fn }`                 |
-| `ComparePerformanceAsyncOptions<A, R>` | Same as `ComparePerformanceOptions<A, Promise<R>>` |
-| `ComparePerformanceAsyncResult<A, R>`  | Same as `ComparePerformanceResult<A, R>`           |
-| `ElapsedTimes`                         | Times per function ID `{ [id: string]: number }`   |
-| `MeasureOptions<A>`                    | Options for `measure`                              |
-| `MeasureResult<R>`                     | The return value of `measure`                      |
-| `MeasureAsyncOptions<A>`               | Same as `MeasureOptions<A>`                        |
-| `MeasureAsyncResult<R>`                | Same as `MeasureResult<R>`                         |
+| Type                                   | Description                                                                                                                                |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ComparePerformanceOptions<A, R>`      | Options for `comparePerformance`                                                                                                           |
+| `ComparePerformanceResult<A, R>`       | The return value of `comparePerformance`                                                                                                   |
+| `ComparePerformanceTarget<A, R>`       | A function to measure `{ id, fn }`                                                                                                         |
+| `ComparePerformanceAsyncOptions<A, R>` | Same as `ComparePerformanceOptions<A, Promise<R>>`                                                                                         |
+| `ComparePerformanceAsyncResult<A, R>`  | The return value of `comparePerformanceAsync`. Same as `ComparePerformanceResult<A, R>`, except that `order` functions return `Promise<R>` |
+| `ElapsedTimes`                         | Times per function ID `{ [id: string]: number }`                                                                                           |
+| `MeasureArgsOptions<A>`                | Options for the arguments passed to the function (`args` / `getArgs`)                                                                      |
+| `MeasureOptions<A>`                    | Options for `measure`                                                                                                                      |
+| `MeasureResult<R>`                     | The return value of `measure`                                                                                                              |
+| `MeasureAsyncOptions<A>`               | Same as `MeasureOptions<A>`                                                                                                                |
+| `MeasureAsyncResult<R>`                | Same as `MeasureResult<R>`                                                                                                                 |
 
 ### number
 
@@ -732,11 +722,12 @@ The async-function version of `measure`. Runs `fn` one call at a time, waiting f
 | `replaceOutOfRange(value, min, max, replacement)` | Replaces a value outside a range with a given value                        |
 | `roundToStep(data, step)`                         | Rounds a value to the nearest multiple of a step                           |
 
+Functions that take a range (`clampInRange`, `isStrictlyWithinRange`, `isWithinRange`, `keepInRange`, `loopInRange`, `pingpongInRange`, `replaceOutOfRange`) swap `min` and `max` when `min` is greater than `max`.
+
 #### `clampInRange`
 
 ```ts
 clampInRange(value: number, min: number, max: number): number
-clampInRange.dataLast(min: number, max: number): (value: number) => number
 ```
 
 Returns `min` when `value` is below `min`, `max` when it is above `max`, and `value` otherwise.
@@ -750,10 +741,11 @@ clampInRange(-10, 0, 100); // 0
 
 ```ts
 ensureNumber(data: unknown): number
-ensureNumber.dataLast(): (data: unknown) => number
 ```
 
-Converts a value to a number. Numbers are returned as is (`NaN` becomes `0`), and strings are converted with `Number()`. Strings that cannot be converted, `null`, `undefined`, booleans, objects, and so on become `0`.
+Converts a value to a `number`. Numbers are returned as is (`NaN` becomes `0`), and strings are converted with `Number()`. Strings that cannot be converted, `null`, `undefined`, booleans, bigints, objects, and so on become `0`.
+
+`Infinity` and `-Infinity` are returned as is. Use `getValidNumber` to allow only finite numbers.
 
 ```ts
 ensureNumber('12.5'); // 12.5
@@ -768,23 +760,23 @@ ensureNumber(true); // 0
 getValidMinMax(min: number | null | undefined, max: number | null | undefined, options?: GetValidMinMaxOptions): [number, number]
 ```
 
-Returns `min` and `max` as an array ordered from smaller to larger. Defaults are used for `null` and `undefined`.
+Returns `min` and `max` as an array ordered from smaller to larger. Defaults are used for `null`, `undefined`, and `NaN`.
 
 ```ts
 getValidMinMax(10, 1); // [1, 10]
 getValidMinMax(null, 5); // [-Infinity, 5]
+getValidMinMax(NaN, 5); // [-Infinity, 5]
 ```
 
-| Option        | Type     | Description                                                   |
-| ------------- | -------- | ------------------------------------------------------------- |
-| `defaultMin?` | `number` | The value used when `min` is missing. Defaults to `-Infinity` |
-| `defaultMax?` | `number` | The value used when `max` is missing. Defaults to `Infinity`  |
+| Option        | Type     | Description                                                                         |
+| ------------- | -------- | ----------------------------------------------------------------------------------- |
+| `defaultMin?` | `number` | The value used when `min` is `null`, `undefined`, or `NaN`. Defaults to `-Infinity` |
+| `defaultMax?` | `number` | The value used when `max` is `null`, `undefined`, or `NaN`. Defaults to `Infinity`  |
 
 #### `getValidNumber`
 
 ```ts
 getValidNumber(value: number | null | undefined, options?: GetValidNumberOptions): number
-getValidNumber.dataLast(options?: GetValidNumberOptions): (value: number | null | undefined) => number
 ```
 
 Returns `value` when it is a valid number (`isValidNumber` returns `true`), and `invalidValue` otherwise.
@@ -804,7 +796,6 @@ getValidNumber(Infinity, { allowInfinity: true }); // Infinity
 
 ```ts
 isStrictlyWithinRange(value: number, min: number, max: number): boolean
-isStrictlyWithinRange.dataLast(min: number, max: number): (value: number) => boolean
 ```
 
 Returns `true` when `value` is greater than `min` and less than `max`.
@@ -813,7 +804,6 @@ Returns `true` when `value` is greater than `min` and less than `max`.
 
 ```ts
 isWithinRange(value: number, min: number, max: number): boolean
-isWithinRange.dataLast(min: number, max: number): (value: number) => boolean
 ```
 
 Returns `true` when `value` is at least `min` and at most `max`.
@@ -822,7 +812,6 @@ Returns `true` when `value` is at least `min` and at most `max`.
 
 ```ts
 keepInRange(value: number, min: number, max: number, options?: KeepInRangeOptions): number
-keepInRange.dataLast(min: number, max: number, options?: KeepInRangeOptions): (value: number) => number
 ```
 
 Keeps `value` between `min` and `max`. How out-of-range values are handled is set with `mode`, and can be set separately for values below the minimum and above the maximum.
@@ -847,10 +836,9 @@ keepInRange(15, 0, 10, { mode: 'replace', outOfRangeValue: -1 }); // -1
 
 ```ts
 lerpNumber(value: number, ratio: number, options?: LerpNumberOptions): number
-lerpNumber.dataLast(ratio: number, options?: LerpNumberOptions): (value: number) => number
 ```
 
-Returns the value linearly interpolated by `ratio` between the base value (`baseValue`) and the target value (`value`).
+Returns the value linearly interpolated by `ratio` between the base value (`baseValue`) and the target value (`value`). A `ratio` outside 0 to 1 extrapolates.
 
 ```ts
 lerpNumber(100, 0.5); // 50
@@ -880,7 +868,6 @@ limitNaturalNumber(-3.5, { negativeValue: 'abs' }); // 3
 
 ```ts
 limitPositiveNumber(value: number | null | undefined, options?: LimitPositiveNumberOptions): number | null | undefined
-limitPositiveNumber.dataLast(options?: LimitPositiveNumberOptions): (value: number | null | undefined) => number | null | undefined
 ```
 
 Limits a value to a positive number (greater than 0). Positive numbers are returned as is; otherwise the value set in the options is returned.
@@ -903,21 +890,20 @@ limitPositiveNumber(0, { zeroValue: 0 }); // 0
 
 ```ts
 loopInRange(value: number, min: number, max: number): number
-loopInRange.dataLast(min: number, max: number): (value: number) => number
 ```
 
-Brings an out-of-range `value` back into the range by treating the range as a loop. Values within the range (including `min` and `max`) are returned as is.
+Brings `value` to at least `min` and less than `max` by treating the range as a loop. `max` is treated as the same position as `min` (the same idea as the remainder operator). Useful for values whose end and start are the same position, such as indexes and angles. Returns `min` when `min` and `max` are equal.
 
 ```ts
 loopInRange(12, 0, 10); // 2
 loopInRange(-1, 0, 10); // 9
+loopInRange(10, 0, 10); // 0
 ```
 
 #### `pingpongInRange`
 
 ```ts
 pingpongInRange(value: number, min: number, max: number): number
-pingpongInRange.dataLast(min: number, max: number): (value: number) => number
 ```
 
 Brings an out-of-range `value` back into the range by bouncing back and forth between the ends.
@@ -931,7 +917,6 @@ pingpongInRange(-2, 0, 10); // 2
 
 ```ts
 replaceOutOfRange(value: number, min: number, max: number, replacement: number): number
-replaceOutOfRange.dataLast(min: number, max: number, replacement: number): (value: number) => number
 ```
 
 Returns `value` when it is within the range (at least `min` and at most `max`), and `replacement` otherwise.
@@ -940,14 +925,16 @@ Returns `value` when it is within the range (at least `min` and at most `max`), 
 
 ```ts
 roundToStep(data: number, step: number): number
-roundToStep.dataLast(step: number): (data: number) => number
 ```
 
-Rounds `data` to the nearest multiple of `step`. The calculation uses floating-point numbers, so a fractional `step` may produce rounding errors.
+Rounds `data` to the nearest multiple of `step`. Values exactly halfway are rounded toward positive infinity (the same as `Math.round`, so `-2.5` becomes `-2`). The result is rounded again to the number of decimal places in `step`, so errors like `0.30000000000000004` do not appear. If `step` is `0` or not finite, `data` is returned as is.
+
+Rounding works on the floating-point (double) value. `1.15` is `1.1499…` as a double, so `roundToStep(1.15, 0.1)` returns `1.1`. Use `@fringeworks/numeric-string` to round decimals exactly as written.
 
 ```ts
 roundToStep(7, 5); // 5
 roundToStep(8, 5); // 10
+roundToStep(0.3, 0.1); // 0.3
 ```
 
 #### Constants
@@ -970,6 +957,8 @@ roundToStep(8, 5); // 10
 
 ### object
 
+To prevent prototype pollution, functions that read or write object keys ignore the `__proto__` key. Functions that take a path, such as `set` and `unset`, do nothing when the path contains `__proto__`.
+
 | Function                                               | Description                                                                      |
 | ------------------------------------------------------ | -------------------------------------------------------------------------------- |
 | `assignDefined(target, values, options?)`              | Returns a new object with only the values that are not `undefined` assigned      |
@@ -977,6 +966,7 @@ roundToStep(8, 5); // 10
 | `cloneDeep(value)`                                     | Makes a deep copy of a value                                                     |
 | `cloneShallow(value)`                                  | Makes a shallow copy of a value                                                  |
 | `countKeys(obj)`                                       | Returns the number of enumerable properties of an object                         |
+| `createOverrideProxy(instance, overrides)`             | Creates a proxy that overrides an instance's properties                          |
 | `distribute(data, rules, options?)`                    | Splits properties into several objects according to rules                        |
 | `exactKeys<T>()(keys)`                                 | Checks at compile time that an array lists exactly the keys of a type            |
 | `exactKeysFromRecord<T>(keys)`                         | Creates an array of keys from an object that has every key of a type             |
@@ -986,11 +976,11 @@ roundToStep(8, 5); // 10
 | `filterByValues(target, condition, options?)`          | Keeps only the values that match a condition                                     |
 | `flattenObject(data, options?)`                        | Flattens a nested object into a single level                                     |
 | `forEachValue(target, callback, options?)`             | Runs a callback for the value of each property                                   |
-| `get(data, path)`                                      | Returns the value of the property at a path                                      |
+| `get(data, path, options?)`                            | Returns the value of the property at a path                                      |
 | `hasOwn(data, key)`                                    | Checks whether an object has an own property (equivalent to `Object.hasOwn`)     |
 | `maybeHasOwn(data, key)`                               | Checks whether an object has an own property (safe for `null`)                   |
 | `omit(data, keys)`                                     | Returns a new object without the given keys                                      |
-| `overrideInstance(instance, overrides)`                | Creates a proxy that overrides an instance's properties                          |
+| `parsePropertyPath(path)`                              | Converts a property path to an array of keys                                     |
 | `set(data, path, value)`                               | Returns a new object with a value set at a path                                  |
 | `setMutable(data, path, value)`                        | Sets a value at a path (mutating)                                                |
 | `stableStringify(value, space?)`                       | Converts a value to a JSON string with sorted keys                               |
@@ -1003,11 +993,10 @@ roundToStep(8, 5); // 10
 #### `assignDefined`
 
 ```ts
-assignDefined<T extends LooseRecord, V extends LooseRecord>(target: T, values: V, options?: AssignDefinedOptions): AssignDefinedResult<T, V>
-assignDefined.dataLast<V extends LooseRecord>(values: V, options?: AssignDefinedOptions): <T extends LooseRecord>(target: T) => AssignDefinedResult<T, V>
+assignDefined<T extends object, V extends object>(target: T, values: V, options?: AssignDefinedOptions): AssignDefinedResult<T, V>
 ```
 
-Returns a new object with only the properties of `values` that are not `undefined` assigned to `target`. Returns `target` as is when `target` or `values` is `null` or `undefined`.
+Returns a new object with only the properties of `values` that are not `undefined` assigned to `target`. Symbol keys are included.
 
 ```ts
 assignDefined({ a: 1, b: 2 }, { a: undefined, b: null, c: 3 }); // { a: 1, b: null, c: 3 }
@@ -1022,7 +1011,7 @@ assignDefined({ a: 1, b: 2 }, { b: null }, { skipNull: true }); // { a: 1, b: 2 
 #### `assignDefinedMutable`
 
 ```ts
-assignDefinedMutable<T extends LooseRecord, V extends LooseRecord>(target: T, values: V, options?: AssignDefinedMutableOptions): AssignDefinedResult<T, V>
+assignDefinedMutable<T extends object, V extends object>(target: T, values: V, options?: AssignDefinedMutableOptions): AssignDefinedResult<T, V>
 ```
 
 The mutating version of `assignDefined`. Assigns to `target` directly and returns the same object. The options are the same as `assignDefined`.
@@ -1051,14 +1040,31 @@ countKeys(obj: unknown): number
 
 Returns the number of own enumerable properties of an object (`Object.keys(obj).length`). Returns `0` for values that are not objects.
 
+#### `createOverrideProxy`
+
+```ts
+createOverrideProxy<I extends object, O extends Record<PropertyKey, (target: I, prop: string | symbol, receiver: any) => any>>(instance: I, overrides?: O): I & { [K in keyof O]: ReturnType<O[K]> }
+```
+
+Creates a proxy that overrides properties of `instance`, for replacing methods or properties of an instance when subclassing is not possible. `instance` itself is not modified. `overrides` maps property names to functions that return the value read for that property. Methods and getters that are not overridden are called with the original instance as `this`, so it also works with instances that have internal state, such as `Map` or DOM elements. In exchange, properties that the original methods read through `this` do not see the overrides.
+
+```ts
+const logger = createOverrideProxy(console, {
+  log:
+    (target) =>
+    (...args: unknown[]) =>
+      target.log('[app]', ...args),
+});
+logger.log('hello'); // [app] hello
+```
+
 #### `distribute`
 
 ```ts
-distribute<T extends LooseRecord, DR extends DistributeRules<T>>(data: T, rules: DR, options?: DistributeOptions): DistributeResult<T, DR>
-distribute.dataLast<T extends LooseRecord, DR extends DistributeRules<T>>(rules: DR, options?: DistributeOptions): (data: T) => DistributeResult<T, DR>
+distribute<T extends object, DR extends DistributeRules<T>>(data: T, rules: DR, options?: DistributeOptions): DistributeResult<T, DR>
 ```
 
-Splits the top-level properties of `data` into several objects according to `rules`. `rules` maps group names to arrays of property names; a group set to `null` receives the properties that went into no other group. The result type has the specified properties for each group.
+Splits the top-level properties of `data` into several objects according to `rules`. `rules` maps group names to arrays of property names; a group set to `null` receives the properties that went into no other group. A property listed in several groups goes into each of them. The result type has the specified properties for each group.
 
 ```ts
 const { identity, rest } = distribute(user, {
@@ -1069,10 +1075,10 @@ const { identity, rest } = distribute(user, {
 // rest: the other properties of user
 ```
 
-| Option              | Type      | Description                                     |
-| ------------------- | --------- | ----------------------------------------------- |
-| `includeInherited?` | `boolean` | If `true`, inherited properties are split too   |
-| `cloneValue?`       | `boolean` | If `true`, values are cloned before being split |
+| Option              | Type      | Description                                                                                                                      |
+| ------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `includeInherited?` | `boolean` | If `true`, inherited properties are split too                                                                                    |
+| `cloneValue?`       | `boolean` | If `true`, values are cloned with `cloneDeep` before being split. Groups set to `null` also receive values cloned for each group |
 
 #### `exactKeys`
 
@@ -1105,11 +1111,10 @@ const userKeys = exactKeysFromRecord<User>({ id: true, name: true, age: true });
 #### `fillDefaults`
 
 ```ts
-fillDefaults<T extends LooseRecord, V extends LooseRecord>(target: T, defaultValues: V, options?: FillDefaultsOptions): FillDefaultsResult<T, V>
-fillDefaults.dataLast<V extends LooseRecord>(defaultValues: V, options?: FillDefaultsOptions): <T extends LooseRecord>(target: T) => FillDefaultsResult<T, V>
+fillDefaults<T extends object, V extends object>(target: T, defaultValues: V, options?: FillDefaultsOptions): FillDefaultsResult<T, V>
 ```
 
-Returns a new object with the values of `defaultValues` set on the properties of `target` whose values are `undefined`. Values in `defaultValues` that are `undefined` are not set. Returns `target` as is when `target` or `defaultValues` is `null` or `undefined`.
+Returns a new object with the values of `defaultValues` set on the properties of `target` whose values are `undefined`. Values in `defaultValues` that are `undefined` are not set. Symbol keys are included.
 
 ```ts
 fillDefaults({ a: undefined, b: null, c: 1 }, { a: 1, b: 2, c: 3, d: 4 }); // { a: 1, b: null, c: 1, d: 4 }
@@ -1125,7 +1130,7 @@ fillDefaults({ b: null }, { b: 2 }, { overwriteNull: true }); // { b: 2 }
 #### `fillDefaultsMutable`
 
 ```ts
-fillDefaultsMutable<T extends LooseRecord, V extends LooseRecord>(target: T, defaultValues: V, options?: FillDefaultsMutableOptions): FillDefaultsResult<T, V>
+fillDefaultsMutable<T extends object, V extends object>(target: T, defaultValues: V, options?: FillDefaultsMutableOptions): FillDefaultsResult<T, V>
 ```
 
 The mutating version of `fillDefaults`. Sets the values on `target` directly and returns the same object. The options are the same as `fillDefaults`.
@@ -1133,11 +1138,10 @@ The mutating version of `fillDefaults`. Sets the values on `target` directly and
 #### `filterByKeys`
 
 ```ts
-filterByKeys<T = unknown>(target: T, condition: PropertyKey, options?: FilterByKeysOptions): T | null
-filterByKeys.dataLast(condition: PropertyKey, options?: FilterByKeysOptions): <T = unknown>(target: T) => T | null
+filterByKeys(target: unknown, condition: string | number, options?: FilterByKeysOptions): unknown
 ```
 
-Walks objects and arrays recursively and returns a new value that keeps only the properties whose keys match the condition. When `condition` is a string, a key matches if it contains `condition` (substring match); otherwise the key must equal `condition`. A matching property is kept with its whole value, and a non-matching property is searched further. Returns `null` when nothing matches. Arrays keep their original indexes, leaving holes where nothing matched.
+Walks objects and arrays recursively and returns a new value that keeps only the properties whose keys match the condition. When `condition` is a string, a key matches if it contains `condition` (substring match); when it is a number, the key must equal it (`0` matches `'0'`). A matching property is kept with its whole value, and a non-matching property is searched further. Returns `null` when nothing matches. The remaining structure is only known at runtime, so the return type is `unknown`. Arrays keep their original indexes, leaving holes where nothing matched.
 
 ```ts
 filterByKeys({ a: { name: 1, x: 2 }, y: [{ name: 3 }] }, 'name');
@@ -1155,8 +1159,7 @@ filterByKeys({ UserName: 'A', age: 1 }, 'username', {
 #### `filterByValues`
 
 ```ts
-filterByValues<T = unknown>(target: T, condition: unknown, options?: FilterByValuesOptions): T | null
-filterByValues.dataLast(condition: unknown, options?: FilterByValuesOptions): <T = unknown>(target: T) => T | null
+filterByValues(target: unknown, condition: unknown, options?: FilterByValuesOptions): unknown
 ```
 
 Walks objects and arrays recursively and returns a new value that keeps only the values matching the condition. When `condition` is a string, a string value matches if it contains `condition` (substring match); otherwise the value must equal `condition` (`===`). What is kept, when `null` is returned, and how arrays are handled are the same as `filterByKeys`.
@@ -1174,49 +1177,51 @@ filterByValues({ a: 1, b: 2, c: 1 }, 1); // { a: 1, c: 1 }
 #### `flattenObject`
 
 ```ts
-flattenObject(data: LooseRecord, options?: FlattenObjectOptions): LooseRecord
-flattenObject.dataLast(options?: FlattenObjectOptions): (data: LooseRecord) => LooseRecord
+flattenObject(data: object, options?: FlattenObjectOptions): LooseRecord
 ```
 
-Flattens nested plain objects and arrays into a single-level object whose keys are the joined paths.
+Flattens nested plain objects and arrays into a single-level object whose keys are the joined paths. Array elements are joined in the `a[0]` form, so keys made with the default separator can be used as paths for `set` and others as is (keys containing `.` or `[` cannot be told apart). Empty objects and arrays are kept as values. When joined keys collide, the value processed later wins.
 
 ```ts
-flattenObject({ a: { b: [1, { c: 2 }] } }); // { 'a.b.0': 1, 'a.b.1.c': 2 }
+flattenObject({ a: { b: [1, { c: 2 }] } }); // { 'a.b[0]': 1, 'a.b[1].c': 2 }
 flattenObject({ a: { b: [1] } }, { keepArrays: true }); // { 'a.b': [1] }
 ```
 
-| Option          | Type      | Description                                                                                                        |
-| --------------- | --------- | ------------------------------------------------------------------------------------------------------------------ |
-| `keySeparator?` | `string`  | The separator used to join paths. Defaults to `'.'`                                                                |
-| `keepArrays?`   | `boolean` | If `true`, arrays are kept as values instead of being flattened. Defaults to `false`                               |
-| `leafKeysOnly?` | `boolean` | If `true`, uses only the last key instead of the joined path (same keys overwrite each other). Defaults to `false` |
+| Option          | Type      | Description                                                                                                                  |
+| --------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `keySeparator?` | `string`  | The separator used to join paths. Array elements are joined in the `[0]` form regardless of the separator. Defaults to `'.'` |
+| `keepArrays?`   | `boolean` | If `true`, arrays are kept as values instead of being flattened. Defaults to `false`                                         |
+| `leafKeysOnly?` | `boolean` | If `true`, uses only the last key instead of the joined path (same keys overwrite each other). Defaults to `false`           |
 
 #### `forEachValue`
 
 ```ts
-forEachValue<T extends LooseRecord>(target: T, callback: (value: unknown, key: PropertyKey, obj: T) => void | boolean, options?: ForEachValueOptions): boolean
-forEachValue.dataLast<T extends LooseRecord>(callback: (value: unknown, key: PropertyKey, obj: T) => void | boolean, options?: ForEachValueOptions): (target: T) => boolean
+forEachValue<T extends object>(target: T, callback: (value: T[keyof T], key: string | symbol, obj: T) => void | boolean, options?: ForEachValueOptions): boolean
 ```
 
-Runs `callback` for each own enumerable property of an object. Stops when `callback` returns `false`. Returns `true` when every property was processed and `false` when it stopped early.
+Runs `callback` for each own enumerable property of an object. Like spread syntax and `Object.assign`, symbol keys are included. Stops when `callback` returns `false`. Returns `true` when every property was processed and `false` when it stopped early.
 
-| Option              | Type      | Description                                  |
-| ------------------- | --------- | -------------------------------------------- |
-| `includeInherited?` | `boolean` | If `true`, inherited properties are included |
+| Option              | Type      | Description                                                                     |
+| ------------------- | --------- | ------------------------------------------------------------------------------- |
+| `includeInherited?` | `boolean` | If `true`, inherited properties are included. Only own symbol keys are included |
 
 #### `get`
 
 ```ts
-get<T, R = unknown>(data: T, path: PropertyKey | PropertyKey[]): R | undefined
-get.dataLast<T, R = unknown>(path: PropertyKey | PropertyKey[]): (data: T) => R | undefined
+get(data: unknown, path: PropertyPath, options?: GetOptions): unknown
 ```
 
-Returns the value of the property at a path. The path is a string such as `'a.b[0]'` or `'a.b.0'`, or an array of keys. Returns `undefined` when a property along the path is missing or `data` is `null` or `undefined`.
+Returns the value of the property at a path. The path is a string such as `'a.b[0]'`, or an array of keys. Array indexes are written as `[0]`. See `parsePropertyPath` for how strings are parsed. A number or symbol is treated as a single key. Returns `undefined` when a property along the path is missing, the path is empty, or `data` is `null` or `undefined`. The value's type cannot be determined from the path, so it returns `unknown`; check the type before using it. By default only own properties are followed; properties on the prototype (such as `toString` or class getters) are treated as missing.
 
 ```ts
 get({ a: { b: [{ c: 1 }] } }, 'a.b[0].c'); // 1
 get({ a: { b: [{ c: 1 }] } }, ['a', 'b', 0, 'c']); // 1
+get({}, 'toString'); // undefined
 ```
+
+| Option              | Type      | Description                                                                                    |
+| ------------------- | --------- | ---------------------------------------------------------------------------------------------- |
+| `includeInherited?` | `boolean` | If `true`, also follows properties on the prototype (but not `__proto__`). Defaults to `false` |
 
 #### `hasOwn`
 
@@ -1242,42 +1247,45 @@ Checks whether `data` has `key` as an own property (`hasOwn`). Returns `false` w
 #### `omit`
 
 ```ts
-omit<T, R = unknown>(data: T, keys: PropertyKey | readonly PropertyKey[]): R | undefined
-omit.dataLast<T, R = unknown>(keys: PropertyKey | readonly PropertyKey[]): (data: T) => R | undefined
+omit<T extends object, K extends PropertyKey>(data: T, keys: K | readonly K[]): Omit<T, K>
+omit<T extends object, K extends PropertyKey>(data: T | null | undefined, keys: K | readonly K[]): Omit<T, K> | undefined
 ```
 
-Returns a new object without the properties in `keys`. Keys are not treated as paths (use `unset` to remove nested properties). Returns `undefined` when `data` is `null` or `undefined`.
+Returns a new object without the properties in `keys`. Keys are not treated as paths (use `unset` to remove nested properties). Keys that are not in `data` are allowed. The return type is `Omit<T, K>`. Returns `undefined` when `data` is `null` or `undefined`.
 
 ```ts
 omit({ a: 1, b: 2, c: 3 }, ['a', 'c']); // { b: 2 }
 ```
 
-#### `overrideInstance`
+#### `parsePropertyPath`
 
 ```ts
-overrideInstance<I extends object, O extends Record<PropertyKey, (target: I, prop: string | symbol, receiver: any) => any>>(instance: I, overrides?: O): I & { [K in keyof O]: ReturnType<O[K]> }
+parsePropertyPath(path: PropertyPath): readonly PropertyKey[]
 ```
 
-Creates a proxy that overrides properties of `instance`, for replacing methods or properties of an instance when subclassing is not possible. `overrides` maps property names to functions that return the value read for that property.
+Converts a property path to an array of keys. `get`, `set`, `unset`, and others interpret paths by these rules. A string is parsed as follows.
+
+- Parts separated by `.` are string keys (`'a.1'` becomes `['a', '1']`)
+- A non-negative integer in brackets, such as `[0]`, is an array index (a number)
+- Quoting with `["b.c"]` or `['b.c']` allows keys that contain `.` or `[`. The character after `\` is used as is
+- Unquoted bracket contents that are not such an integer (`[b]`, `[01]`, `[-1]`) are string keys
+- Empty keys (such as between `'a..b'`) are skipped, and an unclosed bracket or quote makes the rest of the string part of the key
+
+Writing array indexes as `[0]` is recommended. `'a.0'` and `'a[0]'` point to the same element when reading or removing, but when `set` creates a missing container, `'a.0'` creates an object and `'a[0]'` creates an array. A number or symbol is treated as a single key, and an array is returned as is.
 
 ```ts
-const logger = overrideInstance(console, {
-  log:
-    (target) =>
-    (...args: unknown[]) =>
-      target.log('[app]', ...args),
-});
-logger.log('hello'); // [app] hello
+parsePropertyPath('a.b[0].c'); // ['a', 'b', 0, 'c']
+parsePropertyPath('a.1'); // ['a', '1']
+parsePropertyPath('a["b.c"]'); // ['a', 'b.c']
 ```
 
 #### `set`
 
 ```ts
-set<T extends object>(data: T, path: string | PropertyKey[], value: unknown): T
-set.dataLast(path: string | PropertyKey[], value: unknown): <T extends object>(data: T) => T
+set<T extends object>(data: T, path: PropertyPath, value: unknown): T
 ```
 
-Returns a new object with `value` set at the path. Objects and arrays along the path are copied, and missing ones are created (an array when the next key is a number). Paths are specified the same way as `get`.
+Returns a new object with `value` set at the path. Objects and arrays along the path are copied, and missing ones are created (an array when the next key is an index such as `[0]`, otherwise an object). An existing object is never turned into an array, even with a number key. An empty path does nothing and returns `data`. Paths are specified the same way as `get`.
 
 ```ts
 set({ a: { b: 1 } }, 'a.c', 2); // { a: { b: 1, c: 2 } }
@@ -1287,8 +1295,7 @@ set({}, 'a[0].b', 1); // { a: [{ b: 1 }] }
 #### `setMutable`
 
 ```ts
-setMutable<T extends object>(data: T, path: string | PropertyKey[], value: unknown): T
-setMutable.dataLast<T extends object>(path: string | PropertyKey[], value: unknown): (data: T) => T
+setMutable<T extends object>(data: T, path: PropertyPath, value: unknown): T
 ```
 
 The mutating version of `set`. Modifies `data` directly and returns the same object.
@@ -1299,7 +1306,7 @@ The mutating version of `set`. Modifies `data` directly and returns the same obj
 stableStringify(value: unknown, space?: string | number): string
 ```
 
-Sorts object keys recursively in ascending order and converts the value to a JSON string. Objects with the same content produce the same string regardless of key order, which makes it useful for cache keys. Values with `toJSON` (such as `Date`) use the result of `toJSON`, as `JSON.stringify` does. `space` is the same as the `space` of `JSON.stringify`.
+Sorts object keys recursively in ascending order and converts the value to a JSON string. Objects with the same content produce the same string regardless of key order, which makes it useful for cache keys. Values with `toJSON` (such as `Date`) and boxed primitives (such as `new Number(1)`) are converted as `JSON.stringify` does, and a circular reference throws a `TypeError` as `JSON.stringify` does. `space` is the same as the `space` of `JSON.stringify`.
 
 ```ts
 stableStringify({ b: 2, a: { d: 1, c: 2 } }); // '{"a":{"c":2,"d":1},"b":2}'
@@ -1308,11 +1315,10 @@ stableStringify({ b: 2, a: { d: 1, c: 2 } }); // '{"a":{"c":2,"d":1},"b":2}'
 #### `transformObject`
 
 ```ts
-transformObject<T extends LooseRecord = LooseRecord, S extends LooseRecord = LooseRecord>(source: S, rules: (string | TransformObjectRule<S, T>)[], options?: TransformObjectOptions): T
-transformObject.dataLast<T extends LooseRecord = LooseRecord, S extends LooseRecord = LooseRecord>(rules: (string | TransformObjectRule<S, T>)[], options?: TransformObjectOptions): (source: S) => T
+transformObject<T extends object = LooseRecord, S extends object = LooseRecord>(source: S, rules: readonly (string | TransformObjectRule<S, T>)[], options?: TransformObjectOptions): T
 ```
 
-Builds a new object by taking values from `source` according to `rules`. A string rule takes and sets the value at the same path. Values that are `undefined` are not set. With `removeFromSource`, `source` is modified directly.
+Builds a new object by taking values from `source` according to `rules`. A string rule takes and sets the value at the same path. Values that are `undefined` are not set. With `removeFromSource`, `source` is modified directly. Properties are removed after all rules have taken their values, so removing array elements does not shift the indexes used by other rules.
 
 ```ts
 transformObject({ firstName: 'Alice', age: 30 }, [
@@ -1323,11 +1329,11 @@ transformObject({ firstName: 'Alice', age: 30 }, [
 // { age: 30, user: { name: 'Alice' }, doubleAge: 60 }
 ```
 
-| Rule property       | Type                                           | Description                                                                                         |
-| ------------------- | ---------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `from`              | `string \| ((source: S) => unknown)`           | The path to take from, or a function returning the value                                            |
-| `to?`               | `string \| ((target: T, value: unknown) => T)` | The path to set, or a function returning the object with the value set. Defaults to the `from` path |
-| `removeFromSource?` | `boolean`                                      | If `true`, removes the property from `source` after taking it. Follows the option when omitted      |
+| Rule property       | Type                                                 | Description                                                                                                                             |
+| ------------------- | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `from`              | `PropertyPath \| ((source: S) => unknown)`           | The path to take from, or a function returning the value                                                                                |
+| `to?`               | `PropertyPath \| ((target: T, value: unknown) => T)` | The path to set, or a function returning the object with the value set. Defaults to the `from` path. Required when `from` is a function |
+| `removeFromSource?` | `boolean`                                            | If `true`, removes the property from `source` after taking it. Follows the option when omitted. Not allowed when `from` is a function   |
 
 | Option              | Type      | Description                                                                          |
 | ------------------- | --------- | ------------------------------------------------------------------------------------ |
@@ -1336,8 +1342,7 @@ transformObject({ firstName: 'Alice', age: 30 }, [
 #### `unset`
 
 ```ts
-unset<T extends LooseRecord>(data: T, path: string | PropertyKey[]): T
-unset.dataLast<T extends LooseRecord>(path: string | PropertyKey[]): (data: T) => T
+unset<T extends object>(data: T, path: PropertyPath): T
 ```
 
 Returns a new object without the property at the path. Removing an array element shifts the following elements. Returns `data` as is when the path does not exist. Paths are specified the same way as `get`.
@@ -1350,8 +1355,7 @@ unset({ a: [1, 2, 3] }, 'a[1]'); // { a: [1, 3] }
 #### `unsetMutable`
 
 ```ts
-unsetMutable<T extends LooseRecord>(data: T, path: string | PropertyKey[]): T
-unsetMutable.dataLast<T extends LooseRecord>(path: string | PropertyKey[]): (data: T) => T
+unsetMutable<T extends object>(data: T, path: PropertyPath): T
 ```
 
 The mutating version of `unset`. Modifies `data` directly and returns the same object.
@@ -1359,29 +1363,26 @@ The mutating version of `unset`. Modifies `data` directly and returns the same o
 #### `update`
 
 ```ts
-update<T extends LooseRecord>(object: T, values: Partial<T>, options?: UpdateOptions): T
-update.dataLast(values: LooseRecord, options?: UpdateOptions): <T extends LooseRecord>(object: T) => T
+update<T extends object>(object: T, values: Partial<T>, options?: UpdateOptions): T
 ```
 
-Returns a new object with only the properties of `values` that differ from `object` updated. When nothing changes, `object` itself is returned, so a reference comparison tells whether anything changed. How values are compared is set with the options of `isEqual`.
+Returns a new object with only the properties of `values` that differ from `object` updated. When nothing changes, `object` itself is returned, so a reference comparison tells whether anything changed. How values are compared is set with the `isEqual` option.
 
 ```ts
 const state = { a: 1, b: 2 };
 update(state, { a: 9 }); // { a: 9, b: 2 } (a new object)
 update(state, { a: 1 }) === state; // true
-update({ a: { x: 1 } }, { a: { x: 1 } }, { mode: 'deep' }); // the original object
+update({ a: { x: 1 } }, { a: { x: 1 } }, { isEqual }); // the original object
 ```
 
-| Option        | Type          | Description                                |
-| ------------- | ------------- | ------------------------------------------ |
-| `mode?`       | `CompareMode` | How values are compared. Same as `isEqual` |
-| `customizer?` | `function`    | A custom comparison. Same as `isEqual`     |
+| Option     | Type                                            | Description                                                                                                                                                                        |
+| ---------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `isEqual?` | `(value1: unknown, value2: unknown) => boolean` | A function that checks whether a value is unchanged. Defaults to `Object.is` (`NaN` equals `NaN`, and `+0` differs from `-0`). Pass the `isEqual` function to compare by structure |
 
 #### `updateMutable`
 
 ```ts
-updateMutable<T extends LooseRecord>(object: T | null | undefined, values: Partial<T> | null | undefined, options?: UpdateMutableOptions): Partial<T>
-updateMutable.dataLast<T extends LooseRecord>(values: Partial<T> | null | undefined, options?: UpdateMutableOptions): (object: T | null | undefined) => Partial<T>
+updateMutable<T extends object>(object: T, values: Partial<T>, options?: UpdateMutableOptions): Partial<T>
 ```
 
 The mutating version of `update`. Updates `object` directly and returns an object with the previous values of the updated properties. The options are the same as `update`.
@@ -1409,62 +1410,77 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 } (state becomes { a: 9, b: 2 })
 | `FilterByValuesOptions`       | Options for `filterByValues`                                                                                                                                                                     |
 | `FlattenObjectOptions`        | Options for `flattenObject`                                                                                                                                                                      |
 | `ForEachValueOptions`         | Options for `forEachValue`                                                                                                                                                                       |
+| `GetOptions`                  | Options for `get`                                                                                                                                                                                |
+| `PropertyPath`                | A path for `get`, `set`, `unset`, and others. A string is parsed by the rules of `parsePropertyPath`, a number or symbol is a single key, and an array is a sequence of keys                     |
 | `TransformObjectOptions`      | Options for `transformObject`                                                                                                                                                                    |
 | `TransformObjectRule<S, T>`   | A rule of `transformObject`                                                                                                                                                                      |
-| `UpdateMutableOptions`        | Options for `updateMutable` (same as `IsEqualOptions`)                                                                                                                                           |
+| `UpdateMutableOptions`        | Options for `updateMutable`                                                                                                                                                                      |
 | `UpdateOptions`               | Same as `UpdateMutableOptions`                                                                                                                                                                   |
 
 ### string
 
-| Function                                            | Description                                                     |
-| --------------------------------------------------- | --------------------------------------------------------------- |
-| `createExtractor(delimiters?)`                      | Creates a function that extracts text enclosed in delimiters    |
-| `ensureString(data)`                                | Converts a value to a string                                    |
-| `escapeRegExp(target)`                              | Escapes special regular expression characters                   |
-| `isSurroundedBy(str, prefix, suffix?)`              | Checks whether a string is enclosed by given strings            |
-| `lowerFirst(str)`                                   | Converts the first character to lowercase                       |
-| `maybeMatchAll(str, regexp)`                        | Returns the results of `matchAll` as an array (safe for `null`) |
-| `maybeReplace(str, pattern, replacement, options?)` | Replaces text in a string (safe for `null`)                     |
-| `replaceByMap(str, map)`                            | Replaces text according to a map                                |
-| `replacePlaceholders(template, values, options?)`   | Replaces placeholders in a template with values                 |
-| `toCamelCase(data)`, ...                            | Converts the case of a string                                   |
-| `upperFirst(str)`                                   | Converts the first character to uppercase                       |
+| Function                                          | Description                                                  |
+| ------------------------------------------------- | ------------------------------------------------------------ |
+| `createExtractor(delimiters?)`                    | Creates a function that extracts text enclosed in delimiters |
+| `createReplacerByMap(map)`                        | Creates a function that replaces text according to a map     |
+| `ensureString(data)`                              | Converts a value to a string                                 |
+| `escapeRegExp(target)`                            | Escapes special regular expression characters                |
+| `isSurroundedBy(str, prefix, suffix?)`            | Checks whether a string is enclosed by given strings         |
+| `lowerFirst(str)`                                 | Converts the first character to lowercase                    |
+| `replaceByMap(str, map)`                          | Replaces text according to a map                             |
+| `replacePlaceholders(template, values, options?)` | Replaces placeholders in a template with values              |
+| `toCamelCase(data)`, ...                          | Converts the case of a string                                |
+| `upperFirst(str)`                                 | Converts the first character to uppercase                    |
 
 #### `createExtractor`
 
 ```ts
-createExtractor(delimiters?: string | [string, string]): CreateExtractorResult
+createExtractor(delimiters?: string | readonly [string, string]): Extractor
 ```
 
-Creates a function that extracts the text enclosed in `delimiters`. A single string is used as both the opening and closing delimiter. Defaults to `['{{', '}}']`. The created function returns an array of the extracted strings.
+Creates a function that extracts the text enclosed in `delimiters`. A single string is used as both the opening and closing delimiter. Defaults to `['{{', '}}']`, which is also used when a delimiter is empty. The created function returns an array of the extracted strings. Whitespace just inside the delimiters is trimmed, and enclosed text containing a line break is not extracted. An empty string, `null`, or `undefined` gives an empty array.
 
 ```ts
 const extract = createExtractor();
-extract('{{a}} and {{ b }} and {{a}}', { trim: true, unique: true }); // ['a', 'b']
+extract('{{a}} and {{ b }} and {{a}}', { unique: true }); // ['a', 'b']
+extract('{{ a }}', { keepWhitespace: true }); // [' a ']
+extract('{{ a }}', { keepDelimiters: true }); // ['{{ a }}']
 createExtractor('%')('%x% %y%'); // ['x', 'y']
 ```
 
 The created function has the following options and properties.
 
-| Option            | Type      | Description                                                            |
-| ----------------- | --------- | ---------------------------------------------------------------------- |
-| `keepDelimiters?` | `boolean` | If `true`, includes the delimiters in the results. Defaults to `false` |
-| `trim?`           | `boolean` | If `true`, trims surrounding whitespace. Defaults to `false`           |
-| `unique?`         | `boolean` | If `true`, removes duplicates. Defaults to `false`                     |
+| Option            | Type      | Description                                                                                             |
+| ----------------- | --------- | ------------------------------------------------------------------------------------------------------- |
+| `keepDelimiters?` | `boolean` | If `true`, returns the original text including the delimiters (whitespace is kept). Defaults to `false` |
+| `keepWhitespace?` | `boolean` | If `true`, keeps the whitespace just inside the delimiters. Defaults to `false`                         |
+| `unique?`         | `boolean` | If `true`, removes duplicates (compared after trimming). Defaults to `false`                            |
 
-| Property | Type     | Description           |
-| -------- | -------- | --------------------- |
-| `prefix` | `string` | The opening delimiter |
-| `suffix` | `string` | The closing delimiter |
+| Property | Type     | Description                       |
+| -------- | -------- | --------------------------------- |
+| `prefix` | `string` | The opening delimiter (read-only) |
+| `suffix` | `string` | The closing delimiter (read-only) |
+
+#### `createReplacerByMap`
+
+```ts
+createReplacerByMap(map: ReplacementMap): Replacer
+```
+
+Creates a function that replaces text by the same rules as `replaceByMap`. The lookup index is built only once, so it is faster than `replaceByMap` when replacing many strings with the same map. Changes to `map` after creation are not reflected in the created function. The created function returns an empty string, `null`, or `undefined` as is.
+
+```ts
+const replace = createReplacerByMap({ hello: 'hi', world: 'earth' });
+['hello world', 'hello'].map(replace); // ['hi earth', 'hi']
+```
 
 #### `ensureString`
 
 ```ts
 ensureString(data: unknown): string
-ensureString.dataLast(): (data: unknown) => string
 ```
 
-Converts a value to a string. Strings are returned as is, `null` and `undefined` become an empty string, and other values are converted with `String()`.
+Converts a value to a string. Strings are returned as is, `null` and `undefined` become an empty string, and other values are converted with `String()`. Values that `String()` cannot convert (such as objects with a `null` prototype) become `'[object Object]'` and similar, as ordinary objects do.
 
 #### `escapeRegExp`
 
@@ -1472,69 +1488,42 @@ Converts a value to a string. Strings are returned as is, `null` and `undefined`
 escapeRegExp(target: string): string
 ```
 
-Escapes the special regular expression characters (`- . * + ? ^ $ { } ( ) | [ ]` and the backslash) so that the string can be passed to the `RegExp` constructor. `-` is escaped as `\x2d`, as the standard `RegExp.escape` does, so the result also works with the `u` and `v` flags and inside character classes.
+Escapes a string so that it matches itself inside a regular expression. Returns the same result as the standard `RegExp.escape`, and uses it when available. The result is treated as the original text even with the `u` and `v` flags and inside character classes. A leading letter or digit is also escaped (as in `\x31`) so that it cannot combine with the preceding text.
 
 ```ts
-new RegExp(escapeRegExp('1.5*2')); // /1\.5\*2/
+new RegExp(escapeRegExp('1.5*2')); // /\x31\.5\*2/
 ```
 
 #### `isSurroundedBy`
 
 ```ts
 isSurroundedBy(str: string, prefix: string, suffix?: string): boolean
-isSurroundedBy.dataLast(prefix: string, suffix?: string): (str: string) => boolean
 ```
 
-Checks whether `str` starts with `prefix` and ends with `suffix`. At least one character is required between them. `suffix` defaults to `prefix`.
+Checks whether `str` starts with `prefix` and ends with `suffix`. Nothing is required between them, but `false` is returned when `prefix` and `suffix` overlap. `suffix` defaults to `prefix`.
 
 ```ts
 isSurroundedBy('(a)', '(', ')'); // true
-isSurroundedBy('()', '(', ')'); // false
-isSurroundedBy('"text"', '"'); // true
+isSurroundedBy('()', '(', ')'); // true
+isSurroundedBy('"', '"'); // false
 ```
 
 #### `lowerFirst` / `upperFirst`
 
 ```ts
 lowerFirst(str: string): string
-lowerFirst.dataLast(): (str: string) => string
 upperFirst(str: string): string
-upperFirst.dataLast(): (str: string) => string
 ```
 
-Converts the first character to lowercase (`lowerFirst`) or uppercase (`upperFirst`).
-
-#### `maybeMatchAll`
-
-```ts
-maybeMatchAll(str: string | null | undefined, regexp: RegExp): RegExpExecArray[]
-```
-
-Returns the results of `str.matchAll(regexp)` as an array. Returns an empty array when `str` is `null`, `undefined`, or empty. As with `String.prototype.matchAll`, `regexp` must have the `g` flag.
-
-#### `maybeReplace`
-
-```ts
-maybeReplace(str: string | null | undefined, pattern: MaybeReplacePattern, replacement: string | ((substring: string, ...args: unknown[]) => string), options?: MaybeReplaceOptions): string | null | undefined
-maybeReplace.dataLast(pattern: MaybeReplacePattern, replacement: ..., options?: MaybeReplaceOptions): (str: string | null | undefined) => string | null | undefined
-```
-
-Replaces text in a string. Returns `str` as is when it is `null` or `undefined`. A string `pattern` replaces every occurrence (`replaceAll`), and a regular expression follows its `g` flag as `String.prototype.replace` does. When `pattern` is a function, it is called with `options` and its result is used as the pattern.
-
-```ts
-maybeReplace('a-b-c', '-', '_'); // 'a_b_c'
-maybeReplace('a-b-c', /-/, '_'); // 'a_b-c'
-maybeReplace(null, '-', '_'); // null
-```
+Converts the first character to lowercase (`lowerFirst`) or uppercase (`upperFirst`). A surrogate pair is treated as one character.
 
 #### `replaceByMap`
 
 ```ts
-replaceByMap(str: string, map: Map<string, string> | Record<string, string> | [string, string][]): string
-replaceByMap.dataLast(map: Map<string, string> | Record<string, string> | [string, string][]): (str: string) => string
+replaceByMap(str: string, map: ReplacementMap): string
 ```
 
-Replaces the keys of `map` with their values. All replacements happen in one pass, so replaced text is never replaced again. When keys overlap, longer keys win.
+Replaces the keys of `map` with their values. All replacements happen in one pass, so replaced text is never replaced again. When keys overlap, longer keys win. An empty string, `null`, or `undefined` is returned as is.
 
 ```ts
 replaceByMap('hello world', { hello: 'hi', world: 'earth' }); // 'hi earth'
@@ -1544,11 +1533,12 @@ replaceByMap('abcab', { ab: 'X', a: 'Y' }); // 'XcX'
 #### `replacePlaceholders`
 
 ```ts
-replacePlaceholders(template: string, values: Record<string, unknown> | unknown[], options?: ReplacePlaceholdersOptions): string
-replacePlaceholders.dataLast(values: Record<string, unknown> | unknown[], options?: ReplacePlaceholdersOptions): (template: string) => string
+replacePlaceholders(template: string, values: Record<string, unknown> | readonly unknown[], options?: ReplacePlaceholdersOptions): string
 ```
 
-Replaces the placeholders in `template` (`{{key}}` by default) with values from `values`. Keys are treated as paths as in `get`, and whitespace just inside the delimiters is ignored. Placeholders whose value is `null` or `undefined` are left as is.
+Replaces the placeholders in `template` (`{{key}}` by default) with values from `values`. Keys are treated as paths as in `get`, and whitespace just inside the delimiters is ignored. Enclosed text containing a line break is not treated as a placeholder.
+
+Placeholders whose value is not found are left as is. A value of `null`, `undefined`, or a function, and an empty key, are handled the same way. Other values are converted with `ensureString`. Properties on the prototype (such as `toString` or class getters) are not used unless `includeInherited` is set.
 
 ```ts
 replacePlaceholders('Hello, {{ user.name }}! {{greeting}}', {
@@ -1556,13 +1546,15 @@ replacePlaceholders('Hello, {{ user.name }}! {{greeting}}', {
   greeting: 'Welcome',
 }); // 'Hello, Alice! Welcome'
 replacePlaceholders('{{0}} and {{1}}', ['Alice', 'Bob']); // 'Alice and Bob'
+replacePlaceholders('{{toString}}', {}); // '{{toString}}'
 ```
 
-| Option              | Type                         | Description                                                                                   |
-| ------------------- | ---------------------------- | --------------------------------------------------------------------------------------------- |
-| `delimiters?`       | `string \| [string, string]` | The placeholder delimiters. A single string is used for both ends. Defaults to `['{{', '}}']` |
-| `removeUnresolved?` | `boolean`                    | If `true`, removes placeholders that have no value                                            |
-| `flatKeys?`         | `boolean`                    | If `true`, keys are not treated as paths but as property names directly under `values`        |
+| Option              | Type                                  | Description                                                                                                                        |
+| ------------------- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `delimiters?`       | `string \| readonly [string, string]` | The placeholder delimiters. A single string is used for both ends. Defaults to `['{{', '}}']`, which is also used for an empty one |
+| `removeUnresolved?` | `boolean`                             | If `true`, removes placeholders whose value is not found                                                                           |
+| `flatKeys?`         | `boolean`                             | If `true`, keys are not treated as paths but as property names directly under `values`                                             |
+| `includeInherited?` | `boolean`                             | If `true`, properties on the prototype (such as class getters) are also used. Function values are still not used                   |
 
 #### Case conversion
 
@@ -1579,61 +1571,68 @@ toSnakeCase(data: string): string
 toTitleCase(data: string): string
 toTrainCase(data: string): string
 toUpperCase(data: string): string
-// each also has dataLast(): (data: string) => string
 ```
 
-Converts the case of a string. `toLowerCase` and `toUpperCase` convert the whole string without splitting words; the others detect word boundaries (whitespace, `_`, `-`, `.`, uppercase letters, and so on), so any case in the table below except flat case can be used as input. Consecutive uppercase letters (acronyms) are kept as is only by `toTitleCase`; the others treat them as a single word. An empty string, `null`, or `undefined` is returned as is.
+Converts the case of a string. `toLowerCase` and `toUpperCase` convert the whole string without splitting words. The others split the string into words and join them in the form of each case, so any case in the table below except flat case can be used as input. An empty string, `null`, or `undefined` is returned as is.
 
-| Function               | Result for `'hello world'` | Result for `'XMLParser'` |
-| ---------------------- | -------------------------- | ------------------------ |
-| `toCamelCase`          | `helloWorld`               | `xmlParser`              |
-| `toPascalCase`         | `HelloWorld`               | `XmlParser`              |
-| `toSnakeCase`          | `hello_world`              | `xml_parser`             |
-| `toScreamingSnakeCase` | `HELLO_WORLD`              | `XML_PARSER`             |
-| `toKebabCase`          | `hello-world`              | `xml-parser`             |
-| `toTrainCase`          | `Hello-World`              | `Xml-Parser`             |
-| `toDotCase`            | `hello.world`              | `xml.parser`             |
-| `toFlatCase`           | `helloworld`               | `xmlparser`              |
-| `toTitleCase`          | `Hello World`              | `XML Parser`             |
-| `toSentenceCase`       | `Hello world`              | `Xml parser`             |
-| `toLowerCase`          | `hello world`              | `xmlparser`              |
-| `toUpperCase`          | `HELLO WORLD`              | `XMLPARSER`              |
+Words are split by the following rules.
+
+- Any character other than letters and digits (whitespace, `_`, `-`, `.`, `/`, `:`, and so on) is a separator, and leading and trailing separators are removed (`'_private'` becomes `private`)
+- Apostrophes (`'` and `’`) are removed without splitting (`"don't"` becomes `dont`)
+- A word boundary is placed before an uppercase letter that follows a lowercase letter or a digit (`helloWorld`, `version2Beta`)
+- Consecutive uppercase letters (acronyms) form one word, split before the last one when it is followed by a lowercase letter (`XMLParser` becomes `XML` / `Parser`). Acronyms are converted like any other word
+- No boundary is placed before a digit that follows a letter (`i18n`, `utf8`, and `base64` are single words)
+- Characters without case, such as Japanese, are part of a word
+
+| Function               | Result for `'hello world'` | Result for `'XMLParser'` | Result for `'user/i18n:v2'` |
+| ---------------------- | -------------------------- | ------------------------ | --------------------------- |
+| `toCamelCase`          | `helloWorld`               | `xmlParser`              | `userI18nV2`                |
+| `toPascalCase`         | `HelloWorld`               | `XmlParser`              | `UserI18nV2`                |
+| `toSnakeCase`          | `hello_world`              | `xml_parser`             | `user_i18n_v2`              |
+| `toScreamingSnakeCase` | `HELLO_WORLD`              | `XML_PARSER`             | `USER_I18N_V2`              |
+| `toKebabCase`          | `hello-world`              | `xml-parser`             | `user-i18n-v2`              |
+| `toTrainCase`          | `Hello-World`              | `Xml-Parser`             | `User-I18n-V2`              |
+| `toDotCase`            | `hello.world`              | `xml.parser`             | `user.i18n.v2`              |
+| `toFlatCase`           | `helloworld`               | `xmlparser`              | `useri18nv2`                |
+| `toTitleCase`          | `Hello World`              | `Xml Parser`             | `User I18n V2`              |
+| `toSentenceCase`       | `Hello world`              | `Xml parser`             | `User i18n v2`              |
+| `toLowerCase`          | `hello world`              | `xmlparser`              | `user/i18n:v2`              |
+| `toUpperCase`          | `HELLO WORLD`              | `XMLPARSER`              | `USER/I18N:V2`              |
 
 #### Types
 
-| Type                         | Description                                                             |
-| ---------------------------- | ----------------------------------------------------------------------- |
-| `CreateExtractorResult`      | The function created by `createExtractor`                               |
-| `ExtractorOptions`           | Options for the function created by `createExtractor`                   |
-| `MaybeReplaceOptions`        | Options passed to the function that builds a `maybeReplace` pattern     |
-| `MaybeReplacePattern`        | A `maybeReplace` pattern (a static pattern or a function returning one) |
-| `MaybeReplaceStaticPattern`  | A static pattern (`string \| RegExp`)                                   |
-| `MaybeReplaceDynamicPattern` | A function returning a pattern                                          |
-| `ReplacePlaceholdersOptions` | Options for `replacePlaceholders`                                       |
+| Type                         | Description                                                                                                            |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `Extractor`                  | The function created by `createExtractor`                                                                              |
+| `ExtractorOptions`           | Options for the function created by `createExtractor`                                                                  |
+| `ReplacementMap`             | The map for `replaceByMap` and `createReplacerByMap`: a Map, an object whose properties are entries, or an entry array |
+| `Replacer`                   | The function created by `createReplacerByMap`                                                                          |
+| `ReplacePlaceholdersOptions` | Options for `replacePlaceholders`                                                                                      |
 
 ### timer
 
-| Function                          | Description                                           |
-| --------------------------------- | ----------------------------------------------------- |
-| `debounce(fn, wait, options?)`    | Creates a function that runs after calls have settled |
-| `setLongTimeout(callback, delay)` | Sets a timer longer than the `setTimeout` limit       |
-| `sleep(ms)`                       | Returns a `Promise` that resolves after a given time  |
-| `throttle(fn, wait, options?)`    | Creates a function that runs at most once per period  |
+| Function                                    | Description                                           |
+| ------------------------------------------- | ----------------------------------------------------- |
+| `debounce(fn, options?)`                    | Creates a function that runs after calls have settled |
+| `setLongTimeout(callback, delay, options?)` | Sets a timer longer than the `setTimeout` limit       |
+| `sleep(ms, options?)`                       | Returns a `Promise` that resolves after a given time  |
+| `throttle(fn, options?)`                    | Creates a function that runs at most once per period  |
 
 #### `debounce`
 
 ```ts
-debounce<ARGS extends unknown[]>(fn: (...args: ARGS) => void, wait: number, options?: DebounceOptions): DebounceResult<ARGS>
+debounce<ARGS extends unknown[]>(fn: (...args: ARGS) => void, options?: DebounceOptions): DebounceResult<ARGS>
 ```
 
 Creates a function that runs `fn` once there have been no calls for `wait` milliseconds since the last call. `fn` receives the arguments of the last call.
 
 ```ts
-const onInput = debounce((value: string) => search(value), 300);
+const onInput = debounce((value: string) => search(value), { wait: 300 });
 ```
 
 | Option       | Type                         | Description                                                                                                 |
 | ------------ | ---------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `wait?`      | `number`                     | Milliseconds without calls before running. Defaults to `240`                                                |
 | `triggerAt?` | `'end' \| 'start' \| 'both'` | When to run. `'end'`: after calls settle; `'start'`: on the first call; `'both'`: both. Defaults to `'end'` |
 
 The created function has the following methods.
@@ -1647,129 +1646,119 @@ The created function has the following methods.
 #### `setLongTimeout`
 
 ```ts
-setLongTimeout(callback: () => void, delay: number): () => void
+setLongTimeout(callback: () => void, delay: number, options?: SetLongTimeoutOptions): () => void
 ```
 
-Runs `callback` after `delay` milliseconds. `delay` may exceed the `setTimeout` limit (about 24.8 days). Returns a function that cancels the timer.
+Runs `callback` after `delay` milliseconds. `delay` may exceed the `setTimeout` limit (about 24.8 days); in that case the timer is reset based on the remaining time to the target time, so it stays on time even if timers pause while the computer sleeps. As with `setTimeout`, `NaN` and negative values are treated as `0`. With `Infinity`, `callback` never runs. Returns a function that cancels the timer.
+
+| Option    | Type          | Description                    |
+| --------- | ------------- | ------------------------------ |
+| `signal?` | `AbortSignal` | Cancels the timer when aborted |
 
 #### `sleep`
 
 ```ts
-sleep(ms: number): Promise<void>
+sleep(ms: number, options?: SleepOptions): Promise<void>
 ```
 
-Returns a `Promise` that resolves after `ms` milliseconds.
+Returns a `Promise` that resolves after `ms` milliseconds. Like `setLongTimeout`, `ms` may exceed the `setTimeout` limit. When aborted, it rejects with `signal.reason` (an `AbortError` if not set).
 
 ```ts
 await sleep(1000);
 ```
 
+| Option    | Type          | Description                  |
+| --------- | ------------- | ---------------------------- |
+| `signal?` | `AbortSignal` | Aborts the wait when aborted |
+
 #### `throttle`
 
 ```ts
-throttle<ARGS extends unknown[]>(fn: (...args: ARGS) => void, wait: number, options?: ThrottleOptions): ThrottleResult<ARGS>
+throttle<ARGS extends unknown[]>(fn: (...args: ARGS) => void, options?: ThrottleOptions): ThrottleResult<ARGS>
 ```
 
-Creates a function that runs `fn` at most once every `wait` milliseconds. `fn` receives the arguments of the last call. The created function has the same methods as `debounce`.
+Creates a function that runs `fn` at most once every `wait` milliseconds. With `'start'` and `'both'`, at least `wait` milliseconds pass between runs. `fn` receives the arguments of the last call. The created function has the same methods as `debounce`.
 
 ```ts
-const onScroll = throttle(() => updatePosition(), 100);
+const onScroll = throttle(() => updatePosition(), { wait: 100 });
 ```
 
 | Option       | Type                         | Description                                                                                                    |
 | ------------ | ---------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `wait?`      | `number`                     | Minimum milliseconds between runs. Defaults to `240`                                                           |
 | `triggerAt?` | `'both' \| 'start' \| 'end'` | When to run. `'start'`: at the start of each period; `'end'`: at the end; `'both'`: both. Defaults to `'both'` |
 
 #### Types
 
-| Type                   | Description                        |
-| ---------------------- | ---------------------------------- |
-| `DebounceOptions`      | Options for `debounce`             |
-| `DebounceResult<ARGS>` | The function created by `debounce` |
-| `ThrottleOptions`      | Options for `throttle`             |
-| `ThrottleResult<ARGS>` | The function created by `throttle` |
+| Type                    | Description                        |
+| ----------------------- | ---------------------------------- |
+| `DebounceOptions`       | Options for `debounce`             |
+| `DebounceResult<ARGS>`  | The function created by `debounce` |
+| `SetLongTimeoutOptions` | Options for `setLongTimeout`       |
+| `SleepOptions`          | Options for `sleep`                |
+| `ThrottleOptions`       | Options for `throttle`             |
+| `ThrottleResult<ARGS>`  | The function created by `throttle` |
 
 ### type
 
-| Function                           | Description                                                                         |
-| ---------------------------------- | ----------------------------------------------------------------------------------- |
-| `ensureValidValue(data, options?)` | Returns a replacement when a value is not the expected kind, `null`, or `undefined` |
-| `getKind(data)`                    | Returns the kind of a value in more detail than `typeof`                            |
-| `getPriority(data, options?)`      | Returns a priority based on the kind of a value                                     |
-| `getRawType(value)`                | Returns the type label from `Object.prototype.toString`                             |
-| `isAsyncIterable(value)`           | Checks whether a value is async iterable                                            |
-| `isBlank(value, options?)`         | Checks whether a value is `null`, `undefined`, or an empty string                   |
-| `isEmptyCollection(value)`         | Checks whether a value is an empty array, `Map`, or `Set`                           |
-| `isEmptyValue(value, options?)`    | Checks whether `isBlank` or `isEmptyCollection` applies                             |
-| `isInvalidDate(value)`             | Checks whether a value is a `Date` with an invalid date (`Invalid Date`)            |
-| `isIterable(value)`                | Checks whether a value is iterable                                                  |
-| `isNonNegativeInteger(value)`      | Checks whether a value is an integer of 0 or more                                   |
-| `isNullish(value)`                 | Checks whether a value is `null` or `undefined`                                     |
-| `isNumberLike(value)`              | Checks whether a value is a number or a decimal number string                       |
-| `isPresent(value)`                 | Checks whether a value is neither `null` nor `undefined`                            |
-| `isPrimitive(value)`               | Checks whether a value is a primitive                                               |
-| `isRegExp(value)`                  | Checks whether a value is a `RegExp`                                                |
-| `isUndefined(value)`               | Checks whether a value is `undefined`                                               |
-| `isValidDate(value)`               | Checks whether a value is a `Date` with a valid date                                |
-| `isValidNumber(value, options?)`   | Checks whether a value is a valid number (not `NaN` or `Infinity`)                  |
-| `unsafeCast(value)`                | Casts a value to a type, bypassing type checking                                    |
-
-#### `ensureValidValue`
-
-```ts
-ensureValidValue<T = unknown>(data: unknown, options?: EnsureValidValueOptions<T>): T
-ensureValidValue.dataLast<T = unknown>(options?: EnsureValidValueOptions<T>): (data: unknown) => T
-```
-
-Returns the value set in the options when a value is not the expected kind, or is `null` or `undefined`. Returns `data` as is when no matching value is set. Without `validType`, only `null` and `undefined` are replaced.
-
-```ts
-ensureValidValue('a', { validType: 'number', invalidValue: 0 }); // 0
-ensureValidValue(null, { nullValue: '' }); // ''
-```
-
-| Option            | Type   | Description                                                        |
-| ----------------- | ------ | ------------------------------------------------------------------ |
-| `validType?`      | `Kind` | The expected kind of value (a value of `getKind`)                  |
-| `undefinedValue?` | `T`    | The value returned when the value is `undefined`                   |
-| `nullValue?`      | `T`    | The value returned when the value is `null`                        |
-| `invalidValue?`   | `T`    | The value returned when the kind of value differs from `validType` |
+| Function                         | Description                                                                                 |
+| -------------------------------- | ------------------------------------------------------------------------------------------- |
+| `getKind(data)`                  | Returns the kind of a value in more detail than `typeof`                                    |
+| `getPriority(data, options?)`    | Returns a priority based on the kind of a value                                             |
+| `getRawType(value)`              | Returns the type label from `Object.prototype.toString`                                     |
+| `isAsyncIterable(value)`         | Checks whether a value is async iterable                                                    |
+| `isBlank(value)`                 | Checks whether a value is `null`, `undefined`, an empty string, or a whitespace-only string |
+| `isEmpty(value)`                 | Checks whether a value is `null`, `undefined`, or an empty string                           |
+| `isEmptyCollection(value)`       | Checks whether a value is an empty array, `Map`, or `Set`                                   |
+| `isInvalidDate(value)`           | Checks whether a value is a `Date` with an invalid date (`Invalid Date`)                    |
+| `isIterable(value)`              | Checks whether a value is iterable                                                          |
+| `isNonNegativeInteger(value)`    | Checks whether a value is an integer of 0 or more                                           |
+| `isNullish(value)`               | Checks whether a value is `null` or `undefined`                                             |
+| `isNumberLike(value)`            | Checks whether a value is a number or a decimal number string                               |
+| `isPresent(value)`               | Checks whether a value is neither `null` nor `undefined`                                    |
+| `isPrimitive(value)`             | Checks whether a value is a primitive                                                       |
+| `isRegExp(value)`                | Checks whether a value is a `RegExp`                                                        |
+| `isUndefined(value)`             | Checks whether a value is `undefined`                                                       |
+| `isValidDate(value)`             | Checks whether a value is a `Date` with a valid date                                        |
+| `isValidNumber(value, options?)` | Checks whether a value is a valid number (not `NaN` or `Infinity`)                          |
+| `unsafeCast(value)`              | Casts a value to a type, bypassing type checking                                            |
 
 #### `getKind`
 
 ```ts
 getKind(data: unknown): Kind
-getKind.dataLast(): (data: unknown) => Kind
 ```
 
-Returns the kind of a value. In addition to the results of `typeof`, objects are divided into `null`, `array`, `plainobject` (an object that directly inherits from `Object.prototype`), `date`, `regexp`, `error`, `map`, `set`, `weakmap`, `weakset`, `promise`, `arraybuffer`, and `sharedarraybuffer`. Any other object is `object`.
+Returns the kind of a value. Values other than objects return the result of `typeof`. Objects are divided into `null`, `array`, `plainobject` (an object whose prototype is `Object.prototype` or `null`), `date`, `regexp`, `error`, `map`, `set`, `weakmap`, `weakset`, `promise`, `arraybuffer`, and `sharedarraybuffer`. Any other object (class instances, DOM elements, typed arrays, ...) is `instance`.
+
+Built-in objects are checked with `instanceof`, so objects from another realm (such as an iframe) are `instance`.
 
 ```ts
 getKind([]); // 'array'
 getKind({}); // 'plainobject'
 getKind(new Date()); // 'date'
 getKind(null); // 'null'
+getKind(new (class {})()); // 'instance'
 ```
 
 #### `getPriority`
 
 ```ts
 getPriority(data: unknown, options?: GetPriorityOptions): number
-getPriority.dataLast(options?: GetPriorityOptions): (data: unknown) => number
 ```
 
-Returns a priority based on the kind of a value, for example to move `null` and `undefined` to the end when sorting. By default `undefined` is `-2`, `null` is `-1`, and everything else is `0`.
+Returns a priority based on the kind of a value from `getKind`, for example to move `null` and `undefined` to the end when sorting. By default `undefined` is `-2`, `null` is `-1`, and everything else is `0`.
 
 ```ts
 getPriority(undefined); // -2
-getPriority([], { useKind: true, priorityMap: { array: 3 } }); // 3
+getPriority([], { priorityMap: { array: 3 } }); // 3
+getPriority(null, { priorityMap: { array: 3 } }); // -1 (merged with the default)
 ```
 
-| Option                 | Type                                            | Description                                                                                        |
-| ---------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `priorityMap?`         | `Partial<Record<Kind \| TypeOfResult, number>>` | Priorities per kind. When given, it replaces the default `{ undefined: -2, null: -1 }`             |
-| `useKind?`             | `boolean`                                       | If `true`, looks up priorities by the kind from `getKind` instead of `typeof`. Defaults to `false` |
-| `getFallbackPriority?` | `(data: unknown) => number`                     | Returns the priority for kinds not in `priorityMap`. Defaults to `0` if omitted                    |
+| Option                 | Type                            | Description                                                                                    |
+| ---------------------- | ------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `priorityMap?`         | `Partial<Record<Kind, number>>` | Priorities per kind from `getKind`. Merged with the default `{ undefined: -2, null: -1 }`      |
+| `getFallbackPriority?` | `(data: unknown) => number`     | Returns the priority for kinds not in `priorityMap` or the default. Defaults to `0` if omitted |
 
 #### `getRawType`
 
@@ -1783,28 +1772,26 @@ Returns the result of `Object.prototype.toString.call(value)`, such as `'[object
 
 ```ts
 isAsyncIterable(value: unknown): value is AsyncIterable<unknown>
-isIterable<T>(value: unknown): value is Iterable<T>
+isIterable(value: unknown): value is Iterable<unknown>
 ```
 
 Checks whether a value has a `Symbol.asyncIterator` (`isAsyncIterable`) or `Symbol.iterator` (`isIterable`) method. Strings are iterable.
 
-#### `isBlank`
+#### `isBlank` / `isEmpty`
 
 ```ts
-isBlank(value: unknown, options?: IsBlankOptions): boolean
+isBlank(value: unknown): boolean
+isEmpty(value: unknown): value is Empty
 ```
 
-Returns `true` when a value is `null`, `undefined`, or an empty string. With `trimType`, strings consisting only of whitespace also return `true`. Values other than strings return `false`.
+`isEmpty` returns `true` when a value is `null`, `undefined`, or an empty string (the `Empty` type of `@fringeworks/types`). `isBlank` also returns `true` for strings consisting only of whitespace. Whitespace is the same as `\s` in regular expressions (half-width and full-width spaces, tabs, line breaks, ...). Other values return `false`.
 
 ```ts
-isBlank(''); // true
-isBlank('  '); // false
-isBlank('  ', { trimType: 'half' }); // true
+isEmpty(''); // true
+isEmpty(' '); // false
+isBlank(' \u3000\n'); // true
+isBlank(0); // false
 ```
-
-| Option      | Type                                            | Description                                                                                                                                                                                                                                |
-| ----------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `trimType?` | `'none' \| 'half' \| 'full' \| 'both' \| 'all'` | Which whitespace counts as empty. `'none'`: none; `'half'`: half-width whitespace (spaces, tabs, line breaks, ...); `'full'`: full-width spaces; `'both'`: half-width and full-width spaces; `'all'`: all whitespace. Defaults to `'none'` |
 
 #### `isEmptyCollection`
 
@@ -1812,15 +1799,7 @@ isBlank('  ', { trimType: 'half' }); // true
 isEmptyCollection(value: unknown): boolean
 ```
 
-Returns `true` for an empty array, `Map`, or `Set`, and for `null` and `undefined`.
-
-#### `isEmptyValue`
-
-```ts
-isEmptyValue(value: unknown, options?: IsEmptyValueOptions): boolean
-```
-
-Returns `true` when `isBlank` or `isEmptyCollection` applies. The options are the same as `isBlank`. An empty object (`{}`) returns `false`.
+Returns `true` for an empty array, `Map`, or `Set`. Other values, including `null`, `undefined`, and empty objects (`{}`), return `false`. To check both, combine it with `isBlank`, such as `isBlank(value) || isEmptyCollection(value)`.
 
 #### `isInvalidDate` / `isValidDate`
 
@@ -1834,7 +1813,7 @@ Checks whether a value is a `Date` with an invalid date (`isInvalidDate`) or a v
 #### `isNonNegativeInteger`
 
 ```ts
-isNonNegativeInteger(value: unknown): value is number
+isNonNegativeInteger(value: unknown): boolean
 ```
 
 Returns `true` when a value is an integer of 0 or more (`0`, `1`, `2`, ...).
@@ -1860,7 +1839,7 @@ Returns `true` when a value is a finite number or a decimal number string (`'12'
 #### `isPrimitive`
 
 ```ts
-isPrimitive(value: unknown): boolean
+isPrimitive(value: unknown): value is Primitive
 ```
 
 Returns `true` when a value is a primitive (`null`, `undefined`, a boolean, a number, a BigInt, a string, or a symbol).
@@ -1871,7 +1850,7 @@ Returns `true` when a value is a primitive (`null`, `undefined`, a boolean, a nu
 isRegExp(value: unknown): value is RegExp
 ```
 
-Returns `true` when a value is a `RegExp`.
+Returns `true` when a value is a `RegExp`. It checks with `instanceof`, so an object pretending to be one with `Symbol.toStringTag` returns `false`, and so does a `RegExp` from another realm (such as an iframe).
 
 #### `isValidNumber`
 
@@ -1901,15 +1880,12 @@ Returns a value as the inferred type, bypassing type checking. Use it instead of
 
 #### Types
 
-| Type                         | Description                           |
-| ---------------------------- | ------------------------------------- |
-| `EnsureValidValueOptions<V>` | Options for `ensureValidValue`        |
-| `GetPriorityOptions`         | Options for `getPriority`             |
-| `GetRawTypeReturn`           | The return value of `getRawType`      |
-| `IsBlankOptions`             | Options for `isBlank`                 |
-| `IsEmptyValueOptions`        | Same as `IsBlankOptions`              |
-| `IsValidNumberOptions`       | Options for `isValidNumber`           |
-| `Kind`                       | The kind values returned by `getKind` |
+| Type                   | Description                           |
+| ---------------------- | ------------------------------------- |
+| `GetPriorityOptions`   | Options for `getPriority`             |
+| `GetRawTypeReturn`     | The return value of `getRawType`      |
+| `IsValidNumberOptions` | Options for `isValidNumber`           |
+| `Kind`                 | The kind values returned by `getKind` |
 
 ## License
 

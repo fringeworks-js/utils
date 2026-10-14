@@ -22,8 +22,27 @@ describe('comparePerformanceAsync', () => {
       targets: [{ id: 'fn', fn: async () => 0 }],
       rounds: 1,
       iterations: 1,
-      warmUp: true,
+      warmUpIterations: 1,
     });
     expect(result.results).toHaveLength(1);
+  });
+
+  it('ウォームアップも1つずつ順に実行する', async () => {
+    const log: string[] = [];
+    const createFn = (id: string) => async () => {
+      log.push(`start${id}`);
+      await Promise.resolve();
+      log.push(`end${id}`);
+    };
+    await comparePerformanceAsync({
+      targets: [
+        { id: 'a', fn: createFn('a') },
+        { id: 'b', fn: createFn('b') },
+      ],
+      iterations: 1,
+      rounds: 1,
+      warmUpIterations: 1,
+    });
+    expect(log.slice(0, 4)).toEqual(['starta', 'enda', 'startb', 'endb']);
   });
 });

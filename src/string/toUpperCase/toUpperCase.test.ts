@@ -16,10 +16,4 @@ describe('toUpperCase', () => {
   it('空文字', () => {
     expect(toUpperCase('')).toBe('');
   });
-
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(toUpperCase.dataLast()('hello')).toBe('HELLO');
-    });
-  });
 });

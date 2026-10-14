@@ -1,41 +1,44 @@
 /**
- * extract関数
+ * createExtractor で作った、囲み文字で囲まれた部分を抽出する関数
  */
-export type CreateExtractorResult = {
+export type Extractor = {
   /**
-   * トークン抽出関数
+   * 囲み文字で囲まれた部分を抽出する
+   * @param str 対象の文字列。空文字・null・undefined は空配列を返す
+   * @param options オプション
+   * @returns 抽出した文字列の配列
    */
   (str: string, options?: ExtractorOptions): string[];
 
   /**
-   * デリミタ(左)
+   * 開始の囲み文字
    */
-  prefix: string;
+  readonly prefix: string;
 
   /**
-   * デリミタ(右)
+   * 終了の囲み文字
    */
-  suffix: string;
+  readonly suffix: string;
 };
 
 /**
- * CreateExtractorResult関数のオプション
+ * Extractor のオプション
  */
 export type ExtractorOptions = {
   /**
-   * 抽出結果にデリミタ（囲い）を含めるかどうか
+   * 囲み文字を含めて、元の文字列のまま返すかどうか（keepWhitespace に関わらず空白も残す）
    * @default false
    */
   keepDelimiters?: boolean;
 
   /**
-   * トークンの前後の空白を削除するかどうか
+   * 囲み文字の内側の前後の空白を残すかどうか。false の場合は削除する
    * @default false
    */
-  trim?: boolean;
+  keepWhitespace?: boolean;
 
   /**
-   * 重複したトークンを除外するかどうか
+   * 重複したものを除外するかどうか
    * @default false
    */
   unique?: boolean;

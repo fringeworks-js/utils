@@ -1,32 +1,23 @@
-import type { LooseRecord } from '@fringeworks/types';
+import type { StrictRecord } from '@fringeworks/types';
 import * as R from 'remeda';
+import _isUnsafeKey from '../../_internal/_isUnsafeKey';
 import { alwaysInput } from '../../function/alwaysInput';
 import { countKeys } from '../countKeys';
 import type { FilterByValuesOptions } from './types';
 
 /**
  * 指定の文字列が含まれる値を持つ項目以外をフィルタリングする
- * @param target
- * @param condition
- * @param options
- * @returns
+ * 残る構造は実行時に決まるため、戻り値は unknown とする
+ * @param target 対象の値
+ * @param condition 条件
+ * @param options オプション
+ * @returns 条件に合うものだけを残した新しい値。1つも無い場合は null
  */
-const filterByValues = <T = unknown>(
-  target: T,
+export default function filterByValues(
+  target: unknown,
   condition: unknown,
   options: FilterByValuesOptions = {},
-): T | null => _filterByValues(target, condition, options);
-filterByValues.dataLast =
-  (condition: unknown, options: FilterByValuesOptions = {}) =>
-  <T = unknown>(target: T): T | null =>
-    _filterByValues(target, condition, options);
-export default filterByValues;
-
-function _filterByValues<T = unknown>(
-  target: T,
-  condition: unknown,
-  options: FilterByValuesOptions = {},
-): T | null {
+): unknown {
   const { normalize } = options;
 
   let normalizeFn: (value: string) => string = alwaysInput;
@@ -40,11 +31,11 @@ function _filterByValues<T = unknown>(
   return _filter(target, condition, normalizeFn) ?? null;
 }
 
-function _filter<T = unknown>(
-  target: T,
+function _filter(
+  target: unknown,
   condition: unknown,
   normalizeFn: (value: string) => string,
-): T | undefined {
+): unknown {
   if (Array.isArray(target)) {
     // array
     const array: unknown[] = [];
@@ -56,12 +47,15 @@ function _filter<T = unknown>(
       }
     }
     if (array.length) {
-      return array as T;
+      return array;
     }
   } else if (R.isPlainObject(target)) {
     // object
-    const obj: LooseRecord = {};
+    const obj: StrictRecord = {};
     for (const key in target) {
+      if (_isUnsafeKey(key)) {
+        continue;
+      }
       // 子要素を処理
       const result = _filter(target[key], condition, normalizeFn);
       if (result != null) {

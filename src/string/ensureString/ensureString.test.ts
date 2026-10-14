@@ -46,9 +46,20 @@ describe('ensureString', () => {
     expect(result).toBe('a,b,c');
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(ensureString.dataLast()('abc')).toBe('abc');
-    });
+  it('シンボル', () => {
+    expect(ensureString(Symbol('a'))).toBe('Symbol(a)');
+  });
+
+  it('プロトタイプの無いオブジェクトは普通のオブジェクトと同じ文字列にする', () => {
+    expect(ensureString(Object.create(null))).toBe('[object Object]');
+  });
+
+  it('toStringが例外を投げるオブジェクトも文字列にする', () => {
+    const value = {
+      toString() {
+        throw new Error('error');
+      },
+    };
+    expect(ensureString(value)).toBe('[object Object]');
   });
 });

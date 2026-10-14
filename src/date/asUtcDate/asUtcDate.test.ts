@@ -14,6 +14,12 @@ describe('asUtcDate', () => {
     expect(utc.getUTCMilliseconds()).toBe(local.getMilliseconds());
   });
 
+  it('0〜99年の日時もそのままの年で扱う', () => {
+    const local = new Date(2000, 5, 15, 10, 30);
+    local.setFullYear(50);
+    expect(asUtcDate(local).toISOString()).toBe('0050-06-15T10:30:00.000Z');
+  });
+
   it('Dateインスタンスを返す', () => {
     expect(asUtcDate(new Date())).toBeInstanceOf(Date);
   });

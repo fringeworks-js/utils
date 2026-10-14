@@ -1,28 +1,18 @@
 /**
- * 数値であることを保証する\
- * null や undefined や NaN や数値に変換できない値は0に変換される
+ * number型の値であることを保証する\
+ * 数値はそのまま返し（NaNは0）、文字列はNumber()で変換する（変換できない場合は0）。
+ * それ以外の値（null、undefined、真偽値、bigint、オブジェクトなど）は0になる。
+ * Infinity・-Infinityはそのまま返すため、有限の数だけを扱う場合はgetValidNumberを使う
  *
- * @param data 任意の値 or null or undefined
+ * @param data 任意の値
  * @returns 数値
  */
-const ensureNumber = (data: unknown | null | undefined): number =>
-  _ensureNumber(data);
-ensureNumber.dataLast = () => ensureNumber;
-export default ensureNumber;
-
-function _ensureNumber(target: unknown | null | undefined): number {
+export default function ensureNumber(target: unknown): number {
   if (typeof target === 'number') {
     return Number.isNaN(target) ? 0 : target;
-  } else if (target == null) {
-    return 0;
   } else if (typeof target === 'string') {
     const num = Number(target);
-    if (isNaN(num)) {
-      return 0;
-    } else {
-      return num;
-    }
-  } else {
-    return 0;
+    return Number.isNaN(num) ? 0 : num;
   }
+  return 0;
 }

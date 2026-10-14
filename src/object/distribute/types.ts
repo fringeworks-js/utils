@@ -1,5 +1,3 @@
-import type { LooseRecord } from '@fringeworks/types';
-
 /**
  * 分配するプロパティの情報
  * 分配先のグループに対応する値がnullの場合は、
@@ -7,14 +5,14 @@ import type { LooseRecord } from '@fringeworks/types';
  *
  * @param group 分配先のグループ
  */
-export type DistributeRules<T extends LooseRecord> = {
+export type DistributeRules<T extends object> = {
   [group: string]: DistributePropertyList<T> | null;
 };
 
 /**
  * 分配するプロパティ名の一覧
  */
-export type DistributePropertyList<T extends LooseRecord> = readonly (
+export type DistributePropertyList<T extends object> = readonly (
   | keyof T
   | KeysOfUnion<T>
 )[];
@@ -34,10 +32,7 @@ export type DistributeOptions = {
 /**
  * 分配した結果
  */
-export type DistributeResult<
-  T extends LooseRecord,
-  R extends DistributeRules<T>,
-> = {
+export type DistributeResult<T extends object, R extends DistributeRules<T>> = {
   [G in keyof R]: IsRestGroup<R[G]> extends true
     ? Partial<T>
     : R[G] extends DistributePropertyList<T>

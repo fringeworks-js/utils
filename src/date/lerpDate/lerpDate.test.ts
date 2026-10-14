@@ -41,12 +41,18 @@ describe('lerpDate', () => {
     expect(result.getTime()).toBe(expected.getTime());
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const base = new Date('2024-01-01');
-      const value = new Date('2024-12-31');
-      const result = lerpDate.dataLast(1, { baseValue: base })(value);
-      expect(result.getTime()).toBe(value.getTime());
-    });
+  it('ratioが範囲外の場合は外挿する', () => {
+    const base = new Date('2024-01-01T00:00:00.000Z');
+    const value = new Date('2024-01-01T00:00:02.000Z');
+    expect(lerpDate(value, 2, { baseValue: base }).toISOString()).toBe(
+      '2024-01-01T00:00:04.000Z',
+    );
+    expect(lerpDate(value, -1, { baseValue: base }).toISOString()).toBe(
+      '2023-12-31T23:59:58.000Z',
+    );
+  });
+
+  it('Invalid Dateを渡すとInvalid Dateを返す', () => {
+    expect(lerpDate(new Date(NaN), 0.5).getTime()).toBeNaN();
   });
 });

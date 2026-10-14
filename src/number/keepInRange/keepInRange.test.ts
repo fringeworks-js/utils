@@ -83,9 +83,14 @@ describe('keepInRange', () => {
     });
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(keepInRange.dataLast(0, 10)(5)).toBe(5);
-    });
+  it('min が max より大きい場合は入れ替えて扱う', () => {
+    expect(keepInRange(15, 10, 0)).toBe(10);
+    expect(keepInRange(-1, 10, 0, { minMode: 'max' })).toBe(10);
+    expect(keepInRange(15, 10, 0, { mode: 'loop' })).toBe(5);
+  });
+
+  it('loopの場合、最大値ちょうどは最小値になる', () => {
+    expect(keepInRange(10, 0, 10, { mode: 'loop' })).toBe(0);
+    expect(keepInRange(10, 0, 10)).toBe(10);
   });
 });

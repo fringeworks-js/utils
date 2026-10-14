@@ -1,19 +1,22 @@
 /**
  * 文字列であることを保証する\
- * null や undefined は空文字列に変換される
+ * null や undefined は空文字列に変換される。
+ * `String()` で変換できない値（`Object.create(null)` など）は、
+ * 普通のオブジェクトと同じく `Object.prototype.toString` の結果（`'[object Object]'`）にする
  *
- * @param data 任意の値 or null or undefined
+ * @param data 任意の値
  * @returns 文字列
  */
-const ensureString = (data: unknown | null | undefined): string =>
-  _ensureString(data);
-ensureString.dataLast = () => ensureString;
-export default ensureString;
-
-function _ensureString(target: unknown | null | undefined): string {
-  return typeof target === 'string'
-    ? target
-    : target == null
-      ? ''
-      : String(target);
+export default function ensureString(data: unknown): string {
+  if (typeof data === 'string') {
+    return data;
+  }
+  if (data == null) {
+    return '';
+  }
+  try {
+    return String(data);
+  } catch {
+    return Object.prototype.toString.call(data);
+  }
 }

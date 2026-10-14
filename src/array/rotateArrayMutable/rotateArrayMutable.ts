@@ -1,4 +1,4 @@
-import { isEmptyCollection } from '../../type/isEmptyCollection';
+import { pushAllMutable } from '../pushAllMutable';
 import type { RotateArrayMutableOptions } from './types';
 
 /**
@@ -7,28 +7,18 @@ import type { RotateArrayMutableOptions } from './types';
  * @param options オプション
  * @returns ローテーションした同じ配列
  */
-const rotateArrayMutable = <I>(
-  data: I[],
-  options?: RotateArrayMutableOptions,
-) => _rotateArrayMutable(data, options);
-rotateArrayMutable.dataLast =
-  (options?: RotateArrayMutableOptions) =>
-  <I>(data: I[]) =>
-    _rotateArrayMutable(data, options);
-export default rotateArrayMutable;
-
-function _rotateArrayMutable<I>(
+export default function rotateArrayMutable<I>(
   data: I[],
   options: RotateArrayMutableOptions = {},
 ): I[] {
-  if (isEmptyCollection(data)) {
+  if (data.length === 0) {
     return data;
   }
   const { count = 1 } = options;
   // 負の数（右シフト）は同じ結果になる正の数（左シフト）に変換
   const offset = ((count % data.length) + data.length) % data.length;
   if (offset !== 0) {
-    data.push(...data.splice(0, offset));
+    pushAllMutable(data, data.splice(0, offset));
   }
   return data;
 }

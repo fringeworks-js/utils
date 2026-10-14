@@ -1,4 +1,4 @@
-import type { MeasureOptions } from '../measure';
+import type { MeasureArgsOptions } from '../measure';
 
 /**
  * 測定する対象
@@ -8,7 +8,8 @@ export type ComparePerformanceTarget<
   R = unknown,
 > = {
   /**
-   * ID
+   * ID\
+   * 測定対象ごとに異なる値にする
    */
   id: string;
 
@@ -26,7 +27,7 @@ export type ComparePerformanceTarget<
 export type ComparePerformanceOptions<
   A extends unknown[] = unknown[],
   R = unknown,
-> = MeasureOptions<A> & {
+> = MeasureArgsOptions<A> & {
   /**
    * ID
    */
@@ -38,16 +39,27 @@ export type ComparePerformanceOptions<
   targets: ComparePerformanceTarget<A, R>[];
 
   /**
-   * 測定を何周行うか
-   * 1周ごとに各測定対象の関数を`iterations`回ずつ実行し、周ごとに測定する順番を入れ替える
+   * 1周の中で各測定対象を実行する回数\
+   * 小数は切り捨て、1未満の場合は1回にする
+   * @default 10
+   */
+  iterations?: number;
+
+  /**
+   * 測定を何周行うか\
+   * 1周ごとに各測定対象の関数を`iterations`回ずつ実行し、周ごとに測定する順番を入れ替える。
+   * 同じ周の中では、すべての測定対象に同じ引数を渡す。
+   * 小数は切り捨て、1未満の場合は1周にする
    * @default 10
    */
   rounds?: number;
 
   /**
-   * trueの場合、測定前に各測定対象を1回ずつ実行する
+   * 測定前に各測定対象を実行する回数\
+   * 小数は切り捨て、0未満の場合は0回にする
+   * @default 0
    */
-  warmUp?: boolean;
+  warmUpIterations?: number;
 };
 
 /**
@@ -68,34 +80,35 @@ export type ComparePerformanceResult<
   R = unknown,
 > = {
   /**
-   * 測定結果毎の平均
+   * 測定対象毎の1周あたりの平均（ミリ秒）
    */
   average: ElapsedTimes;
 
   /**
-   * 全体の平均
+   * 全体の平均（ミリ秒）\
+   * 測定対象が無い場合は0
    */
   totalAverage: number;
 
   /**
-   * 順位
+   * 平均が短い順に並べた測定対象
    */
-  order: ComparePerformanceTarget<A>[];
+  order: ComparePerformanceTarget<A, R>[];
 
   /**
    * ID
    */
-  id?: string;
+  id: string;
 
   /**
-   * 測定結果
+   * 周ごとの測定結果
    */
   results: ElapsedTimes[];
 
   /**
-   * 測定結果毎の戻り値(最後の処理分のみ)
+   * 測定対象毎の最後の戻り値
    */
-  returnValues: { [targetId: string]: R | undefined };
+  returnValues: { [targetId: string]: R };
 
   /**
    * 測定開始日時

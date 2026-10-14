@@ -1,29 +1,20 @@
 /**
- * strはprefixで始まり、suffixで終わっているか
- * prefixとsuffixの間には最低1文字が必要
- * @param str 文字列
+ * str が prefix で始まり、suffix で終わっているか判定する\
+ * prefix と suffix の間は0文字でもよいが、prefix と suffix が重なっている場合は false
+ * @param str 文字列。null・undefined は false
  * @param prefix 接頭語
- * @param suffix 接尾語
+ * @param suffix 接尾語。省略した場合は prefix と同じ
+ * @returns prefix と suffix で囲まれている場合は true
  */
-const isSurroundedBy = (
+export default function isSurroundedBy(
   str: string,
   prefix: string,
   suffix: string = prefix,
-): boolean => _isSurroundedBy(str, prefix, suffix);
-isSurroundedBy.dataLast =
-  (prefix: string, suffix: string = prefix) =>
-  (str: string): boolean =>
-    _isSurroundedBy(str, prefix, suffix);
-export default isSurroundedBy;
-
-function _isSurroundedBy(str: string, prefix: string, suffix: string): boolean {
-  if (str) {
-    if (str.length <= prefix.length + suffix.length) {
-      // prefix+suffixよりも短い場合はfalse
-      return false;
-    }
-    return str.startsWith(prefix) && str.endsWith(suffix);
-  } else {
-    return false;
-  }
+): boolean {
+  return (
+    str != null &&
+    str.length >= prefix.length + suffix.length &&
+    str.startsWith(prefix) &&
+    str.endsWith(suffix)
+  );
 }

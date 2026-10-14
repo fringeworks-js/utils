@@ -7,17 +7,7 @@ import type { GetValidNumberOptions } from './types';
  * @param options オプション
  * @returns 対象の値またはデフォルト値
  */
-const getValidNumber = (
-  value: number | null | undefined,
-  options: GetValidNumberOptions = {},
-): number => _getValidNumber(value, options);
-getValidNumber.dataLast =
-  (options: GetValidNumberOptions = {}) =>
-  (value: number | null | undefined): number =>
-    _getValidNumber(value, options);
-export default getValidNumber;
-
-function _getValidNumber(
+export default function getValidNumber(
   value: number | null | undefined,
   options: GetValidNumberOptions = {},
 ): number {

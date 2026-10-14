@@ -19,6 +19,25 @@ describe('createUtcDate', () => {
     expect(date.getUTCMilliseconds()).toBe(500);
   });
 
+  it('0〜99年をそのままの年として扱う', () => {
+    expect(createUtcDate(50).toISOString()).toBe('0050-01-01T00:00:00.000Z');
+    expect(createUtcDate(0, 5, 15, 10).toISOString()).toBe(
+      '0000-06-15T10:00:00.000Z',
+    );
+  });
+
+  it('範囲外の値は繰り上げ・繰り下げる', () => {
+    expect(createUtcDate(2024, 12, 1).toISOString()).toBe(
+      '2025-01-01T00:00:00.000Z',
+    );
+    expect(createUtcDate(2024, 0, 31, 24).toISOString()).toBe(
+      '2024-02-01T00:00:00.000Z',
+    );
+    expect(createUtcDate(99, 11, 31, 24).toISOString()).toBe(
+      '0100-01-01T00:00:00.000Z',
+    );
+  });
+
   it('Dateインスタンスを返す', () => {
     expect(createUtcDate(2024, 0, 1)).toBeInstanceOf(Date);
   });

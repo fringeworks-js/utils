@@ -25,9 +25,8 @@ describe('isStrictlyWithinRange', () => {
     expect(isStrictlyWithinRange(0.001, 0, 10)).toBe(true);
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(isStrictlyWithinRange.dataLast(0, 10)(5)).toBe(true);
-    });
+  it('min が max より大きい場合は入れ替えて扱う', () => {
+    expect(isStrictlyWithinRange(5, 10, 0)).toBe(true);
+    expect(isStrictlyWithinRange(10, 10, 0)).toBe(false);
   });
 });

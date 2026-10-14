@@ -28,10 +28,4 @@ describe('toSnakeCase', () => {
   it('空文字', () => {
     expect(toSnakeCase('')).toBe('');
   });
-
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(toSnakeCase.dataLast()('helloWorld')).toBe('hello_world');
-    });
-  });
 });

@@ -1,173 +1,28 @@
 import isBlank from './isBlank';
 
 describe('isBlank', () => {
-  it('undefined', () => {
-    const result = isBlank(undefined);
-    expect(result).toBe(true);
+  it.each([undefined, null, ''])('%o はtrue', (value) => {
+    expect(isBlank(value)).toBe(true);
   });
 
-  it('null', () => {
-    const result = isBlank(null);
-    expect(result).toBe(true);
+  it.each([
+    ['半角スペース', '   '],
+    ['全角スペース', '\u3000\u3000'],
+    ['タブ・改行', '\t\n\r\v\f'],
+    ['NBSP', '\u00a0'],
+    ['空白の組み合わせ', ' \t\u3000\n'],
+  ])('空白だけの文字列はtrue（%s）', (_, value) => {
+    expect(isBlank(value)).toBe(true);
   });
 
-  describe("trimType==='none'", () => {
-    it('空文字', () => {
-      const result = isBlank('', { trimType: 'none' });
-      expect(result).toBe(true);
-    });
+  it.each(['a', ' a ', '\u3000a'])(
+    '空白以外の文字を含む文字列はfalse（%o）',
+    (value) => {
+      expect(isBlank(value)).toBe(false);
+    },
+  );
 
-    it('半角スペースのみ', () => {
-      const result = isBlank('   ', { trimType: 'none' });
-      expect(result).toBe(false);
-    });
-
-    it('全角スペースのみ', () => {
-      const result = isBlank('　　', { trimType: 'none' });
-      expect(result).toBe(false);
-    });
-
-    it('半角・全角スペースのみ', () => {
-      const result = isBlank(' 　', { trimType: 'none' });
-      expect(result).toBe(false);
-    });
-
-    it('半角・全角スペース・タブ・改行のみ', () => {
-      const result = isBlank(' \t　\n', { trimType: 'none' });
-      expect(result).toBe(false);
-    });
-
-    it('スペース以外の文字を含む', () => {
-      const result = isBlank('abc', { trimType: 'none' });
-      expect(result).toBe(false);
-    });
-  });
-
-  describe("trimType==='half'", () => {
-    it('空文字', () => {
-      const result = isBlank('', { trimType: 'half' });
-      expect(result).toBe(true);
-    });
-
-    it('半角スペースのみ', () => {
-      const result = isBlank('   ', { trimType: 'half' });
-      expect(result).toBe(true);
-    });
-
-    it('全角スペースのみ', () => {
-      const result = isBlank('　　', { trimType: 'half' });
-      expect(result).toBe(false);
-    });
-
-    it('半角・全角スペースのみ', () => {
-      const result = isBlank(' 　', { trimType: 'half' });
-      expect(result).toBe(false);
-    });
-
-    it('半角・全角スペース・タブ・改行のみ', () => {
-      const result = isBlank(' \t　\n', { trimType: 'half' });
-      expect(result).toBe(false);
-    });
-
-    it('スペース以外の文字を含む', () => {
-      const result = isBlank('abc', { trimType: 'half' });
-      expect(result).toBe(false);
-    });
-  });
-
-  describe("trimType==='full'", () => {
-    it('空文字', () => {
-      const result = isBlank('', { trimType: 'full' });
-      expect(result).toBe(true);
-    });
-
-    it('半角スペースのみ', () => {
-      const result = isBlank('   ', { trimType: 'full' });
-      expect(result).toBe(false);
-    });
-
-    it('全角スペースのみ', () => {
-      const result = isBlank('　　', { trimType: 'full' });
-      expect(result).toBe(true);
-    });
-
-    it('半角・全角スペースのみ', () => {
-      const result = isBlank(' 　', { trimType: 'full' });
-      expect(result).toBe(false);
-    });
-
-    it('半角・全角スペース・タブ・改行のみ', () => {
-      const result = isBlank(' \t　\n', { trimType: 'full' });
-      expect(result).toBe(false);
-    });
-
-    it('スペース以外の文字を含む', () => {
-      const result = isBlank('abc', { trimType: 'full' });
-      expect(result).toBe(false);
-    });
-  });
-
-  describe("trimType==='both'", () => {
-    it('空文字', () => {
-      const result = isBlank('', { trimType: 'both' });
-      expect(result).toBe(true);
-    });
-
-    it('半角スペースのみ', () => {
-      const result = isBlank('   ', { trimType: 'both' });
-      expect(result).toBe(true);
-    });
-
-    it('全角スペースのみ', () => {
-      const result = isBlank('　　', { trimType: 'both' });
-      expect(result).toBe(true);
-    });
-
-    it('半角・全角スペースのみ', () => {
-      const result = isBlank(' 　', { trimType: 'both' });
-      expect(result).toBe(true);
-    });
-
-    it('半角・全角スペース・タブ・改行のみ', () => {
-      const result = isBlank(' \t　\n', { trimType: 'both' });
-      expect(result).toBe(false);
-    });
-
-    it('スペース以外の文字を含む', () => {
-      const result = isBlank('abc', { trimType: 'both' });
-      expect(result).toBe(false);
-    });
-  });
-
-  describe("trimType==='all'", () => {
-    it('空文字', () => {
-      const result = isBlank('', { trimType: 'all' });
-      expect(result).toBe(true);
-    });
-
-    it('半角スペースのみ', () => {
-      const result = isBlank('   ', { trimType: 'all' });
-      expect(result).toBe(true);
-    });
-
-    it('全角スペースのみ', () => {
-      const result = isBlank('　　', { trimType: 'all' });
-      expect(result).toBe(true);
-    });
-
-    it('半角・全角スペースのみ', () => {
-      const result = isBlank(' 　', { trimType: 'all' });
-      expect(result).toBe(true);
-    });
-
-    it('半角・全角スペース・タブ・改行のみ', () => {
-      const result = isBlank(' \t　\n', { trimType: 'all' });
-      expect(result).toBe(true);
-    });
-
-    it('スペース以外の文字を含む', () => {
-      const result = isBlank('abc', { trimType: 'all' });
-      expect(result).toBe(false);
-    });
+  it.each([0, false, NaN, [], {}])('文字列以外の値はfalse（%o）', (value) => {
+    expect(isBlank(value)).toBe(false);
   });
 });

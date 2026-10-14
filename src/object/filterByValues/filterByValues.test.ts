@@ -1,3 +1,4 @@
+import { expectTypeOf } from 'vitest';
 import filterByValues from './filterByValues';
 
 describe('filterByValues', () => {
@@ -53,13 +54,13 @@ describe('filterByValues', () => {
     expect(result).toBeNull();
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const result = filterByValues.dataLast('A')({
-        name: 'Alice',
-        city: 'Boston',
-      });
-      expect(result).toEqual({ name: 'Alice' });
-    });
+  it('戻り値の型はunknown', () => {
+    expectTypeOf(filterByValues({ name: 'A' }, 'A')).toEqualTypeOf<unknown>();
+  });
+  it('__proto__キーは読み飛ばす', () => {
+    const data = JSON.parse('{"__proto__":{"a":"abc"},"b":"abc"}');
+    const result: any = filterByValues(data, 'abc');
+    expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
+    expect(result).toEqual({ b: 'abc' });
   });
 });

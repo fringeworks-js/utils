@@ -1,7 +1,4 @@
-import type { LooseRecord } from '@fringeworks/types';
 import _nestedBy from '../../_internal/_nestedBy';
-import { get } from '../../object/get';
-import { setMutable } from '../../object/setMutable';
 import type { NestedKeyByOptions, NestedKeyByResult } from './types';
 
 /**
@@ -29,57 +26,22 @@ import type { NestedKeyByOptions, NestedKeyByResult } from './types';
  * }
  *
  *
- * @param data オブジェクト配列
+ * @param data オブジェクト配列。null・undefinedは空配列として扱う
  * @param properties キーとする値を持ったプロパティ
  * @param options オプション
  * @returns
  */
-const nestedKeyBy = <I extends object>(
-  data: I[],
-  properties: keyof I | (keyof I)[],
-  options: NestedKeyByOptions = {},
-) => _nestedKeyBy(data, properties, options);
-nestedKeyBy.dataLast =
-  <I extends object>(
-    properties: keyof I | (keyof I)[],
-    options: NestedKeyByOptions = {},
-  ) =>
-  (data: I[]) =>
-    _nestedKeyBy(data, properties, options);
-export default nestedKeyBy;
-
-function _nestedKeyBy<I extends object>(
-  data: I[],
+export default function nestedKeyBy<I extends object>(
+  data: I[] | null | undefined,
   properties: keyof I | (keyof I)[],
   options: NestedKeyByOptions = {},
 ): NestedKeyByResult<I> {
   const { overwrite, ...rest } = options;
-  const [setByFlatKey, setByNestedKey]: [
-    (result: LooseRecord, key: string, value: I) => void,
-    (result: LooseRecord, path: string[], value: I) => void,
-  ] = overwrite
+  const merge: (current: I | undefined, item: I) => I = overwrite
     ? // 後勝ち
-      [
-        (result, key, value) => {
-          result[key] = value;
-        },
-        (result, path, value) => {
-          setMutable(result, path as PropertyKey[], value);
-        },
-      ]
+      (_current, item) => item
     : // 先勝ち
-      [
-        (result, key, value) => {
-          if (result[key] === undefined) {
-            result[key] = value;
-          }
-        },
-        (result, path, value) => {
-          if (get(result, path) === undefined) {
-            setMutable(result, path as PropertyKey[], value);
-          }
-        },
-      ];
+      (current, item) => current ?? item;
 
-  return _nestedBy(data, properties, setByFlatKey, setByNestedKey, rest);
+  return _nestedBy(data, properties, merge, rest);
 }

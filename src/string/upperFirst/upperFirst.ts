@@ -1,14 +1,13 @@
 /**
- * 先頭を大文字に変換します
- * @param str
+ * 先頭の文字を大文字に変換する\
+ * サロゲートペアの文字も1文字として扱う
+ * @param str 対象の文字列。空文字・null・undefined はそのまま返す
+ * @returns 先頭の文字を大文字にした文字列
  */
-const upperFirst = (str: string): string => _upperFirst(str);
-upperFirst.dataLast =
-  () =>
-  (str: string): string =>
-    _upperFirst(str);
-export default upperFirst;
-
-function _upperFirst(str: string): string {
-  return str ? str.charAt(0).toUpperCase() + str.slice(1) : str;
+export default function upperFirst(str: string): string {
+  if (!str) {
+    return str;
+  }
+  const length = str.codePointAt(0)! > 0xffff ? 2 : 1;
+  return str.slice(0, length).toUpperCase() + str.slice(length);
 }

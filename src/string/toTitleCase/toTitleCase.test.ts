@@ -17,17 +17,15 @@ describe('toTitleCase', () => {
     expect(toTitleCase('hello.world')).toBe('Hello World');
   });
 
-  it('略語を含む', () => {
-    expect(toTitleCase('XMLParser')).toBe('XML Parser');
+  it('略語は1つの単語として扱う', () => {
+    expect(toTitleCase('XMLParser')).toBe('Xml Parser');
   });
 
   it('空文字', () => {
     expect(toTitleCase('')).toBe('');
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(toTitleCase.dataLast()('hello world')).toBe('Hello World');
-    });
+  it('すべて大文字の文字列も単語ごとに先頭だけ大文字にする', () => {
+    expect(toTitleCase('HELLO_WORLD')).toBe('Hello World');
   });
 });

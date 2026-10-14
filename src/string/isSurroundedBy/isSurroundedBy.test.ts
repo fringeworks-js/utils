@@ -22,17 +22,22 @@ describe('isSurroundedBy', () => {
     });
   });
 
-  it('prefix+suffix以下の長さの場合はfalse', () => {
-    expect(isSurroundedBy('""', '"')).toBe(false);
+  it('prefixとsuffixの間が0文字の場合はtrue', () => {
+    expect(isSurroundedBy('""', '"')).toBe(true);
+    expect(isSurroundedBy('{{}}', '{{', '}}')).toBe(true);
+  });
+
+  it('prefixとsuffixが重なっている場合はfalse', () => {
+    expect(isSurroundedBy('"', '"')).toBe(false);
+    expect(isSurroundedBy('aba', 'ab', 'ba')).toBe(false);
   });
 
   it('空文字はfalse', () => {
     expect(isSurroundedBy('', '"')).toBe(false);
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(isSurroundedBy.dataLast('"')('"abc"')).toBe(true);
-    });
+  it('null・undefinedはfalse', () => {
+    expect(isSurroundedBy(null as any, '"')).toBe(false);
+    expect(isSurroundedBy(undefined as any, '"')).toBe(false);
   });
 });

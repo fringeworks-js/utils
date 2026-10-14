@@ -7,17 +7,7 @@ import type { LimitPositiveNumberOptions } from './types';
  * @param options オプション
  * @returns
  */
-const limitPositiveNumber = (
-  value: number | null | undefined,
-  options: LimitPositiveNumberOptions = {},
-): number | null | undefined => _limitPositiveNumber(value, options);
-limitPositiveNumber.dataLast =
-  (options: LimitPositiveNumberOptions = {}) =>
-  (value: number | null | undefined): number | null | undefined =>
-    _limitPositiveNumber(value, options);
-export default limitPositiveNumber;
-
-function _limitPositiveNumber(
+export default function limitPositiveNumber(
   value: number | null | undefined,
   options: LimitPositiveNumberOptions = {},
 ): number | null | undefined {

@@ -62,18 +62,33 @@ describe('nestedGroupBy', () => {
       '!/ID4': [ITEM4],
     });
   });
+  describe('Object.prototypeのプロパティ名のキー', () => {
+    it('constructorもキーとしてグループ化する', () => {
+      const result = nestedGroupBy([{ k: 'constructor' }], 'k');
+      expect(Object.keys(result)).toEqual(['constructor']);
+      expect(result['constructor']).toEqual([{ k: 'constructor' }]);
+    });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const array = [ITEM0, ITEM1, ITEM2A, ITEM2B, ITEM3, ITEM4];
-      const result = nestedGroupBy.dataLast('$id')(array);
-      expect(result).toEqual({
-        ID0: [ITEM0],
-        ID1: [ITEM1],
-        ID2: [ITEM2A, ITEM2B],
-        ID3: [ITEM3],
-        ID4: [ITEM4],
+    it('ネストしたキーとflatのキーでもグループ化する', () => {
+      const data = [
+        { a: '__proto__', k: 'toString' },
+        { a: '__proto__', k: 'toString' },
+      ];
+      const nested = nestedGroupBy(data, ['a', 'k']);
+      expect(Object.keys(nested)).toEqual(['__proto__']);
+      expect(Object.getPrototypeOf(nested)).toBe(Object.prototype);
+      expect(
+        Object.getOwnPropertyDescriptor(nested, '__proto__')?.value,
+      ).toEqual({
+        toString: data,
+      });
+      expect(nestedGroupBy(data, ['a', 'k'], { flat: true })).toEqual({
+        '__proto__.toString': data,
       });
     });
+  });
+
+  it('nullを渡した場合は空オブジェクトを返す', () => {
+    expect(nestedGroupBy<{ id: string }>(null, 'id')).toEqual({});
   });
 });

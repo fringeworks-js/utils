@@ -1,12 +1,12 @@
 import compactMap from './compactMap';
 
 describe('compactMap', () => {
-  it('nullを渡した場合はundefinedを返す', () => {
-    expect(compactMap(null, (v) => v)).toBeUndefined();
+  it('nullを渡した場合は空配列を返す', () => {
+    expect(compactMap(null, (v) => v)).toEqual([]);
   });
 
-  it('undefinedを渡した場合はundefinedを返す', () => {
-    expect(compactMap(undefined, (v) => v)).toBeUndefined();
+  it('undefinedを渡した場合は空配列を返す', () => {
+    expect(compactMap(undefined, (v) => v)).toEqual([]);
   });
 
   it('callbackがundefinedを返す要素を除外する', () => {
@@ -52,15 +52,6 @@ describe('compactMap', () => {
         exclude: 'falsy',
       });
       expect(result).toEqual([1, 2, 3]);
-    });
-  });
-
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const result = compactMap.dataLast((v: number) =>
-        v > 1 ? v : undefined,
-      )([1, 2, 3]);
-      expect(result).toEqual([2, 3]);
     });
   });
 });

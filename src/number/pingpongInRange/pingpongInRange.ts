@@ -1,19 +1,21 @@
 import { isWithinRange } from '../isWithinRange';
 
 /**
- * 値が範囲外の場合は範囲を超えたら逆方向に進むものとして範囲内の値を返す
+ * 値が範囲外の場合は範囲を超えたら逆方向に進むものとして範囲内の値を返す\
+ * min が max より大きい場合は入れ替えて扱う
  * @param value 値
  * @param min 最小値
  * @param max 最大値
  * @returns 最小値から最大値の間の値
  */
-const pingpongInRange = (value: number, min: number, max: number) =>
-  _pingpongInRange(value, min, max);
-pingpongInRange.dataLast = (min: number, max: number) => (value: number) =>
-  _pingpongInRange(value, min, max);
-export default pingpongInRange;
-
-function _pingpongInRange(value: number, min: number, max: number) {
+export default function pingpongInRange(
+  value: number,
+  min: number,
+  max: number,
+): number {
+  if (min > max) {
+    return pingpongInRange(value, max, min);
+  }
   if (isWithinRange(value, min, max)) {
     return value;
   }

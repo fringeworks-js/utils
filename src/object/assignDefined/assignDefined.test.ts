@@ -9,6 +9,16 @@ describe('assignDefined', () => {
     expect(result).not.toBe(target);
   });
 
+  it('interfaceで定義した型のオブジェクトを渡せる', () => {
+    interface Options {
+      size: number;
+      color?: string;
+    }
+    const options: Options = { size: 1 };
+    const values: Partial<Options> = { color: 'red', size: undefined };
+    expect(assignDefined(options, values)).toEqual({ size: 1, color: 'red' });
+  });
+
   it('非破壊的でtargetは変更されない', () => {
     const target = { a: 1 };
     assignDefined(target, { a: 99 });
@@ -27,19 +37,9 @@ describe('assignDefined', () => {
     expect(result2.a).toBe(1);
   });
 
-  it('targetがfalsyなら入力をそのまま返す', () => {
-    const result = assignDefined(null as any, { a: 1 });
-    expect(result).toBeNull();
-  });
-
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const result = assignDefined.dataLast({ a: 10, b: undefined })({
-        a: 1,
-        b: 2,
-      });
-      expect(result.a).toBe(10);
-      expect(result.b).toBe(2);
-    });
+  it('symbolのキーも反映する', () => {
+    const symbol = Symbol('s');
+    const result = assignDefined({ a: 1 }, { [symbol]: 2 });
+    expect(result[symbol]).toBe(2);
   });
 });

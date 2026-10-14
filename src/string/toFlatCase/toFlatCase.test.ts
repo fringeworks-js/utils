@@ -28,10 +28,4 @@ describe('toFlatCase', () => {
   it('空文字', () => {
     expect(toFlatCase('')).toBe('');
   });
-
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(toFlatCase.dataLast()('hello world')).toBe('helloworld');
-    });
-  });
 });

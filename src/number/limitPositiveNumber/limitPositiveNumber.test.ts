@@ -51,10 +51,4 @@ describe('limitPositiveNumber', () => {
       expect(limitPositiveNumber(-5, { negativeValue: 'abs' })).toBe(5);
     });
   });
-
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(limitPositiveNumber.dataLast()(5)).toBe(5);
-    });
-  });
 });

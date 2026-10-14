@@ -1,17 +1,13 @@
 /**
  * 配列の先頭から見て最初のundefined以外の値を返す
- * @param data 配列
+ * @param data 配列。null・undefinedの場合はundefinedを返す
  */
-const firstDefined = <V>(data: V[]): V | undefined => _firstDefined(data);
-firstDefined.dataLast =
-  <V>() =>
-  (data: V[]) =>
-    firstDefined(data);
-export default firstDefined;
-
-function _firstDefined<V>(data: V[]): V | undefined {
+export default function firstDefined<V>(
+  data: V[] | null | undefined,
+): V | undefined {
   return data?.find(_isTarget);
 }
+
 function _isTarget<V>(value: V) {
   return value !== undefined;
 }

@@ -1,18 +1,12 @@
-import * as R from 'remeda';
-import { isBlank } from '../../type/isBlank';
-
 /**
- * Hello World -> HELLO WORLD
- * @param data
- * @returns
+ * 文字列全体を大文字に変換する（`'Hello World'` → `'HELLO WORLD'`）\
+ * 単語は区切らない。ケース変換の関数を一覧から探せるように用意している
+ * @param data 対象の文字列。空文字・null・undefined はそのまま返す
+ * @returns 大文字に変換した文字列
  */
-const toUpperCase = (data: string) => _toUpperCase(data);
-toUpperCase.dataLast = () => (data: string) => _toUpperCase(data);
-export default toUpperCase;
-
-function _toUpperCase(data: string): string {
-  if (isBlank(data)) {
+export default function toUpperCase(data: string): string {
+  if (!data) {
     return data;
   }
-  return R.toUpperCase(data);
+  return data.toUpperCase();
 }

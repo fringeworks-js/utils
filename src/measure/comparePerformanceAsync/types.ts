@@ -1,6 +1,7 @@
 import type {
   ComparePerformanceOptions,
   ComparePerformanceResult,
+  ComparePerformanceTarget,
 } from '../comparePerformance';
 
 /**
@@ -17,4 +18,9 @@ export type ComparePerformanceAsyncOptions<
 export type ComparePerformanceAsyncResult<
   A extends unknown[] = unknown[],
   R = unknown,
-> = ComparePerformanceResult<A, R>;
+> = Omit<ComparePerformanceResult<A, R>, 'order'> & {
+  /**
+   * 平均が短い順に並べた測定対象
+   */
+  order: ComparePerformanceTarget<A, Promise<R>>[];
+};

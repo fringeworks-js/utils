@@ -1,14 +1,14 @@
 import isEmptyCollection from './isEmptyCollection';
 
 describe('isEmptyCollection', () => {
-  it('undefined', () => {
+  it('undefinedはfalseを返す', () => {
     const result = isEmptyCollection(undefined);
-    expect(result).toBe(true);
+    expect(result).toBe(false);
   });
 
-  it('null', () => {
+  it('nullはfalseを返す', () => {
     const result = isEmptyCollection(null);
-    expect(result).toBe(true);
+    expect(result).toBe(false);
   });
 
   it('空配列', () => {

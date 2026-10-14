@@ -29,9 +29,16 @@ describe('toKebabCase', () => {
     expect(toKebabCase('')).toBe('');
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(toKebabCase.dataLast()('hello_world')).toBe('hello-world');
-    });
+  it('英字・数字以外の文字はすべて単語の区切りとして扱う', () => {
+    expect(toKebabCase('user/profile:page')).toBe('user-profile-page');
+  });
+
+  it('先頭・末尾の区切りは除く', () => {
+    expect(toKebabCase('_private_')).toBe('private');
+  });
+
+  it('英字の後の数字の前では区切らない', () => {
+    expect(toKebabCase('i18n')).toBe('i18n');
+    expect(toKebabCase('base64Encode')).toBe('base64-encode');
   });
 });

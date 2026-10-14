@@ -1,25 +1,18 @@
 /**
- * 値が範囲内に収まっているかを判定する（境界を含まない）
+ * 値が範囲内に収まっているかを判定する（境界を含まない）\
+ * min が max より大きい場合は入れ替えて扱う
  * @param value 判定する値
  * @param min 最小値
  * @param max 最大値
  * @returns 範囲内であれば true
  */
-const isStrictlyWithinRange = (
-  value: number,
-  min: number,
-  max: number,
-): boolean => _isStrictlyWithinRange(value, min, max);
-isStrictlyWithinRange.dataLast =
-  (min: number, max: number) =>
-  (value: number): boolean =>
-    _isStrictlyWithinRange(value, min, max);
-export default isStrictlyWithinRange;
-
-function _isStrictlyWithinRange(
+export default function isStrictlyWithinRange(
   value: number,
   min: number,
   max: number,
 ): boolean {
+  if (min > max) {
+    return isStrictlyWithinRange(value, max, min);
+  }
   return value > min && value < max;
 }

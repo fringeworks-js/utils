@@ -8,4 +8,8 @@ describe('alwaysFalse', () => {
   it('引数があってもfalseを返す', () => {
     expect(alwaysFalse(1, 'a', null)).toBe(false);
   });
+
+  it('戻り値の型は false', () => {
+    expectTypeOf(alwaysFalse).returns.toEqualTypeOf<false>();
+  });
 });

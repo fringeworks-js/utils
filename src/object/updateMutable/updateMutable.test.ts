@@ -14,14 +14,6 @@ describe('updateMutable', () => {
     expect(oldValues).toEqual({});
   });
 
-  it('objectがnullの場合は空オブジェクトを返す', () => {
-    expect(updateMutable(null, { a: 1 })).toEqual({});
-  });
-
-  it('valuesがnullの場合は空オブジェクトを返す', () => {
-    expect(updateMutable({ a: 1 }, null)).toEqual({});
-  });
-
   it('継承プロパティは更新対象にならない', () => {
     const obj = { a: 1, b: 2 };
     const parentValues = { a: 99 };
@@ -33,12 +25,38 @@ describe('updateMutable', () => {
     expect(oldValues).toEqual({ b: 2 });
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const obj = { a: 1, b: 2 };
-      const result = updateMutable.dataLast({ a: 10 })(obj);
-      expect(obj.a).toBe(10);
-      expect(result).toEqual({ a: 1 });
-    });
+  it('isEqualで比較方法を指定できる', () => {
+    const obj = { a: { x: 1 }, b: 2 };
+    const a = obj.a;
+    const result = updateMutable(
+      obj,
+      { a: { x: 1 }, b: 3 },
+      { isEqual: (v1, v2) => JSON.stringify(v1) === JSON.stringify(v2) },
+    );
+    expect(obj.a).toBe(a);
+    expect(result).toEqual({ b: 2 });
+  });
+
+  it('既定ではObject.isで比較する', () => {
+    const obj = { a: NaN, b: 0 };
+    expect(updateMutable(obj, { a: NaN })).toEqual({});
+    expect(updateMutable(obj, { b: -0 })).toEqual({ b: 0 });
+  });
+
+  it('symbolのキーも更新し、以前の値を返す', () => {
+    const symbol = Symbol('s');
+    const obj = { [symbol]: 1 };
+    expect(updateMutable(obj, { [symbol]: 2 })).toEqual({ [symbol]: 1 });
+    expect(obj[symbol]).toBe(2);
+  });
+  it('__proto__キーは反映しない', () => {
+    const obj: any = { a: 1 };
+    const result = updateMutable(
+      obj,
+      JSON.parse('{"__proto__":{"polluted":1}}'),
+    );
+    expect(result).toEqual({});
+    expect(Object.getPrototypeOf(obj)).toBe(Object.prototype);
+    expect(obj.polluted).toBeUndefined();
   });
 });

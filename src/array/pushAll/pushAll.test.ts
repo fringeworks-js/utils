@@ -22,7 +22,7 @@ describe('pushAll', () => {
 
   it('sourceがnullの場合は元の配列のコピーを返す', () => {
     const array = [1, 2, 3];
-    const result = pushAll(array, null as any);
+    const result = pushAll(array, null);
     expect(result).toEqual([1, 2, 3]);
   });
 
@@ -31,15 +31,11 @@ describe('pushAll', () => {
     expect(result).toEqual([1, 2, 3]);
   });
 
-  it('dataがnullの場合はnullを返す', () => {
-    const result = pushAll(null as any, [1, 2, 3]);
-    expect(result).toBeNull();
+  it('dataがnullの場合は空配列として扱う', () => {
+    expect(pushAll(null, [1, 2, 3])).toEqual([1, 2, 3]);
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const result = pushAll.dataLast([4, 5])([1, 2, 3]);
-      expect(result).toEqual([1, 2, 3, 4, 5]);
-    });
+  it('dataもsourceもnullの場合は空配列を返す', () => {
+    expect(pushAll(null, null)).toEqual([]);
   });
 });

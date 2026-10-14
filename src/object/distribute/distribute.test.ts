@@ -191,6 +191,24 @@ describe('distribute', () => {
       result.group.meta.score = 999;
       expect(nested.meta.score).toBe(42);
     });
+
+    it('cloneValue=true の場合、残余グループの値もグループごとに複製される', () => {
+      const result = distribute(
+        nested,
+        { group: ['label'] as const, rest1: null, rest2: null },
+        { cloneValue: true },
+      );
+
+      expect(result.rest1.meta).toEqual(nested.meta);
+      expect(result.rest1.meta).not.toBe(nested.meta);
+      expect(result.rest1.meta).not.toBe(result.rest2.meta);
+    });
+
+    it('cloneValue=false の場合、残余グループの値は参照が共有される', () => {
+      const result = distribute(nested, { rest: null });
+
+      expect(result.rest.meta).toBe(nested.meta);
+    });
   });
 
   // ---------------------------------------------------------------------------
@@ -330,13 +348,11 @@ describe('distribute', () => {
       expect(fn({ a: 1, b: 'x', c: true })).toEqual({ b: 'x', c: true });
     });
   });
-
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const result = distribute.dataLast({ identity: ['id', 'name'] as const })(
-        user,
-      );
-      expect(result.identity).toEqual({ id: 1, name: 'Alice' });
-    });
+  it('__proto__は分配しない', () => {
+    const data = JSON.parse('{"__proto__":{"polluted":1},"a":1}');
+    const result: any = distribute(data, { g: ['__proto__', 'a'] });
+    expect(Object.getPrototypeOf(result.g)).toBe(Object.prototype);
+    expect(result.g.polluted).toBeUndefined();
+    expect(result.g).toEqual({ a: 1 });
   });
 });

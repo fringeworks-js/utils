@@ -24,12 +24,11 @@ describe('rotateArrayMutable', () => {
     const array: number[] = [];
     expect(rotateArrayMutable(array)).toBe(array);
   });
-
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const array = [0, 1, 2];
-      expect(rotateArrayMutable.dataLast()(array)).toBe(array);
-      expect(array).toEqual([1, 2, 0]);
-    });
+  it('要素数が多い配列も回転できる', () => {
+    const array = Array.from({ length: 300000 }, (_, i) => i);
+    const result = rotateArrayMutable(array, { count: 200000 });
+    expect(result.length).toBe(300000);
+    expect(result[0]).toBe(200000);
+    expect(result[299999]).toBe(199999);
   });
 });

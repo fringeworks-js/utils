@@ -10,7 +10,8 @@ export type FlattenObjectOptions = {
   leafKeysOnly?: boolean;
 
   /**
-   * 階層を連結する際の区切り文字
+   * 階層を連結する際の区切り文字\
+   * 配列の要素は区切り文字に関わらず `[0]` の形で連結する
    *
    * @default '.'
    */

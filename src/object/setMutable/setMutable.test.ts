@@ -31,11 +31,35 @@ describe('setMutable', () => {
     expect(result).toBe(obj);
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const obj = { a: 1 };
-      setMutable.dataLast('a', 2)(obj);
-      expect(obj.a).toBe(2);
-    });
+  it('__proto__を含むパスは何もしない', () => {
+    const obj: any = { a: {} };
+    expect(setMutable(obj, '__proto__.polluted', 1)).toBe(obj);
+    setMutable(obj, ['a', '__proto__'], { polluted: 1 });
+    expect(({} as any).polluted).toBeUndefined();
+    expect(obj.a.polluted).toBeUndefined();
+    expect(obj).toEqual({ a: {} });
+  });
+
+  it('readonlyの配列や数値のキーでパスを指定できる', () => {
+    const obj = { a: [10, 20] };
+    setMutable(obj, ['a', 1] as const, 99);
+    setMutable(obj.a, 0, 98);
+    expect(obj).toEqual({ a: [98, 99] });
+  });
+
+  it('空のパスは何もせず元のオブジェクトを返す', () => {
+    const obj = { a: 1 };
+    expect(setMutable(obj, [], 'v')).toBe(obj);
+    expect(setMutable(obj, '', 'v')).toBe(obj);
+    expect(obj).toEqual({ a: 1 });
+  });
+
+  it('プロトタイプ上のオブジェクトは書き換えない', () => {
+    const proto = { a: { b: 1 } };
+    const obj = Object.create(proto) as { a: { b: number; c?: number } };
+    setMutable(obj, 'a.c', 2);
+    expect(Object.hasOwnProperty.call(obj, 'a')).toBe(true);
+    expect(obj.a).toEqual({ c: 2 });
+    expect(proto).toEqual({ a: { b: 1 } });
   });
 });

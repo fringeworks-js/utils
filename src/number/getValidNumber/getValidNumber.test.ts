@@ -36,10 +36,4 @@ describe('getValidNumber', () => {
   it('allowInfinity: true でInfinityを許容', () => {
     expect(getValidNumber(Infinity, { allowInfinity: true })).toBe(Infinity);
   });
-
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(getValidNumber.dataLast()(42)).toBe(42);
-    });
-  });
 });

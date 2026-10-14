@@ -1,14 +1,13 @@
 /**
- * 先頭を子文字に変換します
- * @param str
+ * 先頭の文字を小文字に変換する\
+ * サロゲートペアの文字も1文字として扱う
+ * @param str 対象の文字列。空文字・null・undefined はそのまま返す
+ * @returns 先頭の文字を小文字にした文字列
  */
-const lowerFirst = (str: string): string => _lowerFirst(str);
-lowerFirst.dataLast =
-  () =>
-  (str: string): string =>
-    _lowerFirst(str);
-export default lowerFirst;
-
-function _lowerFirst(str: string): string {
-  return str ? str.charAt(0).toLowerCase() + str.slice(1) : str;
+export default function lowerFirst(str: string): string {
+  if (!str) {
+    return str;
+  }
+  const length = str.codePointAt(0)! > 0xffff ? 2 : 1;
+  return str.slice(0, length).toLowerCase() + str.slice(length);
 }

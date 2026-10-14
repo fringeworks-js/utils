@@ -1,46 +1,27 @@
+import _createArgsList from '../_internal/_createArgsList';
+import _runAsync from '../_internal/_runAsync';
+import _toCount from '../_internal/_toCount';
 import type { MeasureAsyncOptions, MeasureAsyncResult } from './types';
 
 /**
- * 関数を指定回数実行しかかった時間を測定する
+ * 非同期関数を指定回数、1つずつ順に実行し、全体にかかった時間を測定する\
+ * 実行回数を指定しなかった場合は10回実行する
  * @param fn 測定対象の関数
- * @param args 測定対象の関数を実行する際に渡す引数
- * @param iterations 実行回数。未指定の場合は10回
- * @returns
+ * @param options オプション。引数が必須の関数では、argsかgetArgsの指定が必須
+ * @returns 所要時間と最後の戻り値
  */
-export default function measureAsync<
-  A extends unknown[] = unknown[],
-  R = unknown,
->(
+export default function measureAsync<R>(
+  fn: () => Promise<R>,
+  options?: MeasureAsyncOptions<[]>,
+): Promise<MeasureAsyncResult<R>>;
+export default function measureAsync<A extends unknown[], R>(
   fn: (...args: A) => Promise<R>,
-  options: MeasureAsyncOptions<A> = {},
+  options: MeasureAsyncOptions<A>,
+): Promise<MeasureAsyncResult<R>>;
+export default function measureAsync<A extends unknown[], R>(
+  fn: (...args: A) => Promise<R>,
+  options: MeasureAsyncOptions<A> = {} as MeasureAsyncOptions<A>,
 ): Promise<MeasureAsyncResult<R>> {
-  const {
-    iterations = 10,
-    args = [] as unknown as A,
-    getArgs = () => args,
-  } = options;
-  // 指定回数分実行
-  let promise = Promise.resolve<MeasureAsyncResult<R>>({
-    time: 0,
-    returnValue: undefined,
-  });
-  for (let i = 0; i < iterations; i++) {
-    promise = promise.then((previousResult) => {
-      // 引数の取得
-      const currentArgs = getArgs();
-      return new Promise((resolve, reject) => {
-        // 計測
-        const start = performance.now();
-        fn(...currentArgs)
-          .then((returnValue) => {
-            const time = previousResult.time + performance.now() - start;
-            // 次に渡す
-            resolve({ time, returnValue });
-            return returnValue;
-          })
-          .catch((e) => reject(e));
-      });
-    });
-  }
-  return promise;
+  const iterations = _toCount(options.iterations, 10);
+  return _runAsync(fn, _createArgsList(options, iterations));
 }

@@ -111,15 +111,6 @@ describe('replaceByMap', () => {
     ).toBe('BA🙂');
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const result = replaceByMap.dataLast(new Map([['ABC', '!!!']]))(
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-      );
-      expect(result).toBe('!!!DEFGHIJKLMNOPQRSTUVWXYZ');
-    });
-  });
-
   it('同じmapを変更した場合は変更後のmapで置換する', () => {
     const map: Record<string, string> = { a: 'A' };
     expect(replaceByMap('abc', map)).toBe('Abc');

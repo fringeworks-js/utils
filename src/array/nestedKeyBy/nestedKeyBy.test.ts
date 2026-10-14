@@ -88,20 +88,35 @@ describe('nestedKeyBy', () => {
   });
 
   it('nullを渡した場合は空オブジェクトを返す', () => {
-    const result = nestedKeyBy(null as any, '$id');
+    const result = nestedKeyBy<{ $id: string }>(null, '$id');
     expect(result).toEqual({});
   });
+  describe('Object.prototypeのプロパティ名のキー', () => {
+    it('constructorやtoStringもキーとして格納する', () => {
+      const result = nestedKeyBy(
+        [{ k: 'constructor' }, { k: 'toString' }],
+        'k',
+      );
+      expect(Object.keys(result)).toEqual(['constructor', 'toString']);
+      expect(result['constructor']).toEqual({ k: 'constructor' });
+    });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const array = [ITEM0, ITEM1, ITEM2, ITEM3, ITEM4];
-      const result = nestedKeyBy.dataLast('$id')(array);
+    it('__proto__は自身のプロパティとして格納し、プロトタイプを変えない', () => {
+      const result = nestedKeyBy([{ k: '__proto__' }], 'k');
+      expect(Object.keys(result)).toEqual(['__proto__']);
+      expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
+    });
+
+    it('ネストしたキーでも先勝ちになる', () => {
+      const result = nestedKeyBy(
+        [
+          { a: 'x', k: 'constructor', v: 1 },
+          { a: 'x', k: 'constructor', v: 2 },
+        ],
+        ['a', 'k'],
+      );
       expect(result).toEqual({
-        ID0: ITEM0,
-        ID1: ITEM1,
-        ID2: ITEM2,
-        ID3: ITEM3,
-        ID4: ITEM4,
+        x: { constructor: { a: 'x', k: 'constructor', v: 1 } },
       });
     });
   });

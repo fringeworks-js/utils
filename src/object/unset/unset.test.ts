@@ -47,10 +47,39 @@ describe('unset', () => {
     expect(result.arr[1]).toEqual([4, 5, 6]);
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const result = unset.dataLast('a')({ a: 1, b: 2 });
-      expect(result).toEqual({ b: 2 });
+  it('配列のインデックス以外のキーは削除せず同じ参照を返す', () => {
+    const obj = { a: ['p', 'q'] };
+    expect(unset(obj, 'a.length')).toBe(obj);
+    expect(unset(obj, ['a', '1.0'])).toBe(obj);
+    expect(unset(obj, 'a.2')).toBe(obj);
+  });
+
+  it('__proto__を含むパスは何もせず同じ参照を返す', () => {
+    const obj = { a: { b: 1 } };
+    expect(unset(obj, '__proto__.toString')).toBe(obj);
+    expect(unset(obj, ['a', '__proto__'])).toBe(obj);
+    expect(typeof Object.prototype.toString).toBe('function');
+  });
+
+  it('readonlyの配列や数値のキーでパスを指定できる', () => {
+    expect(unset({ a: { b: 1, c: 2 } }, ['a', 'b'] as const)).toEqual({
+      a: { c: 2 },
     });
+    expect(unset([10, 20], 0)).toEqual([20]);
+  });
+
+  it('interfaceで定義した型のオブジェクトを渡せる', () => {
+    interface User {
+      id: number;
+      name?: string;
+    }
+    const user: User = { id: 1, name: 'A' };
+    expect(unset(user, 'name')).toEqual({ id: 1 });
+  });
+
+  it('プロトタイプ上のプロパティは削除の対象にしない', () => {
+    const proto = { a: 1 };
+    const obj = Object.create(proto) as { a: number };
+    expect(unset(obj, 'a')).toBe(obj);
   });
 });

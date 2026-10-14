@@ -109,9 +109,6 @@ importers:
 
   .:
     dependencies:
-      '@fringeworks/constants':
-        specifier: link:../constants
-        version: link:../constants
       '@fringeworks/types':
         specifier: link:../types
         version: link:../types

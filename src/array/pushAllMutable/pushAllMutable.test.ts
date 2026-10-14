@@ -25,21 +25,12 @@ describe('pushAllMutable', () => {
     expect(result).toBe(target);
   });
 
-  it('dataがnullの場合はnullを返す', () => {
-    const result = pushAllMutable(null as any, [1, 2, 3]);
-    expect(result).toBeNull();
-  });
-
   it('sourceがnullの場合は変更しない', () => {
-    const result = pushAllMutable([1, 2] as any, null as any);
+    const result = pushAllMutable([1, 2], null);
     expect(result).toEqual([1, 2]);
   });
-
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const target = [1, 2];
-      pushAllMutable.dataLast([3, 4])(target);
-      expect(target).toEqual([1, 2, 3, 4]);
-    });
+  it('要素数が多い配列も追加できる', () => {
+    const result = pushAllMutable([1], new Array(300000).fill(0));
+    expect(result.length).toBe(300001);
   });
 });

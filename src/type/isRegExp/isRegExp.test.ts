@@ -24,4 +24,8 @@ describe('isRegExp', () => {
   it('オブジェクトはfalse', () => {
     expect(isRegExp({})).toBe(false);
   });
+
+  it('Symbol.toStringTagで偽装したオブジェクトはfalse', () => {
+    expect(isRegExp({ [Symbol.toStringTag]: 'RegExp' })).toBe(false);
+  });
 });

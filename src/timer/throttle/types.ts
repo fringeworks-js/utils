@@ -1,5 +1,12 @@
 export type ThrottleOptions = {
   /**
+   * 実行の間隔（ミリ秒）
+   *
+   * @default 240
+   */
+  wait?: number;
+
+  /**
    * 実行するタイミング
    *
    * - 'both': `★-★-★`

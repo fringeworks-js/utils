@@ -47,18 +47,4 @@ describe('ensureArray', () => {
       expect(result).toBe(array);
     });
   });
-
-  describe('dataLast', () => {
-    it('空文字', () => {
-      const result = ensureArray.dataLast()('');
-      expect(result).toEqual(['']);
-    });
-
-    it('空配列', () => {
-      const array: unknown[] = [];
-      const result = ensureArray.dataLast()(array);
-      expect(result).not.toBe(array);
-      expect(result).toEqual(array);
-    });
-  });
 });

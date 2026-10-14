@@ -21,10 +21,7 @@ describe('lowerFirst', () => {
     const result = lowerFirst(null as any);
     expect(result).toBe(null);
   });
-
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(lowerFirst.dataLast()('Abc')).toBe('abc');
-    });
+  it('サロゲートペアの文字を1文字として扱う', () => {
+    expect(lowerFirst('\u{10400}X')).toBe('\u{10428}X');
   });
 });

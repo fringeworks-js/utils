@@ -29,9 +29,9 @@ describe('pingpongInRange', () => {
     expect(pingpongInRange(5, 3, 3)).toBe(3);
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(pingpongInRange.dataLast(0, 10)(5)).toBe(5);
-    });
+  it('min が max より大きい場合は入れ替えて扱う', () => {
+    expect(pingpongInRange(5, 10, 0)).toBe(5);
+    expect(pingpongInRange(12, 10, 0)).toBe(8);
+    expect(pingpongInRange(-2, 10, 0)).toBe(2);
   });
 });

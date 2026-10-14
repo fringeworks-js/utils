@@ -1,5 +1,6 @@
-import type { LooseRecord } from '@fringeworks/types';
-import * as R from 'remeda';
+import type { StrictRecord } from '@fringeworks/types';
+import _isUnsafeKey from '../../_internal/_isUnsafeKey';
+import { cloneDeep } from '../cloneDeep';
 import { hasOwn } from '../hasOwn';
 import type {
   DistributeOptions,
@@ -9,44 +10,33 @@ import type {
 
 /**
  * object直下のプロパティをrulesに従って分配する
- * @param data
- * @param rules
- * @param options
+ * 同じプロパティを複数のグループに指定した場合は、それぞれのグループに分配する
+ * @param data 分配するオブジェクト
+ * @param rules 分配のルール
+ * @param options オプション
  */
-const distribute = <T extends LooseRecord, DR extends DistributeRules<T>>(
-  data: T,
-  rules: DR,
-  options: DistributeOptions = {},
-): DistributeResult<T, DR> => _distribute(data, rules, options);
-distribute.dataLast =
-  <T extends LooseRecord, DR extends DistributeRules<T>>(
-    rules: DR,
-    options: DistributeOptions = {},
-  ) =>
-  (data: T): DistributeResult<T, DR> =>
-    _distribute(data, rules, options);
-export default distribute;
-
-function _distribute<T extends LooseRecord, DR extends DistributeRules<T>>(
+export default function distribute<
+  T extends object,
+  DR extends DistributeRules<T>,
+>(
   data: T,
   rules: DR,
   options: DistributeOptions = {},
 ): DistributeResult<T, DR> {
   const { includeInherited, cloneValue } = options;
+  const record = data as StrictRecord;
   const has = includeInherited
     ? (property: PropertyKey) => property in data
     : (property: PropertyKey) => hasOwn(data, property);
-  const get = cloneValue
-    ? (property: PropertyKey) => R.clone(data[property])
-    : (property: PropertyKey) => data[property];
+  const copy = cloneValue ? cloneDeep : (value: unknown) => value;
   // 分配結果
   const result: Record<string, Record<PropertyKey, unknown>> = {};
   // 対象をrestにコピーし、分配できたものはrestから削除していく
-  const rest = { ...data };
+  const rest = { ...record };
   const restGroupKeys: string[] = [];
 
   for (const groupKey in rules) {
-    const group: LooseRecord = (result[groupKey] = {});
+    const group: StrictRecord = (result[groupKey] = {});
     const properties = rules[groupKey];
     if (properties == null) {
       // 分配できなかったプロパティを設定するグループ
@@ -54,18 +44,20 @@ function _distribute<T extends LooseRecord, DR extends DistributeRules<T>>(
     } else {
       // 指定のプロパティを対象のグループへ分配
       for (const property of properties) {
-        if (has(property)) {
-          group[property] = get(property);
+        if (!_isUnsafeKey(property) && has(property)) {
+          group[property] = copy(record[property]);
           delete rest[property];
         }
       }
     }
   }
-  if (restGroupKeys.length) {
-    for (const groupKey of restGroupKeys) {
-      // restの内容をグループへ設定
-      result[groupKey] = { ...rest };
+  for (const groupKey of restGroupKeys) {
+    // restの内容をグループへ設定
+    const group: StrictRecord = {};
+    for (const key of Reflect.ownKeys(rest)) {
+      group[key] = copy(rest[key]);
     }
+    result[groupKey] = group;
   }
 
   return result as DistributeResult<T, DR>;

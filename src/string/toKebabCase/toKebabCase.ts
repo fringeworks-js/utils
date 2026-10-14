@@ -1,19 +1,14 @@
-import * as R from 'remeda';
-import { isBlank } from '../../type/isBlank';
-import _normalizeSeparators from '../_internal/_normalizeSeparators';
+import _splitWords from '../_internal/_splitWords';
 
 /**
- * hello world -> hello-world
- * @param data
- * @returns
+ * 文字列をケバブケースに変換する（`'hello world'` → `'hello-world'`）\
+ * 単語の区切り方は README の「ケース変換」を参照
+ * @param data 対象の文字列。空文字・null・undefined はそのまま返す
+ * @returns ケバブケースに変換した文字列
  */
-const toKebabCase = (data: string) => _toKebabCase(data);
-toKebabCase.dataLast = () => (data: string) => _toKebabCase(data);
-export default toKebabCase;
-
-function _toKebabCase(data: string): string {
-  if (isBlank(data)) {
+export default function toKebabCase(data: string): string {
+  if (!data) {
     return data;
   }
-  return R.toKebabCase(_normalizeSeparators(data));
+  return _splitWords(data).join('-').toLowerCase();
 }

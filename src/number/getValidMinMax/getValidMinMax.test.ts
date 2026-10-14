@@ -32,4 +32,12 @@ describe('getValidMinMax', () => {
   it('同じ値の場合', () => {
     expect(getValidMinMax(5, 5)).toEqual([5, 5]);
   });
+
+  it('NaNの場合はデフォルトを使う', () => {
+    expect(getValidMinMax(NaN, 5)).toEqual([-Infinity, 5]);
+    expect(getValidMinMax(0, NaN)).toEqual([0, Infinity]);
+    expect(getValidMinMax(NaN, NaN, { defaultMin: 1, defaultMax: 2 })).toEqual([
+      1, 2,
+    ]);
+  });
 });

@@ -27,28 +27,22 @@ export default function cloneShallow<T>(value: T): T {
   if (type === '[object Object]') {
     copy = Object.create(Object.getPrototypeOf(original));
   } else if (type === '[object Array]') {
-    // 長さだけ確保した疎な配列
-    copy = Array(original.length);
+    // 要素は slice でまとめて複製する（空き要素も保たれる）
+    copy = original.slice();
   } else if (type === '[object Set]') {
-    copy = new Set();
-    (original as Set<unknown>).forEach((val) => {
-      copy.add(val);
-    });
-    // Setは要素を追加するだけでOK
-    return copy;
+    copy = new Set(original as Set<unknown>);
   } else if (type === '[object Map]') {
-    copy = new Map();
-    (original as Map<unknown, unknown>).forEach((val, key) => {
-      copy.set(key, val);
-    });
-    // Mapは要素を追加するだけでOK
-    return copy;
+    copy = new Map(original as Map<unknown, unknown>);
   } else if (type === '[object Date]') {
     copy = new Date(original.getTime());
   } else if (type === '[object RegExp]') {
     copy = new RegExp(original.source, original.flags);
   } else if (type === '[object DataView]') {
-    copy = new original.constructor(original.buffer);
+    copy = new original.constructor(
+      original.buffer,
+      original.byteOffset,
+      original.byteLength,
+    );
   } else if (type === '[object ArrayBuffer]') {
     copy = original.slice(0);
   } else if (type.slice(-6) === 'Array]') {
@@ -65,8 +59,9 @@ export default function cloneShallow<T>(value: T): T {
       );
     }
     // 通常のプロパティ
+    // 配列の要素など、コピーのベースを作った時点で同じ値になっているものは飛ばす
     for (const key of Object.getOwnPropertyNames(original)) {
-      if (!hasOwn(copy, key) || copy[key] !== original[key]) {
+      if (!hasOwn(copy, key) || !Object.is(copy[key], original[key])) {
         _setProperty(copy, key, Object.getOwnPropertyDescriptor(original, key));
       }
     }

@@ -7,8 +7,11 @@ export type EnsureMapOptions = {
   raw?: boolean;
 };
 
+/**
+ * ensureMapが受け取る値
+ * - `[キー, 値]` を返す反復可能なオブジェクト（Map、エントリーの配列など）
+ * - プロパティをエントリーにするオブジェクト
+ */
 export type EnsureMapSource<K, V> =
-  | Map<K, V>
-  | Record<PropertyKey, V>
-  | Array<[K, V]>
-  | Array<V>;
+  | Iterable<readonly [K, V]>
+  | Record<string, V>;

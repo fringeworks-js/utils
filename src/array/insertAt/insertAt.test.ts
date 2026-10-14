@@ -61,15 +61,14 @@ describe('insertAt', () => {
     expect(array).toEqual([0, 1, 2, 3, 4]);
   });
 
-  it('dataがnullの場合はnullを返す', () => {
-    const result = insertAt(null as any, 0, ['a']);
-    expect(result).toBeNull();
+  it('dataがnullの場合は空配列として扱う', () => {
+    expect(insertAt(null, 0, ['a'])).toEqual(['a']);
   });
 
-  describe('dataLast', () => {
-    it('中盤に追加', () => {
-      const result = insertAt.dataLast(2, ['a'])([0, 1, 2, 3, 4]);
-      expect(result).toEqual([0, 1, 'a', 2, 3, 4]);
-    });
+  it('itemsがnullの場合はコピーを返す', () => {
+    const array = [1, 2];
+    const result = insertAt(array, 1, null);
+    expect(result).toEqual([1, 2]);
+    expect(result).not.toBe(array);
   });
 });

@@ -1,6 +1,6 @@
-import type { LooseRecord } from '@fringeworks/types';
-import { isEqual } from '../../compare/isEqual';
-import { hasOwn } from '../hasOwn';
+import type { StrictRecord } from '@fringeworks/types';
+import _isUnsafeKey from '../../_internal/_isUnsafeKey';
+import { forEachValue } from '../forEachValue';
 import type { UpdateMutableOptions } from './types';
 
 /**
@@ -11,37 +11,23 @@ import type { UpdateMutableOptions } from './types';
  * @param options オプション
  * @returns 更新されたキーと以前の値
  */
-const updateMutable = <T extends LooseRecord>(
-  object: T | null | undefined,
-  values: Partial<T> | null | undefined,
-  options?: UpdateMutableOptions,
-): Partial<T> => _updateMutable(object, values, options);
-updateMutable.dataLast =
-  <T extends LooseRecord>(
-    values: Partial<T> | null | undefined,
-    options?: UpdateMutableOptions,
-  ) =>
-  (object: T | null | undefined): Partial<T> =>
-    _updateMutable(object, values, options);
-export default updateMutable;
-
-function _updateMutable<T extends LooseRecord>(
-  object: T | null | undefined,
-  values: Partial<T> | null | undefined,
+export default function updateMutable<T extends object>(
+  object: T,
+  values: Partial<T>,
   options?: UpdateMutableOptions,
 ): Partial<T> {
-  const oldValues: Partial<T> = {};
-  if (object && values) {
-    for (const key in values) {
-      if (hasOwn(values, key)) {
-        const value = values[key];
-        const oldValue = object[key];
-        if (!isEqual(oldValue, value, options)) {
-          object[key] = value as T[typeof key];
-          oldValues[key] = oldValue;
-        }
-      }
+  const isEqual = options?.isEqual ?? Object.is;
+  const record = object as StrictRecord;
+  const oldValues: StrictRecord = {};
+  forEachValue(values, (value, key) => {
+    if (_isUnsafeKey(key)) {
+      return;
     }
-  }
-  return oldValues;
+    const oldValue = record[key];
+    if (!isEqual(oldValue, value)) {
+      record[key] = value;
+      oldValues[key] = oldValue;
+    }
+  });
+  return oldValues as Partial<T>;
 }

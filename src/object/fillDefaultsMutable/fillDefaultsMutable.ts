@@ -1,40 +1,41 @@
-import type { LooseRecord } from '@fringeworks/types';
+import type { StrictRecord } from '@fringeworks/types';
+import _isUnsafeKey from '../../_internal/_isUnsafeKey';
 import { forEachValue } from '../forEachValue';
 import type { FillDefaultsMutableOptions, FillDefaultsResult } from './types';
 
 /**
- * 対象のオブジェクトのプロパティ値がundefinedのとき、デフォルト値のプロパティ値がundefinedでなければ設定する。
+ * 対象のオブジェクトのプロパティ値がundefinedのとき、デフォルト値のプロパティ値がundefinedでなければ設定する（破壊的変更）
  *
  * @param target 対象のオブジェクト
  * @param defaultValues デフォルト値
  * @param options オプション
- * @returns デフォルト値が設定されたオブジェクト
+ * @returns デフォルト値を設定した同じオブジェクト
  */
-export default function fillDefaultsMutable<
-  T extends LooseRecord,
-  V extends LooseRecord,
->(
+export default function fillDefaultsMutable<T extends object, V extends object>(
   target: T,
   defaultValues: V,
   options: FillDefaultsMutableOptions = {},
 ): FillDefaultsResult<T, V> {
-  if (target && defaultValues) {
-    const { skipNull, overwriteNull, ...opts } = options;
-    const isValidValue = skipNull
-      ? (value: unknown) => value != null
-      : (value: unknown) => value !== undefined;
-    const isOverwritedValue = overwriteNull
-      ? (value: unknown) => value == null
-      : (value: unknown) => value === undefined;
-    forEachValue(
-      defaultValues,
-      (value, key) => {
-        if (isValidValue(value) && isOverwritedValue(target[key])) {
-          (target as LooseRecord)[key] = value;
-        }
-      },
-      opts,
-    );
-  }
+  const { skipNull, overwriteNull, ...opts } = options;
+  const isValidValue = skipNull
+    ? (value: unknown) => value != null
+    : (value: unknown) => value !== undefined;
+  const isOverwritable = overwriteNull
+    ? (value: unknown) => value == null
+    : (value: unknown) => value === undefined;
+  const record = target as StrictRecord;
+  forEachValue(
+    defaultValues,
+    (value, key) => {
+      if (
+        !_isUnsafeKey(key) &&
+        isValidValue(value) &&
+        isOverwritable(record[key])
+      ) {
+        record[key] = value;
+      }
+    },
+    opts,
+  );
   return target as FillDefaultsResult<T, V>;
 }

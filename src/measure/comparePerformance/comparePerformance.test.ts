@@ -30,8 +30,74 @@ describe('comparePerformance', () => {
       targets: [{ id: 'fn', fn: () => 0 }],
       rounds: 1,
       iterations: 1,
-      warmUp: true,
+      warmUpIterations: 1,
     });
     expect(result.results).toHaveLength(1);
+  });
+
+  it('同じ周の中ではすべての測定対象に同じ引数を渡す', () => {
+    const received: Record<string, number[]> = { a: [], b: [] };
+    let count = 0;
+    comparePerformance({
+      targets: [
+        { id: 'a', fn: (n: number) => received['a']!.push(n) },
+        { id: 'b', fn: (n: number) => received['b']!.push(n) },
+      ],
+      getArgs: () => [count++] as [number],
+      iterations: 2,
+      rounds: 2,
+    });
+    expect(received['a']).toEqual([0, 1, 2, 3]);
+    expect(received['b']).toEqual([0, 1, 2, 3]);
+  });
+
+  it('warmUpIterationsの回数だけ測定前に実行する', () => {
+    const fn = vi.fn(() => 0);
+    comparePerformance({
+      targets: [{ id: 'fn', fn }],
+      iterations: 1,
+      rounds: 1,
+      warmUpIterations: 3,
+    });
+    expect(fn).toHaveBeenCalledTimes(4);
+  });
+
+  it('IDが重複している場合はエラー', () => {
+    expect(() =>
+      comparePerformance({
+        targets: [
+          { id: 'a', fn: () => 1 },
+          { id: 'a', fn: () => 2 },
+        ],
+      }),
+    ).toThrow('Duplicate target id: a');
+  });
+
+  it('roundsが1未満の場合は1周にする', () => {
+    const result = comparePerformance({
+      targets: [{ id: 'fn', fn: () => 0 }],
+      rounds: 0,
+    });
+    expect(result.results).toHaveLength(1);
+    expect(Number.isNaN(result.average['fn'])).toBe(false);
+  });
+
+  it('測定対象が無い場合', () => {
+    const result = comparePerformance({ targets: [], rounds: 1 });
+    expect(result.totalAverage).toBe(0);
+    expect(result.order).toEqual([]);
+  });
+
+  it('orderは平均が短い順', () => {
+    const result = comparePerformance({
+      targets: [
+        { id: '2', fn: () => 0 },
+        { id: '1', fn: () => 0 },
+      ],
+      rounds: 2,
+    });
+    const averages = result.order.map((target) => result.average[target.id]!);
+    expect(averages).toEqual([...averages].sort((a, b) => a - b));
+    expect(result.order.map((target) => target.id).sort()).toEqual(['1', '2']);
   });
 });

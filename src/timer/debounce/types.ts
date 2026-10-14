@@ -1,5 +1,12 @@
 export type DebounceOptions = {
   /**
+   * 呼び出しが途切れたと見なすまでの時間（ミリ秒）
+   *
+   * @default 240
+   */
+  wait?: number;
+
+  /**
    * 実行するタイミング
    *
    * - 'end': `☆-★-★`

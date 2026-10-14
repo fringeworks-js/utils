@@ -1,65 +1,68 @@
-import type { LooseRecord } from '@fringeworks/types';
+import type { LooseRecord, StrictRecord } from '@fringeworks/types';
 import * as R from 'remeda';
+import _isUnsafeKey from '../../_internal/_isUnsafeKey';
 import type { FlattenObjectOptions } from './types';
 
 /**
  * ネストされたオブジェクトを走査し、キーを連結して平坦化（フラット化）したオブジェクトを生成する
  * 階層構造を区切り文字（デフォルトは '.'）で繋いだパスを新しいキーとし、
- * 値がプリミティブ、または特定の条件を満たさない限り再帰的に処理する
+ * プレーンなオブジェクトと配列（keepArrays の場合は除く）を再帰的に処理する
+ * 配列の要素は、区切り文字に関わらず `a[0]` の形で連結する（leafKeysOnly の場合は `0`）
+ * デフォルトの区切り文字で作ったキーは、そのまま parsePropertyPath や set などのパスとして使える
+ * （ただし `.` や `[` を含むキーは引用符で囲まないため、元の構造には戻せない）
+ * 中身の無いオブジェクト・配列は値としてそのまま残す
+ * 連結したキーが重複した場合（`{ 'a.b': 1, a: { b: 2 } }` など）は、後に処理した値で上書きする
  *
  * @param data フラット化する対象のオブジェクト
  * @param options オプション
  * @returns キーが平坦化された新しいオブジェクト
- * * @example
+ * @example
  * // デフォルトの挙動
  * flattenObject({ a: { b: 1 } }); // { "a.b": 1 }
- * * @example
+ * @example
  * // 配列を含む場合
- * flattenObject({ a: [1, 2] }); // { "a.0": 1, "a.1": 2 }
+ * flattenObject({ a: [1, 2] }); // { "a[0]": 1, "a[1]": 2 }
  */
-const flattenObject = (
-  data: LooseRecord,
+export default function flattenObject(
+  data: object,
   options: FlattenObjectOptions = {},
-): LooseRecord => _flattenObject(data, options) as LooseRecord;
-flattenObject.dataLast =
-  (options: FlattenObjectOptions = {}) =>
-  (data: LooseRecord): LooseRecord =>
-    _flattenObject(data, options) as LooseRecord;
-export default flattenObject;
+): LooseRecord {
+  const {
+    leafKeysOnly = false,
+    keySeparator = '.',
+    keepArrays = false,
+  } = options;
+  const isBranch = (value: unknown): value is object =>
+    R.isPlainObject(value) || (Array.isArray(value) && !keepArrays);
+  if (!isBranch(data)) {
+    // 対象外の値はそのまま返す
+    return data as LooseRecord;
+  }
 
-function _flattenObject(
-  data: unknown,
-  options: FlattenObjectOptions,
-  parentPath?: string,
-): unknown {
-  if (R.isPlainObject(data) || (Array.isArray(data) && !options.keepArrays)) {
-    // オブジェクトの場合は配下要素をフラットな状態に変換
-    let flatObj: { [key: string]: unknown } = {};
-    let currentPath: string;
-    const { leafKeysOnly = false, keySeparator = '.' } = options;
-    const keys = Object.keys(data);
-
-    for (const key of keys) {
-      const value: unknown = (data as LooseRecord)[key];
-      // キー名
-      if (parentPath && !leafKeysOnly) {
-        // ネストしたキー名
-        currentPath = parentPath + keySeparator + key;
-      } else {
-        currentPath = key;
+  const result: StrictRecord = {};
+  // 結果のオブジェクトに直接設定しながら、配下をたどる
+  const visit = (node: object, parentPath: string | undefined) => {
+    // 配列の要素は区切り文字に関わらず `[0]` の形で連結する
+    const isArray = Array.isArray(node);
+    for (const key of Object.keys(node)) {
+      if (_isUnsafeKey(key)) {
+        continue;
       }
-      const flatItems: unknown = _flattenObject(value, options, currentPath);
-      if (R.isPlainObject(flatItems)) {
-        // flattenedがobjectectの場合はflatにする為にマージする
-        flatObj = Object.assign(flatObj, flatItems);
-      } else {
-        // objectect以外はそのまま設定
-        flatObj[currentPath] = flatItems;
+      const value: unknown = (node as StrictRecord)[key];
+      const path = leafKeysOnly
+        ? key
+        : isArray
+          ? (parentPath ?? '') + `[${key}]`
+          : parentPath === undefined
+            ? key
+            : parentPath + keySeparator + key;
+      if (isBranch(value) && Object.keys(value).length > 0) {
+        visit(value, path);
+      } else if (!_isUnsafeKey(path)) {
+        result[path] = value;
       }
     }
-    return flatObj;
-  } else {
-    // 上記以外はそのまま
-    return data;
-  }
+  };
+  visit(data, undefined);
+  return result;
 }

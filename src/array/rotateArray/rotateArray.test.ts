@@ -21,17 +21,14 @@ describe('rotateArray', () => {
     const result = rotateArray(array, { count: 8 });
     expect(result).toEqual([3, 4, 0, 1, 2]);
   });
-
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const result = rotateArray.dataLast({ count: 2 })([0, 1, 2, 3, 4]);
-      expect(result).toEqual([2, 3, 4, 0, 1]);
-    });
-  });
-
   it('負の数は右シフト', () => {
     const array = [0, 1, 2, 3, 4];
     expect(rotateArray(array, { count: -1 })).toEqual([4, 0, 1, 2, 3]);
     expect(rotateArray(array, { count: -7 })).toEqual([3, 4, 0, 1, 2]);
+  });
+
+  it('nullを渡した場合は空配列を返す', () => {
+    expect(rotateArray(null)).toEqual([]);
+    expect(rotateArray(undefined)).toEqual([]);
   });
 });

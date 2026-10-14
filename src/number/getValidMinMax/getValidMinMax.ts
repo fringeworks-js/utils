@@ -1,11 +1,11 @@
 import type { GetValidMinMaxOptions } from './types';
 
 /**
- * 最小値と最大値の順序を正しく整えて返す
+ * 最小値と最大値の順序を正しく整えて返す\
+ * null・undefined・NaNの場合はオプションのdefaultMin・defaultMaxを使う
  * @param min 最小値候補
  * @param max 最大値候補
- * @param defaultMin minがnull/undefinedの場合の代替値
- * @param defaultMax maxがnull/undefinedの場合の代替値
+ * @param options オプション
  * @returns [最小値, 最大値]
  */
 export default function getValidMinMax(
@@ -14,7 +14,7 @@ export default function getValidMinMax(
   options: GetValidMinMaxOptions = {},
 ): [number, number] {
   const { defaultMin = -Infinity, defaultMax = Infinity } = options;
-  const minValue = min ?? defaultMin;
-  const maxValue = max ?? defaultMax;
+  const minValue = min == null || Number.isNaN(min) ? defaultMin : min;
+  const maxValue = max == null || Number.isNaN(max) ? defaultMax : max;
   return [Math.min(minValue, maxValue), Math.max(minValue, maxValue)];
 }

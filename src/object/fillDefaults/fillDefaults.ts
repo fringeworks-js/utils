@@ -1,37 +1,19 @@
-import type { LooseRecord } from '@fringeworks/types';
 import type { FillDefaultsResult } from '../fillDefaultsMutable';
 import { fillDefaultsMutable } from '../fillDefaultsMutable';
 import type { FillDefaultsOptions } from './types';
 
 /**
- * 対象のオブジェクトのプロパティ値がundefinedのとき、デフォルト値のプロパティ値がundefinedでなければ設定する。
+ * 対象のオブジェクトのプロパティ値がundefinedのとき、デフォルト値のプロパティ値がundefinedでなければ設定した新しいオブジェクトを返す（非破壊的変更）
  *
  * @param target 対象のオブジェクト
  * @param defaultValues デフォルト値
  * @param options オプション
- * @returns デフォルト値が設定されたオブジェクト
+ * @returns デフォルト値を設定した新しいオブジェクト
  */
-const fillDefaults = <T extends LooseRecord, V extends LooseRecord>(
-  target: T,
-  defaultValues: V,
-  options: FillDefaultsOptions = {},
-): FillDefaultsResult<T, V> => _fillDefaults(target, defaultValues, options);
-fillDefaults.dataLast =
-  <V extends LooseRecord>(
-    defaultValues: V,
-    options: FillDefaultsOptions = {},
-  ) =>
-  <T extends LooseRecord>(target: T): FillDefaultsResult<T, V> =>
-    _fillDefaults(target, defaultValues, options);
-export default fillDefaults;
-
-function _fillDefaults<T extends LooseRecord, V extends LooseRecord>(
+export default function fillDefaults<T extends object, V extends object>(
   target: T,
   defaultValues: V,
   options: FillDefaultsOptions = {},
 ): FillDefaultsResult<T, V> {
-  if (target && defaultValues) {
-    return fillDefaultsMutable({ ...target }, defaultValues, options);
-  }
-  return target as FillDefaultsResult<T, V>;
+  return fillDefaultsMutable({ ...target }, defaultValues, options);
 }

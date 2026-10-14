@@ -1,4 +1,4 @@
-import type { CreateReplacerResult, ReplacementMap } from './types';
+import type { Replacer } from '../../createReplacerByMap/types';
 
 /**
  * 先頭のコード単位ごとの索引
@@ -15,34 +15,20 @@ type IndexEntry = {
   multis?: [string, string][];
 };
 
-const replacers = new WeakMap<ReplacementMap, CreateReplacerResult>();
-
 /**
  * マップによる置き換えで文字列置換をする関数を作る
  *
  * キーの先頭の文字で引く索引を使い、先頭から順に置換する。
  * 一致しなかった位置では、キーの先頭の文字を集めた正規表現で次の候補まで読み飛ばす。
  * キーが重なる場合は長いキーを優先し、置換後の文字列は再び置換しない。
+ * 索引は作成時に作るため、作成後に map を変更しても反映しない
  *
- * @param map 置換用のマップ
- * @param cache mapをキーに置換関数をキャッシュするか。後から変更されないmapにのみ指定する
- * @returns
+ * @param map 置換前の文字列をキー、置換後の文字列を値に持つマップ
+ * @returns 文字列を置換する関数。空文字・null・undefined はそのまま返す
  */
 export default function createReplacer(
-  map: ReplacementMap,
-  cache: boolean = false,
-): CreateReplacerResult {
-  let replacer = cache ? replacers.get(map) : undefined;
-  if (!replacer) {
-    replacer = _createReplacer(map);
-    if (cache) {
-      replacers.set(map, replacer);
-    }
-  }
-  return replacer;
-}
-
-function _createReplacer(map: ReplacementMap): CreateReplacerResult {
+  map: ReadonlyMap<string, string>,
+): Replacer {
   const index = new Map<number, IndexEntry>();
   for (const [key, value] of map) {
     if (!key) {
@@ -61,7 +47,7 @@ function _createReplacer(map: ReplacementMap): CreateReplacerResult {
     }
   }
   if (!index.size) {
-    return (str: string): string => str;
+    return (str) => str;
   }
   // 最長一致になるよう、長いキーから並べる
   for (const entry of index.values()) {
@@ -75,7 +61,7 @@ function _createReplacer(map: ReplacementMap): CreateReplacerResult {
   ).join('');
   const finder = new RegExp(`[${firstChars}]`, 'g');
 
-  return (str: string): string => {
+  return (str) => {
     if (!str) {
       return str;
     }

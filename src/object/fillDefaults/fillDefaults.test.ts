@@ -24,16 +24,14 @@ describe('fillDefaults', () => {
     expect(result.a).toBe(10);
   });
 
-  it('targetがfalsyなら入力をそのまま返す', () => {
-    const result = fillDefaults(null as any, { a: 1 });
-    expect(result).toBeNull();
-  });
-
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const result = fillDefaults.dataLast({ b: 42 })({ a: 1, b: undefined });
-      expect(result.a).toBe(1);
-      expect(result.b).toBe(42);
-    });
+  it('symbolのキーにもデフォルト値を設定する', () => {
+    const symbol = Symbol('s');
+    const result = fillDefaults(
+      { [symbol]: undefined as number | undefined },
+      {
+        [symbol]: 1,
+      },
+    );
+    expect(result[symbol]).toBe(1);
   });
 });

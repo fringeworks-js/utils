@@ -12,16 +12,10 @@ describe('insertAtMutable', () => {
     expect(insertAtMutable([0, 1], -1, ['a'])).toEqual(['a', 0, 1]);
     expect(insertAtMutable([0, 1], 10, ['a'])).toEqual([0, 1, 'a']);
   });
-
-  it('dataがnullの場合はnullを返す', () => {
-    expect(insertAtMutable(null as any, 0, ['a'])).toBeNull();
-  });
-
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const array: (number | string)[] = [0, 1, 2];
-      expect(insertAtMutable.dataLast(1, ['a'])(array)).toBe(array);
-      expect(array).toEqual([0, 'a', 1, 2]);
-    });
+  it('要素数が多い配列も挿入できる', () => {
+    const result = insertAtMutable([1, 2], 1, new Array(300000).fill(0));
+    expect(result.length).toBe(300002);
+    expect(result[0]).toBe(1);
+    expect(result[300001]).toBe(2);
   });
 });

@@ -92,6 +92,41 @@ describe('cloneShallow', () => {
     expect(clone).not.toBe(obj);
   });
 
+  it('DataViewのbyteOffsetとbyteLengthを保つ', () => {
+    const view = new DataView(new ArrayBuffer(8), 2, 4);
+    const copy = cloneShallow(view);
+    expect(copy).not.toBe(view);
+    expect(copy.byteOffset).toBe(2);
+    expect(copy.byteLength).toBe(4);
+  });
+
+  it('配列の空き要素と独自のプロパティを保つ', () => {
+    const array: any = [1, 2, 3];
+    delete array[1];
+    array.extra = 'x';
+    const copy = cloneShallow(array);
+    expect(copy).not.toBe(array);
+    expect(1 in copy).toBe(false);
+    expect(copy.length).toBe(3);
+    expect(copy.extra).toBe('x');
+  });
+
+  it('NaNを含む型付き配列をコピーする', () => {
+    const array = new Float64Array([NaN, 1]);
+    const copy = cloneShallow(array);
+    expect(copy).not.toBe(array);
+    expect(Array.from(copy)).toEqual([NaN, 1]);
+  });
+
+  it('SetとMapの独自のプロパティもコピーする', () => {
+    const set: any = new Set([1]);
+    set.extra = 'x';
+    const map: any = new Map([[1, 2]]);
+    map.extra = 'y';
+    expect(cloneShallow(set).extra).toBe('x');
+    expect(cloneShallow(map).extra).toBe('y');
+  });
+
   it('未対応の型はそのまま返す', () => {
     const wm = new WeakMap();
     const result = cloneShallow(wm as any);

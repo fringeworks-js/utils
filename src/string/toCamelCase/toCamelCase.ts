@@ -1,21 +1,19 @@
-import * as R from 'remeda';
-import { isBlank } from '../../type/isBlank';
-import _normalizeSeparators from '../_internal/_normalizeSeparators';
+import _splitWords from '../_internal/_splitWords';
+import { upperFirst } from '../upperFirst';
 
 /**
- * hello world -> helloWorld
- * @param data
- * @returns
+ * 文字列をキャメルケースに変換する（`'hello world'` → `'helloWorld'`）\
+ * 単語の区切り方は README の「ケース変換」を参照
+ * @param data 対象の文字列。空文字・null・undefined はそのまま返す
+ * @returns キャメルケースに変換した文字列
  */
-const toCamelCase = (data: string) => _toCamelCase(data);
-toCamelCase.dataLast = () => (data: string) => _toCamelCase(data);
-export default toCamelCase;
-
-function _toCamelCase(data: string): string {
-  if (isBlank(data)) {
+export default function toCamelCase(data: string): string {
+  if (!data) {
     return data;
   }
-  return R.toCamelCase(_normalizeSeparators(data), {
-    preserveConsecutiveUppercase: false,
-  });
+  return _splitWords(data)
+    .map((word, i) =>
+      i === 0 ? word.toLowerCase() : upperFirst(word.toLowerCase()),
+    )
+    .join('');
 }

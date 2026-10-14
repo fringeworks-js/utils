@@ -16,7 +16,8 @@ export type SortDependenciesOptions<I> = {
 
   /**
    * 依存先のIDにあたるプロパティ
-   * 未指定の場合はidと同じ設定になる
+   * 未指定の場合、依存先がオブジェクトならidと同じ設定で取得し、
+   * それ以外は依存先の値そのものをIDとする
    */
   dependencyId?: string | number | SortDependenciesGetId<I>;
 

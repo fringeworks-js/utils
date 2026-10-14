@@ -28,10 +28,4 @@ describe('toPascalCase', () => {
   it('空文字', () => {
     expect(toPascalCase('')).toBe('');
   });
-
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(toPascalCase.dataLast()('hello_world')).toBe('HelloWorld');
-    });
-  });
 });

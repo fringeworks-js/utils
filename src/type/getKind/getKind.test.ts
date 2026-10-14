@@ -86,14 +86,27 @@ describe('getKind', () => {
     expect(getKind(new SharedArrayBuffer(0))).toBe('sharedarraybuffer');
   });
 
-  it('クラスインスタンス（plainobjectでないobject）', () => {
-    class MyClass {}
-    expect(getKind(new MyClass())).toBe('object');
+  it('プロトタイプがnullのオブジェクトはplainobject', () => {
+    expect(getKind(Object.create(null))).toBe('plainobject');
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(getKind.dataLast()(42)).toBe('number');
-    });
+  it('どれにも当たらないオブジェクトはinstance', () => {
+    class MyClass {}
+    expect(getKind(new MyClass())).toBe('instance');
+    expect(getKind(Object.create({}))).toBe('instance');
+    expect(getKind(new Uint8Array(0))).toBe('instance');
+  });
+
+  it('SharedArrayBufferが定義されていない環境でも判定できる', () => {
+    const descriptor = Object.getOwnPropertyDescriptor(
+      globalThis,
+      'SharedArrayBuffer',
+    )!;
+    Reflect.deleteProperty(globalThis, 'SharedArrayBuffer');
+    try {
+      expect(getKind(new Uint8Array(0))).toBe('instance');
+    } finally {
+      Object.defineProperty(globalThis, 'SharedArrayBuffer', descriptor);
+    }
   });
 });

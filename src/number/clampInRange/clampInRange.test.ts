@@ -29,9 +29,9 @@ describe('clampInRange', () => {
     expect(clampInRange(-5, -10, 0)).toBe(-5);
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(clampInRange.dataLast(0, 10)(5)).toBe(5);
-    });
+  it('min が max より大きい場合は入れ替えて扱う', () => {
+    expect(clampInRange(15, 10, 0)).toBe(10);
+    expect(clampInRange(-5, 10, 0)).toBe(0);
+    expect(clampInRange(5, 10, 0)).toBe(5);
   });
 });

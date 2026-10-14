@@ -1,42 +1,13 @@
-import type { IsBlankOptions } from './types';
-
-const REGEX_FULL_WHITESPACE = /\u3000/g;
-const REGEX_BOTH_WHITESPACE = /[ \u3000]/g;
-const REGEX_ALL_WHITESPACE = /\s/g;
+const REGEX_BLANK = /^\s*$/;
 
 /**
- * 値が空であるか判定する
- * @param value
- * @param options
- * @returns
+ * 値が `null`・`undefined`・空文字・空白だけの文字列のいずれかであるか判定する。\
+ * 空白は正規表現の `\s` と同じ（半角・全角スペース、タブ、改行など）
+ * @param value 判定する値
+ * @returns `null`・`undefined`・空文字・空白だけの文字列であれば true
  */
-export default function isBlank(
-  value: unknown,
-  options: IsBlankOptions = {},
-): boolean {
-  if (value == null) {
-    return true;
-  }
-  if (typeof value === 'string') {
-    const { trimType = 'none' } = options;
-    let processed = value;
-    switch (trimType) {
-      case 'none':
-        break;
-      case 'half':
-        processed = processed.replace(/^[ \t\n\v\f\r]+|[ \t\n\v\f\r]+$/g, '');
-        break;
-      case 'full':
-        processed = processed.replace(REGEX_FULL_WHITESPACE, '');
-        break;
-      case 'both':
-        processed = processed.replace(REGEX_BOTH_WHITESPACE, '');
-        break;
-      case 'all':
-        processed = processed.replace(REGEX_ALL_WHITESPACE, '');
-        break;
-    }
-    return processed === '';
-  }
-  return false;
+export default function isBlank(value: unknown): boolean {
+  return (
+    value == null || (typeof value === 'string' && REGEX_BLANK.test(value))
+  );
 }

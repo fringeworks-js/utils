@@ -1,19 +1,14 @@
-import * as R from 'remeda';
-import { isBlank } from '../../type/isBlank';
-import _normalizeSeparators from '../_internal/_normalizeSeparators';
+import _splitWords from '../_internal/_splitWords';
 
 /**
- * hello world -> helloworld
- * @param data
- * @returns
+ * 文字列をフラットケースに変換する（`'hello world'` → `'helloworld'`）\
+ * 単語の区切り方は README の「ケース変換」を参照
+ * @param data 対象の文字列。空文字・null・undefined はそのまま返す
+ * @returns フラットケースに変換した文字列
  */
-const toFlatCase = (data: string) => _toFlatCase(data);
-toFlatCase.dataLast = () => (data: string) => _toFlatCase(data);
-export default toFlatCase;
-
-function _toFlatCase(data: string): string {
-  if (isBlank(data)) {
+export default function toFlatCase(data: string): string {
+  if (!data) {
     return data;
   }
-  return R.toSnakeCase(_normalizeSeparators(data)).replaceAll('_', '');
+  return _splitWords(data).join('').toLowerCase();
 }

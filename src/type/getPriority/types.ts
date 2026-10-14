@@ -1,27 +1,18 @@
-import type { TypeOfResult } from '@fringeworks/constants';
 import type { Kind } from '../getKind';
 
 export type GetPriorityOptions = {
   /**
-   * objectの詳細な型を取得するか
-   *
-   * @default false
+   * 型種別（`getKind` の結果）ごとの優先度。\
+   * 既定値の `{ undefined: -2, null: -1 }` とマージする
    */
-  useKind?: boolean;
+  priorityMap?: Partial<Record<Kind, number>>;
 
   /**
-   * 優先度のマップ
+   * `priorityMap` に無い型種別の優先度を決める関数
    *
-   * @default { undefined: -2, null: -1 }
-   */
-  priorityMap?: Partial<Record<Kind | TypeOfResult, number>>;
-
-  /**
-   * 優先順位を解決する関数\
-   * priorityMapに存在しない型の優先順位を決定するための関数
-   *
-   * @param data
-   * @returns
+   * @param data 値
+   * @returns 優先度
+   * @default () => 0
    */
   getFallbackPriority?: (data: unknown) => number;
 };

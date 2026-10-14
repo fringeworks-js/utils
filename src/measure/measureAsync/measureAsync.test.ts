@@ -41,4 +41,16 @@ describe('measureAsync', () => {
       'test error',
     );
   });
+
+  it('1つずつ順に実行する', async () => {
+    const log: string[] = [];
+    const fn = async (n: number) => {
+      log.push(`start${n}`);
+      await Promise.resolve();
+      log.push(`end${n}`);
+    };
+    let count = 0;
+    await measureAsync(fn, { iterations: 2, getArgs: () => [count++] });
+    expect(log).toEqual(['start0', 'end0', 'start1', 'end1']);
+  });
 });

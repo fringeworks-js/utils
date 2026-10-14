@@ -1,20 +1,12 @@
-const PRIMITIVE_SET = new Set([
-  'undefined',
-  'boolean',
-  'number',
-  'bigint',
-  'string',
-  'symbol',
-]);
+import type { Primitive } from '@fringeworks/types';
 
 /**
- * 値がプリミティブか判定します
- * @param value 値
- * @returns
+ * 値がプリミティブ（`null`・`undefined`・`boolean`・`number`・`bigint`・`string`・`symbol`）か判定する
+ * @param value 判定する値
+ * @returns プリミティブであれば true
  */
-export default function isPrimitive(value: unknown): boolean {
-  if (value === null) {
-    return true;
-  }
-  return PRIMITIVE_SET.has(typeof value);
+export default function isPrimitive(value: unknown): value is Primitive {
+  return (
+    value === null || (typeof value !== 'object' && typeof value !== 'function')
+  );
 }

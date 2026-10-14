@@ -21,14 +21,18 @@ describe('fillDefaultsMutable', () => {
     expect(target.a).toBeUndefined();
   });
 
-  it('targetがnullの場合はそのまま返す', () => {
-    const result = fillDefaultsMutable(null as any, { a: 1 });
-    expect(result).toBeNull();
-  });
-
   it('overwriteNull: trueで既存のnullを上書きしない場合(非nullの既存値は維持)', () => {
     const target = { a: 'existing' as any };
     fillDefaultsMutable(target, { a: 10 }, { overwriteNull: true });
     expect(target.a).toBe('existing');
+  });
+
+  it('__proto__キーは反映しない', () => {
+    const target: any = {};
+    fillDefaultsMutable(target, JSON.parse('{"__proto__":{"polluted":1}}'), {
+      overwriteNull: true,
+    });
+    expect(Object.getPrototypeOf(target)).toBe(Object.prototype);
+    expect(target.polluted).toBeUndefined();
   });
 });

@@ -15,7 +15,14 @@ describe('assignDefinedMutable', () => {
     expect(target.a).toBe(1);
   });
 
-  it('targetがfalsyなら何も変更しない', () => {
-    expect(() => assignDefinedMutable(null as any, { a: 1 })).not.toThrow();
+  it('__proto__キーは反映しない', () => {
+    const target: any = {};
+    assignDefinedMutable(
+      target,
+      JSON.parse('{"__proto__":{"polluted":1},"a":1}'),
+    );
+    expect(Object.getPrototypeOf(target)).toBe(Object.prototype);
+    expect(target.polluted).toBeUndefined();
+    expect(target).toEqual({ a: 1 });
   });
 });

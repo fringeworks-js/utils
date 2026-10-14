@@ -34,10 +34,8 @@ describe('swapPairs', () => {
       [4, 3],
     ]);
   });
-
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(swapPairs.dataLast()([['a', 1]])).toEqual([[1, 'a']]);
-    });
+  it('nullを渡した場合は空配列を返す', () => {
+    expect(swapPairs(null)).toEqual([]);
+    expect(swapPairs(undefined)).toEqual([]);
   });
 });

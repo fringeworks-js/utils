@@ -21,7 +21,8 @@ const STRATEGIES: Record<
 };
 
 /**
- * 値が指定の範囲内に収まるようにする
+ * 値が指定の範囲内に収まるようにする\
+ * min が max より大きい場合は入れ替えて扱う
  *
  * @param value 値
  * @param min 最小値
@@ -29,24 +30,15 @@ const STRATEGIES: Record<
  * @param options オプション
  * @returns
  */
-const keepInRange = (
+export default function keepInRange(
   value: number,
   min: number,
   max: number,
   options: KeepInRangeOptions = {},
-) => _keepInRange(value, min, max, options);
-keepInRange.dataLast =
-  (min: number, max: number, options: KeepInRangeOptions = {}) =>
-  (value: number) =>
-    _keepInRange(value, min, max, options);
-export default keepInRange;
-
-function _keepInRange(
-  value: number,
-  min: number,
-  max: number,
-  options: KeepInRangeOptions = {},
-) {
+): number {
+  if (min > max) {
+    return keepInRange(value, max, min, options);
+  }
   const {
     mode = RangeMode.clamp,
     minMode = mode,

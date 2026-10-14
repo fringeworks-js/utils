@@ -1,3 +1,4 @@
+import { isEqual } from '../../compare/isEqual';
 import update from './update';
 
 describe('update', () => {
@@ -24,20 +25,27 @@ describe('update', () => {
     expect(obj.a).toBe(1);
   });
 
-  it('modeで比較方法を指定できる', () => {
+  it('isEqualで比較方法を指定できる', () => {
     const obj = { a: { x: 1 } };
     expect(update(obj, { a: { x: 1 } })).not.toBe(obj);
-    expect(update(obj, { a: { x: 1 } }, { mode: 'deep' })).toBe(obj);
+    expect(update(obj, { a: { x: 1 } }, { isEqual })).toBe(obj);
   });
 
-  it('objectがnullの場合はnullを返す', () => {
-    expect(update(null as any, { a: 1 })).toBeNull();
+  it('既定ではObject.isで比較する', () => {
+    const obj = { a: NaN, b: 0 };
+    expect(update(obj, { a: NaN })).toBe(obj);
+    expect(update(obj, { b: -0 })).not.toBe(obj);
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const result = update.dataLast({ a: 10 })({ a: 1, b: 2 });
-      expect(result).toEqual({ a: 10, b: 2 });
-    });
+  it('symbolのキーも更新する', () => {
+    const symbol = Symbol('s');
+    const obj = { [symbol]: 1 };
+    expect(update(obj, { [symbol]: 2 })[symbol]).toBe(2);
+  });
+  it('__proto__キーは反映しない', () => {
+    const obj: any = { a: 1 };
+    const result = update(obj, JSON.parse('{"__proto__":{"polluted":1}}'));
+    expect(result).toBe(obj);
+    expect(result.polluted).toBeUndefined();
   });
 });

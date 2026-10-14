@@ -24,10 +24,6 @@ describe('forEachValue', () => {
     expect(calls).toEqual([1, 2]);
   });
 
-  it('nullを渡した場合はtrueを返す', () => {
-    expect(forEachValue(null as any, () => {})).toBe(true);
-  });
-
   it('includeInherited: trueで継承プロパティも処理する', () => {
     const parent = { inherited: 'yes' };
     const child = Object.create(parent) as Record<string, unknown>;
@@ -56,13 +52,26 @@ describe('forEachValue', () => {
     expect(calls).not.toContain('yes');
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const calls: unknown[] = [];
-      forEachValue.dataLast((value) => {
-        calls.push(value);
-      })({ a: 1, b: 2 });
-      expect(calls).toEqual([1, 2]);
+  it('自身の列挙可能なsymbolのキーも処理する', () => {
+    const symbol = Symbol('s');
+    const hidden = Symbol('hidden');
+    const target = { a: 1, [symbol]: 2 };
+    Object.defineProperty(target, hidden, { value: 3, enumerable: false });
+    const keys: (string | symbol)[] = [];
+    forEachValue(target, (_value, key) => {
+      keys.push(key);
     });
+    expect(keys).toEqual(['a', symbol]);
+  });
+
+  it('symbolのキーの処理中にfalseを返すと中断する', () => {
+    const target = { a: 1, [Symbol('s')]: 2, [Symbol('t')]: 3 };
+    const calls: unknown[] = [];
+    const result = forEachValue(target, (value) => {
+      calls.push(value);
+      return value !== 2;
+    });
+    expect(result).toBe(false);
+    expect(calls).toEqual([1, 2]);
   });
 });

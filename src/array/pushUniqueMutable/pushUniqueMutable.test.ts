@@ -41,14 +41,6 @@ describe('pushUniqueMutable', () => {
   });
 
   describe('null / undefined', () => {
-    it('dataがnullの場合はnullを返す', () => {
-      expect(pushUniqueMutable(null, [1])).toBeNull();
-    });
-
-    it('dataがundefinedの場合はundefinedを返す', () => {
-      expect(pushUniqueMutable(undefined, [1])).toBeUndefined();
-    });
-
     it('itemsがnullの場合はdataをそのまま返す', () => {
       const data = [1, 2, 3];
       const result = pushUniqueMutable(data, null);
@@ -59,10 +51,6 @@ describe('pushUniqueMutable', () => {
       const data = [1, 2, 3];
       const result = pushUniqueMutable(data, undefined);
       expect(result).toBe(data);
-    });
-
-    it('dataもitemsもnullの場合はnullを返す', () => {
-      expect(pushUniqueMutable(null, null)).toBeNull();
     });
   });
 
@@ -98,22 +86,6 @@ describe('pushUniqueMutable', () => {
       });
       expect(result?.filter((v) => v.id === 0)).toHaveLength(1);
       expect(result?.some((v) => v.id === 200)).toBe(true);
-    });
-  });
-
-  describe('dataLast', () => {
-    it('dataLastでカリー化して使用できる', () => {
-      const data = [1, 2, 3];
-      const result = pushUniqueMutable.dataLast([4, 5])(data);
-      expect(result).toEqual([1, 2, 3, 4, 5]);
-    });
-
-    it('dataLastでoptionsを渡せる', () => {
-      const data = [{ id: 1 }];
-      const result = pushUniqueMutable.dataLast([{ id: 1 }, { id: 2 }], {
-        comparator: (a, b) => a.id === b.id,
-      })(data);
-      expect(result).toEqual([{ id: 1 }, { id: 2 }]);
     });
   });
 });

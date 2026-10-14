@@ -16,10 +16,4 @@ describe('toLowerCase', () => {
   it('空文字', () => {
     expect(toLowerCase('')).toBe('');
   });
-
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(toLowerCase.dataLast()('Hello')).toBe('hello');
-    });
-  });
 });

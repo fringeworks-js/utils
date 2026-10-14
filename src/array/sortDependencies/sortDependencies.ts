@@ -9,29 +9,21 @@ import type {
 /**
  * 依存関係のソート
  * 依存関係かつ重複のあるノードのソートを行う
- * @param data 対象の配列
+ * @param data 対象の配列。null・undefinedは空配列として扱う
  * @param options オプション
  * @returns 新しい配列
  */
-const sortDependencies = <I>(data: I[], options?: SortDependenciesOptions<I>) =>
-  _sortDependencies(data, options);
-sortDependencies.dataLast =
-  <I>(options?: SortDependenciesOptions<I>) =>
-  (data: I[]) =>
-    _sortDependencies(data, options);
-export default sortDependencies;
-
-function _sortDependencies<I>(
-  data: I[],
+export default function sortDependencies<I>(
+  data: I[] | null | undefined,
   options: SortDependenciesOptions<I> = {},
 ): I[] {
   if (!data) {
-    return data;
+    return [];
   }
   const {
     id = 0,
     dependencies = 1,
-    dependencyId = id,
+    dependencyId,
     ignoreMissing = false,
     tree = false,
     reverse = false,
@@ -42,9 +34,13 @@ function _sortDependencies<I>(
   const getDeps: SortDependenciesGetDependencies<I> = R.isFunction(dependencies)
     ? dependencies
     : (item: I) => getProperty(item, dependencies) as I | I[];
-  const getDepId: SortDependenciesGetId<I> = R.isFunction(dependencyId)
-    ? dependencyId
-    : (item: I) => getProperty(item, dependencyId);
+  const getDepId: SortDependenciesGetId<I> =
+    dependencyId === undefined
+      ? // 依存先が要素そのものならidと同じ方法で、IDならその値をそのまま使う
+        (dep: I) => (typeof dep === 'object' && dep !== null ? getId(dep) : dep)
+      : R.isFunction(dependencyId)
+        ? dependencyId
+        : (item: I) => getProperty(item, dependencyId);
   const itemsMap = getUniqItems(
     new Map<unknown, I>(),
     data,
@@ -110,6 +106,10 @@ function _getUniqItems<I>(
 ) {
   for (const item of items) {
     const id = getDepId(item);
+    // 登録済みの要素は依存先もたどっているので、共有されたノードや循環を再訪しない
+    if (results.has(id)) {
+      continue;
+    }
     results.set(id, item);
     _getUniqItems(results, ensureArray(getDeps(item)), getDepId, getDeps);
   }
@@ -131,7 +131,7 @@ function sort<I>(
   getDepId: SortDependenciesGetId<I>,
   ignoreMissing: boolean,
 ) {
-  const distinctArray = new Array(...itemsMap.values());
+  const distinctArray = Array.from(itemsMap.values());
   const sorted: I[] = [];
   const visited: Record<number, boolean> = {};
   const dependenciesMap = makeDependenciesMap(itemsMap, getDeps, getDepId);

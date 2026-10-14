@@ -1,19 +1,14 @@
-import * as R from 'remeda';
-import { isBlank } from '../../type/isBlank';
-import _normalizeSeparators from '../_internal/_normalizeSeparators';
+import _splitWords from '../_internal/_splitWords';
 
 /**
- * hello world -> hello_world
- * @param data
- * @returns
+ * 文字列をスネークケースに変換する（`'hello world'` → `'hello_world'`）\
+ * 単語の区切り方は README の「ケース変換」を参照
+ * @param data 対象の文字列。空文字・null・undefined はそのまま返す
+ * @returns スネークケースに変換した文字列
  */
-const toSnakeCase = (data: string) => _toSnakeCase(data);
-toSnakeCase.dataLast = () => (data: string) => _toSnakeCase(data);
-export default toSnakeCase;
-
-function _toSnakeCase(data: string): string {
-  if (isBlank(data)) {
+export default function toSnakeCase(data: string): string {
+  if (!data) {
     return data;
   }
-  return R.toSnakeCase(_normalizeSeparators(data));
+  return _splitWords(data).join('_').toLowerCase();
 }

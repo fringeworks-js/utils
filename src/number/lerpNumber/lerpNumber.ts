@@ -5,22 +5,11 @@ import type { LerpNumberOptions } from './types';
  * (線形補間: start + (end - start) * ratio)
  *
  * @param value 目標値（1.0のときの値）
- * @param ratio 適用する割合（0.0 〜 1.0）
+ * @param ratio 適用する割合（0.0 〜 1.0。範囲外の場合は外挿する）
  * @param options オプション
  * @returns 算出された数値
  */
-const lerpNumber = (
-  value: number,
-  ratio: number,
-  options: LerpNumberOptions = {},
-): number => _lerpNumber(value, ratio, options);
-lerpNumber.dataLast =
-  (ratio: number, options: LerpNumberOptions = {}) =>
-  (value: number): number =>
-    _lerpNumber(value, ratio, options);
-export default lerpNumber;
-
-function _lerpNumber(
+export default function lerpNumber(
   value: number,
   ratio: number,
   options: LerpNumberOptions = {},

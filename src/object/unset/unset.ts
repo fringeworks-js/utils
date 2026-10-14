@@ -1,26 +1,23 @@
-import type { LooseRecord } from '@fringeworks/types';
-import _parsePath from '../../_internal/_parsePath';
+import type { StrictRecord } from '@fringeworks/types';
+import _isUnsafeKey from '../../_internal/_isUnsafeKey';
+import _toArrayIndex from '../../_internal/_toArrayIndex';
+import { hasOwn } from '../hasOwn';
+import { parsePropertyPath, type PropertyPath } from '../parsePropertyPath';
 
 /**
- * オブジェクトを更新して新しいオブジェクトを返す（非破壊的変更）
- * @param data 更新対象のオブジェクト
- * @param path 更新するプロパティのパス（例: 'a.b.0' または ['a', 'b', 0]）
- * @param value 設定する値
- * @returns 更新された新しいオブジェクト
+ * 指定のパスの値を削除した新しいオブジェクトを返す（非破壊的変更）
+ * @param data 削除対象のオブジェクト
+ * @param path 削除するプロパティのパス（例: 'a.b[0]' または ['a', 'b', 0]）
+ * @returns 削除された新しいオブジェクト。削除するものが無い場合は data をそのまま返す
  */
-const unset = <T extends LooseRecord>(data: T, path: string | PropertyKey[]) =>
-  _unset(data, path);
-unset.dataLast =
-  <T extends LooseRecord>(path: string | PropertyKey[]) =>
-  (data: T) =>
-    _unset(data, path);
-export default unset;
-
-function _unset<T extends LooseRecord>(
+export default function unset<T extends object>(
   data: T,
-  path: string | PropertyKey[],
+  path: PropertyPath,
 ): T {
-  const segments = _parsePath(path);
+  const segments = parsePropertyPath(path);
+  if (segments.some(_isUnsafeKey)) {
+    return data;
+  }
 
   const unsetter = (current: unknown, index: number): unknown => {
     const key = segments[index];
@@ -30,7 +27,7 @@ function _unset<T extends LooseRecord>(
       key === undefined ||
       current == null ||
       typeof current !== 'object' ||
-      !(key in current)
+      !hasOwn(current, key)
     ) {
       return current;
     }
@@ -38,19 +35,24 @@ function _unset<T extends LooseRecord>(
     // 削除対象のキーに達した場合
     if (index === segments.length - 1) {
       if (Array.isArray(current)) {
+        const arrayIndex = _toArrayIndex(current, key);
+        if (arrayIndex === undefined) {
+          // インデックス以外のキー（length など）は削除しない
+          return current;
+        }
         // 配列の場合は要素を除去
         const next = [...current];
-        next.splice(key as number, 1);
+        next.splice(arrayIndex, 1);
         return next;
       } else {
         // オブジェクトの場合はプロパティを除外
-        const { [key]: _, ...next } = current as LooseRecord;
+        const { [key]: _, ...next } = current as StrictRecord;
         return next;
       }
     }
 
     // 直下の値を取得し再帰的に進む
-    const oldValue = (current as LooseRecord)[key];
+    const oldValue = (current as StrictRecord)[key];
     const newValue = unsetter(oldValue, index + 1);
 
     if (oldValue === newValue) {

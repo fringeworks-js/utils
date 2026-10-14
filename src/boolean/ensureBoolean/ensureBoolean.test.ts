@@ -45,7 +45,40 @@ describe('ensureBoolean', () => {
     expect(ensureBoolean(0)).toBe(false);
   });
 
+  it('"1"', () => {
+    expect(ensureBoolean('1')).toBe(true);
+    expect(ensureBoolean('0')).toBe(false);
+  });
+
+  it('前後の空白は無視する', () => {
+    expect(ensureBoolean(' true ')).toBe(true);
+    expect(ensureBoolean('\t1\n')).toBe(true);
+    expect(ensureBoolean(' yes ', { trueValues: ['yes'] })).toBe(true);
+  });
+
+  it('"tRUE" はデフォルトでは false', () => {
+    expect(ensureBoolean('tRUE')).toBe(false);
+  });
+
+  it('オブジェクト・配列は truthy', () => {
+    expect(ensureBoolean({})).toBe(true);
+    expect(ensureBoolean([])).toBe(true);
+  });
+
   describe('trueValues オプション', () => {
+    it('readonly の配列を渡せる', () => {
+      const trueValues = ['yes', 'on'] as const;
+      expect(ensureBoolean('on', { trueValues })).toBe(true);
+    });
+
+    it('空の配列の場合はどの文字列も false', () => {
+      expect(ensureBoolean('true', { trueValues: [] })).toBe(false);
+    });
+
+    it('文字列以外の値には使わない', () => {
+      expect(ensureBoolean(0, { trueValues: ['0'] })).toBe(false);
+    });
+
     it('カスタムtrueValues', () => {
       expect(ensureBoolean('yes', { trueValues: ['yes'] })).toBe(true);
     });
@@ -62,20 +95,20 @@ describe('ensureBoolean', () => {
       ).toBe(true);
     });
 
+    it('trueValues を指定しない場合もデフォルトの値と大文字小文字を無視して比較する', () => {
+      expect(ensureBoolean('tRUE', { ignoreCase: true })).toBe(true);
+    });
+
+    it('trueValues に大文字が含まれていても無視して比較する', () => {
+      expect(
+        ensureBoolean('yes', { ignoreCase: true, trueValues: ['YES'] }),
+      ).toBe(true);
+    });
+
     it('大文字小文字を無視しない', () => {
       expect(
         ensureBoolean('TRUE', { ignoreCase: false, trueValues: ['true'] }),
       ).toBe(false);
-    });
-  });
-
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(ensureBoolean.dataLast()('true')).toBe(true);
-    });
-
-    it('オプション付き', () => {
-      expect(ensureBoolean.dataLast({ trueValues: ['yes'] })('yes')).toBe(true);
     });
   });
 });

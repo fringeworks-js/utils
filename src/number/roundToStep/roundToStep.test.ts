@@ -29,9 +29,20 @@ describe('roundToStep', () => {
     expect(roundToStep(-3.7, 1)).toBe(-4);
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(roundToStep.dataLast(0.5)(3.7)).toBe(3.5);
-    });
+  it('浮動小数点の誤差を含まない', () => {
+    expect(roundToStep(0.3, 0.1)).toBe(0.3);
+    expect(roundToStep(0.7, 0.1)).toBe(0.7);
+    expect(roundToStep(1.23456, 0.01)).toBe(1.23);
+    expect(roundToStep(0.00000034, 1e-7)).toBe(0.0000003);
+  });
+
+  it('ちょうど中間の負の値は正の方向へ丸める', () => {
+    expect(roundToStep(-2.5, 1)).toBe(-2);
+  });
+
+  it('stepが0や有限の数でない場合はそのまま返す', () => {
+    expect(roundToStep(1.23, 0)).toBe(1.23);
+    expect(roundToStep(1.23, NaN)).toBe(1.23);
+    expect(roundToStep(1.23, Infinity)).toBe(1.23);
   });
 });

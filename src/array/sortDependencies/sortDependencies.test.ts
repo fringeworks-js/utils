@@ -92,8 +92,8 @@ describe('sortDependencies', () => {
     ]);
   });
 
-  it('nullを渡した場合はそのまま返す', () => {
-    expect(sortDependencies(null as any)).toBeNull();
+  it('nullを渡した場合は空配列を返す', () => {
+    expect(sortDependencies(null)).toEqual([]);
   });
 
   it('共有依存ノードがある場合でも正しくソートされる', () => {
@@ -179,26 +179,55 @@ describe('sortDependencies', () => {
     });
     expect(result.map((item) => item.id)).toEqual(['A', 'B']);
   });
+  it('デフォルトのタプル形式で依存先をIDで持てる', () => {
+    const result = sortDependencies([
+      ['foo', ['bar']],
+      ['bar', []],
+    ]);
+    expect(result).toEqual([
+      ['bar', []],
+      ['foo', ['bar']],
+    ]);
+  });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const result = sortDependencies.dataLast<(typeof TREE_1)[number]>({
-        id: 'id',
-        dependencies: 'deps',
-        tree: true,
-      })(TREE_1);
-      expect(result.map((item) => item.id)).toEqual([
-        ID_1A_2A_3A,
-        ID_1A_2A,
-        ID_1A_2B_3A,
-        ID_1A_2B,
-        ID_1A,
-        ID_1B_2A_3A,
-        ID_1B_2A,
-        ID_1B_2B_3A,
-        ID_1B_2B,
-        ID_1B,
-      ]);
+  it('デフォルトのタプル形式で依存先を要素で持てる', () => {
+    const c = ['c', []];
+    const b = ['b', [c]];
+    const a = ['a', [b, c]];
+    expect(sortDependencies([a, b, c])).toEqual([c, b, a]);
+  });
+
+  it('要素が数値1つの場合もそのまま返す', () => {
+    const result = sortDependencies([3], {
+      id: (item) => item,
+      dependencies: () => [],
     });
+    expect(result).toEqual([3]);
+  });
+
+  it('ツリー形式で共有されたノードは1度だけたどる', () => {
+    type Node = { id: string; deps: Node[] };
+    let node: Node = { id: 'n0', deps: [] };
+    for (let i = 1; i <= 30; i++) {
+      node = { id: `n${i}`, deps: [node, node] };
+    }
+    const result = sortDependencies([node], {
+      id: 'id',
+      dependencies: 'deps',
+      tree: true,
+    });
+    expect(result.map((item) => item.id)).toEqual(
+      Array.from({ length: 31 }, (_, i) => `n${i}`),
+    );
+  });
+
+  it('ツリー形式で循環がある場合はエラーをスロー', () => {
+    type Node = { id: string; deps: Node[] };
+    const a: Node = { id: 'a', deps: [] };
+    const b: Node = { id: 'b', deps: [a] };
+    a.deps.push(b);
+    expect(() =>
+      sortDependencies([a], { id: 'id', dependencies: 'deps', tree: true }),
+    ).toThrow('Cyclic dependency');
   });
 });

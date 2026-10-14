@@ -56,10 +56,13 @@ describe('ensureNumber', () => {
     expect(result).toBe(0);
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(ensureNumber.dataLast()(123)).toBe(123);
-    });
+  it('Infinityはそのまま返す', () => {
+    expect(ensureNumber(Infinity)).toBe(Infinity);
+    expect(ensureNumber('-Infinity')).toBe(-Infinity);
+  });
+
+  it('bigintは0', () => {
+    expect(ensureNumber(10n)).toBe(0);
   });
 
   it('NaN', () => {

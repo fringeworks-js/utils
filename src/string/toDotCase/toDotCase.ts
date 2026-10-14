@@ -1,19 +1,14 @@
-import * as R from 'remeda';
-import { isBlank } from '../../type/isBlank';
-import _normalizeSeparators from '../_internal/_normalizeSeparators';
+import _splitWords from '../_internal/_splitWords';
 
 /**
- * hello world -> hello.world
- * @param data
- * @returns
+ * 文字列をドットケースに変換する（`'hello world'` → `'hello.world'`）\
+ * 単語の区切り方は README の「ケース変換」を参照
+ * @param data 対象の文字列。空文字・null・undefined はそのまま返す
+ * @returns ドットケースに変換した文字列
  */
-const toDotCase = (data: string) => _toDotCase(data);
-toDotCase.dataLast = () => (data: string) => _toDotCase(data);
-export default toDotCase;
-
-function _toDotCase(data: string): string {
-  if (isBlank(data)) {
+export default function toDotCase(data: string): string {
+  if (!data) {
     return data;
   }
-  return R.toSnakeCase(_normalizeSeparators(data)).replaceAll('_', '.');
+  return _splitWords(data).join('.').toLowerCase();
 }

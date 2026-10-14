@@ -61,15 +61,4 @@ describe('toArray', () => {
     }
     expect(toArray(gen())).toEqual([1, 2]);
   });
-
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const result = toArray.dataLast()([1, 2, 3]);
-      expect(result).toEqual([1, 2, 3]);
-    });
-
-    it('null', () => {
-      expect(toArray.dataLast()(null)).toEqual([]);
-    });
-  });
 });

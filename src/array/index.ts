@@ -1,4 +1,4 @@
-export * from './clearArray';
+export * from './clearArrayMutable';
 export * from './compactMap';
 export * from './ensureArray';
 export * from './firstDefined';

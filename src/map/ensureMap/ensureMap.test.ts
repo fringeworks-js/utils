@@ -35,11 +35,26 @@ describe('ensureMap', () => {
     expect(result.get('b')).toBe(2);
   });
 
-  it('値配列はインデックスをキーにしたMapを返す', () => {
-    const result = ensureMap(['x', 'y', 'z']);
-    expect(result.get(0)).toBe('x');
-    expect(result.get(1)).toBe('y');
-    expect(result.get(2)).toBe('z');
+  it('タプル配列は要素の長さに関わらずMapのコンストラクターと同じに扱う', () => {
+    const result = ensureMap([[1, 2], [3, 4, 5] as any]);
+    expect([...result]).toEqual([
+      [1, 2],
+      [3, 4],
+    ]);
+  });
+
+  it('値を2要素の配列として持つ配列もエントリーとして扱う', () => {
+    const result = ensureMap(['ab'].entries());
+    expect(result.get(0)).toBe('ab');
+  });
+
+  it('Setなどの反復可能なオブジェクトはエントリーとして扱う', () => {
+    const result = ensureMap(new Set<[string, number]>([['a', 1]]));
+    expect(result.get('a')).toBe(1);
+  });
+
+  it('エントリーでない要素を持つ反復可能なオブジェクトはTypeError', () => {
+    expect(() => ensureMap(new Set([1]) as any)).toThrow(TypeError);
   });
 
   it('オブジェクトはMapに変換する', () => {
@@ -54,10 +69,19 @@ describe('ensureMap', () => {
     expect(result.size).toBe(0);
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const result = ensureMap.dataLast()(new Map([['x', 1]]));
-      expect(result.get('x')).toBe(1);
-    });
+  it('文字列は空のMapを返す', () => {
+    expect(ensureMap('ab' as any).size).toBe(0);
+  });
+
+  it('キーの型は入力から決まる', () => {
+    expectTypeOf(ensureMap({ a: 1 })).toEqualTypeOf<Map<string, number>>();
+    expectTypeOf(ensureMap([['a', 1]] as [string, number][])).toEqualTypeOf<
+      Map<string, number>
+    >();
+    expectTypeOf(ensureMap(new Map([[1, 'a']]))).toEqualTypeOf<
+      Map<number, string>
+    >();
+    const source = {} as Record<string, number> | [string, number][];
+    expectTypeOf(ensureMap(source)).toEqualTypeOf<Map<string, number>>();
   });
 });

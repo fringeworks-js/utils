@@ -1,11 +1,13 @@
 export type GetValidMinMaxOptions = {
   /**
-   * 最小値のデフォルト
+   * minがnull・undefined・NaNの場合の値
+   * @default -Infinity
    */
   defaultMin?: number;
 
   /**
-   * 最大値のデフォルト
+   * maxがnull・undefined・NaNの場合の値
+   * @default Infinity
    */
   defaultMax?: number;
 };

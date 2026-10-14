@@ -1,3 +1,4 @@
+import { expectTypeOf } from 'vitest';
 import omit from './omit';
 
 describe('omit', () => {
@@ -20,10 +21,22 @@ describe('omit', () => {
     expect(omit(null, 'a')).toBeUndefined();
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const result = omit.dataLast('b')({ a: 1, b: 2 });
-      expect(result).toEqual({ a: 1 });
-    });
+  it('戻り値の型から指定したキーが除かれる', () => {
+    const data = { a: 1, b: 'x', c: true };
+    expectTypeOf(omit(data, 'a')).toEqualTypeOf<{ b: string; c: boolean }>();
+    expectTypeOf(omit(data, ['a', 'c'])).toEqualTypeOf<{ b: string }>();
+    expectTypeOf(omit(data, ['a', 'c'] as const)).toEqualTypeOf<{
+      b: string;
+    }>();
+  });
+
+  it('dataに無いキーも指定できる', () => {
+    const key: string = 'z';
+    expect(omit({ a: 1 }, key)).toEqual({ a: 1 });
+  });
+
+  it('dataがnull/undefinedになりうる場合は戻り値にundefinedを含む', () => {
+    const data = null as { a: number; b: number } | null;
+    expectTypeOf(omit(data, 'a')).toEqualTypeOf<{ b: number } | undefined>();
   });
 });

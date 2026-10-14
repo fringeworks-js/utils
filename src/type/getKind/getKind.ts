@@ -2,47 +2,61 @@ import { Kind } from './constants';
 
 /**
  * typeofの拡張。\
- * typeof value === 'object' よりも詳細な結果を返す
+ * オブジェクトを `null`・配列・単純なオブジェクト・主な組み込みオブジェクトに分け、
+ * どれにも当たらないものを `'instance'` とする。\
+ * 組み込みオブジェクトは `instanceof` で判定するため、iframe など別の realm の値は `'instance'` になる
  *
  * @param data 任意の値
- * @returns
+ * @returns 型種別
  */
-const getKind = (data: unknown): Kind => _getKind(data);
-getKind.dataLast = () => getKind;
-export default getKind;
-
-function _getKind(data: unknown): Kind {
+export default function getKind(data: unknown): Kind {
   const type = typeof data;
-  if (type === 'object') {
-    if (data === null) {
-      return Kind.null;
-    } else if (Array.isArray(data)) {
-      return Kind.array;
-    } else if (Object.getPrototypeOf(data) === Object.prototype) {
-      return Kind.plainobject;
-    } else if (data instanceof Date) {
-      return Kind.date;
-    } else if (data instanceof RegExp) {
-      return Kind.regexp;
-    } else if (data instanceof Error) {
-      return Kind.error;
-    } else if (data instanceof Map) {
-      return Kind.map;
-    } else if (data instanceof Set) {
-      return Kind.set;
-    } else if (data instanceof WeakMap) {
-      return Kind.weakmap;
-    } else if (data instanceof WeakSet) {
-      return Kind.weakset;
-    } else if (data instanceof Promise) {
-      return Kind.promise;
-    } else if (data instanceof ArrayBuffer) {
-      return Kind.arraybuffer;
-    } else if (data instanceof SharedArrayBuffer) {
-      return Kind.sharedarraybuffer;
-    }
-    return Kind.object;
-  } else {
-    return type;
+  if (type !== 'object') {
+    return type as Exclude<typeof type, 'object'>;
   }
+  if (data === null) {
+    return Kind.null;
+  }
+  if (Array.isArray(data)) {
+    return Kind.array;
+  }
+  const proto: unknown = Object.getPrototypeOf(data);
+  if (proto === Object.prototype || proto === null) {
+    return Kind.plainobject;
+  }
+  if (data instanceof Date) {
+    return Kind.date;
+  }
+  if (data instanceof RegExp) {
+    return Kind.regexp;
+  }
+  if (data instanceof Error) {
+    return Kind.error;
+  }
+  if (data instanceof Map) {
+    return Kind.map;
+  }
+  if (data instanceof Set) {
+    return Kind.set;
+  }
+  if (data instanceof WeakMap) {
+    return Kind.weakmap;
+  }
+  if (data instanceof WeakSet) {
+    return Kind.weakset;
+  }
+  if (data instanceof Promise) {
+    return Kind.promise;
+  }
+  if (data instanceof ArrayBuffer) {
+    return Kind.arraybuffer;
+  }
+  // cross-origin isolated でないページでは SharedArrayBuffer が定義されていない
+  if (
+    typeof SharedArrayBuffer !== 'undefined' &&
+    data instanceof SharedArrayBuffer
+  ) {
+    return Kind.sharedarraybuffer;
+  }
+  return Kind.instance;
 }

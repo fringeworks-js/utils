@@ -1,7 +1,4 @@
-import type { LooseRecord } from '@fringeworks/types';
 import _nestedBy from '../../_internal/_nestedBy';
-import { get } from '../../object/get';
-import { setMutable } from '../../object/setMutable';
 import type { NestedGroupByOptions, NestedGroupByResult } from './types';
 
 /**
@@ -36,48 +33,22 @@ import type { NestedGroupByOptions, NestedGroupByResult } from './types';
  * }
  *
  *
- * @param data オブジェクト配列
+ * @param data オブジェクト配列。null・undefinedは空配列として扱う
  * @param properties キーとする値を持ったプロパティ
  * @param options オプション
  * @returns
  */
-const nestedGroupBy = <I extends object>(
-  data: I[],
-  properties: keyof I | (keyof I)[],
-  options?: NestedGroupByOptions,
-) => _nestedGroupBy(data, properties, options);
-nestedGroupBy.dataLast =
-  <I extends object>(
-    properties: keyof I | (keyof I)[],
-    options?: NestedGroupByOptions,
-  ) =>
-  (data: I[]) =>
-    _nestedGroupBy(data, properties, options);
-export default nestedGroupBy;
-
-function _nestedGroupBy<I extends object>(
-  data: I[],
+export default function nestedGroupBy<I extends object>(
+  data: I[] | null | undefined,
   properties: keyof I | (keyof I)[],
   options: NestedGroupByOptions = {},
 ): NestedGroupByResult<I> {
-  return _nestedBy(
+  return _nestedBy<I, I[]>(
     data,
     properties,
-    (result, key, value) => {
-      let group: I[] = result[key];
-      if (!group) {
-        group = [];
-        result[key] = group;
-      }
-      group.push(value);
-    },
-    (result, path, value) => {
-      let group = get<LooseRecord, I[]>(result, path);
-      if (!group) {
-        group = [];
-        setMutable(result, path as PropertyKey[], group);
-      }
-      group.push(value);
+    (group = [], item) => {
+      group.push(item);
+      return group;
     },
     options,
   );

@@ -9,8 +9,9 @@ describe('loopInRange', () => {
     expect(loopInRange(0, 0, 10)).toBe(0);
   });
 
-  it('最大値ちょうど', () => {
-    expect(loopInRange(10, 0, 10)).toBe(10);
+  it('最大値ちょうどは最小値になる', () => {
+    expect(loopInRange(10, 0, 10)).toBe(0);
+    expect(loopInRange(360, 0, 360)).toBe(0);
   });
 
   it('最大値を超えるとループする', () => {
@@ -33,9 +34,15 @@ describe('loopInRange', () => {
     expect(loopInRange(4, 1, 3)).toBe(2);
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      expect(loopInRange.dataLast(0, 10)(5)).toBe(5);
-    });
+  it('min が max より大きい場合は入れ替えて扱う', () => {
+    expect(loopInRange(5, 10, 0)).toBe(5);
+    expect(loopInRange(12, 10, 0)).toBe(2);
+    expect(loopInRange(-1, 10, 0)).toBe(9);
+  });
+
+  it('添字として使える', () => {
+    expect([8, 9, 10, 11].map((i) => loopInRange(i, 0, 10))).toEqual([
+      8, 9, 0, 1,
+    ]);
   });
 });

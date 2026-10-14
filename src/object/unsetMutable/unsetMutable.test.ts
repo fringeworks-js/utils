@@ -34,11 +34,32 @@ describe('unsetMutable', () => {
     expect(arr.length).toBe(3);
   });
 
-  describe('dataLast', () => {
-    it('基本動作', () => {
-      const obj: Record<string, unknown> = { a: 1, b: 2 };
-      unsetMutable.dataLast('a')(obj);
-      expect(obj['a']).toBeUndefined();
-    });
+  it('配列のlengthや正規でないインデックスでは要素を詰めない', () => {
+    const obj = { a: ['p', 'q'] };
+    unsetMutable(obj, 'a.length');
+    unsetMutable(obj, ['a', '1.0']);
+    expect(obj.a).toEqual(['p', 'q']);
+  });
+
+  it('__proto__を含むパスは何もしない', () => {
+    const obj = { a: { b: 1 } };
+    expect(unsetMutable(obj, '__proto__.toString')).toBe(obj);
+    unsetMutable(obj, ['a', '__proto__']);
+    expect(typeof Object.prototype.toString).toBe('function');
+    expect(Object.getPrototypeOf(obj.a)).toBe(Object.prototype);
+  });
+
+  it('readonlyの配列や数値のキーでパスを指定できる', () => {
+    const obj = { a: { b: 1, c: 2 }, d: [10, 20] };
+    unsetMutable(obj, ['a', 'b'] as const);
+    unsetMutable(obj.d, 0);
+    expect(obj).toEqual({ a: { c: 2 }, d: [20] });
+  });
+
+  it('プロトタイプ上のオブジェクトは書き換えない', () => {
+    const proto = { a: { b: 1 } };
+    const obj = Object.create(proto) as { a: { b?: number } };
+    unsetMutable(obj, 'a.b');
+    expect(proto).toEqual({ a: { b: 1 } });
   });
 });
