@@ -14,18 +14,42 @@ export type FillDefaultsMutableOptions = ForEachValueOptions & {
 
 /**
  * fillDefaultsMutable・fillDefaults の結果の型\
- * target の値が undefined（overwriteNull の場合は null も）のキーはデフォルト値で埋まるので、defaultValues の値の型を加える
+ * target の値が undefined（overwriteNull が true の場合は null も）のキーはデフォルト値で埋まるので、その値を除いて defaultValues の値の型を加える\
+ * overwriteNull が boolean で決まらない場合は、null が残る可能性も含める
  */
-export type FillDefaultsResult<T, V> = {
+export type FillDefaultsResult<
+  T,
+  V,
+  O extends FillDefaultsMutableOptions = {},
+> = {
   [K in keyof T | keyof V]: K extends keyof T
     ? K extends keyof V
-      ? undefined extends T[K]
-        ? Exclude<T[K], undefined> | V[K]
-        : null extends T[K]
-          ? T[K] | V[K]
-          : T[K]
+      ? [Extract<T[K], _MaybeFilledValue<O>>] extends [never]
+        ? T[K]
+        : Exclude<T[K], _FilledValue<O>> | V[K]
       : T[K]
     : K extends keyof V
       ? V[K]
       : never;
 };
+
+/**
+ * overwriteNull の指定による null の扱い
+ */
+type _OverwriteNullMode<O> = O extends { overwriteNull: true }
+  ? 'always'
+  : O extends { overwriteNull?: false | undefined }
+    ? 'never'
+    : 'maybe';
+
+/**
+ * 必ずデフォルト値で埋まる値
+ */
+type _FilledValue<O> =
+  _OverwriteNullMode<O> extends 'always' ? null | undefined : undefined;
+
+/**
+ * デフォルト値で埋まる可能性のある値
+ */
+type _MaybeFilledValue<O> =
+  _OverwriteNullMode<O> extends 'never' ? undefined : null | undefined;

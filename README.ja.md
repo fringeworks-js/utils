@@ -1111,7 +1111,7 @@ const userKeys = exactKeysFromRecord<User>({ id: true, name: true, age: true });
 #### `fillDefaults`
 
 ```ts
-fillDefaults<T extends object, V extends object>(target: T, defaultValues: V, options?: FillDefaultsOptions): FillDefaultsResult<T, V>
+fillDefaults<T extends object, const V extends object, const O extends FillDefaultsOptions = {}>(target: T, defaultValues: V, options?: O): FillDefaultsResult<T, V, O>
 ```
 
 `target` のプロパティの値が `undefined` の場合に、`defaultValues` の値を設定した新しいオブジェクトを返します。`defaultValues` の値が `undefined` の場合は設定しません。symbol のキーも対象にします。
@@ -1130,7 +1130,7 @@ fillDefaults({ b: null }, { b: 2 }, { overwriteNull: true }); // { b: 2 }
 #### `fillDefaultsMutable`
 
 ```ts
-fillDefaultsMutable<T extends object, V extends object>(target: T, defaultValues: V, options?: FillDefaultsMutableOptions): FillDefaultsResult<T, V>
+fillDefaultsMutable<T extends object, const V extends object, const O extends FillDefaultsMutableOptions = {}>(target: T, defaultValues: V, options?: O): FillDefaultsResult<T, V, O>
 ```
 
 `fillDefaults` の破壊的な版です。`target` に直接設定し、同じオブジェクトを返します。オプションは `fillDefaults` と同じです。
@@ -1396,28 +1396,28 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 }（state は { a: 9, b: 2 }）
 
 #### 型
 
-| 型                            | 説明                                                                                                                                                                    |
-| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `AssignDefinedMutableOptions` | `assignDefinedMutable` のオプション                                                                                                                                     |
-| `AssignDefinedOptions`        | `AssignDefinedMutableOptions` と同じ                                                                                                                                    |
-| `AssignDefinedResult<T, V>`   | `assignDefined`・`assignDefinedMutable` の戻り値。`values` の値が `undefined`（`skipNull` の場合は `null` も）で反映されない可能性があるキーは、`target` の値の型も残る |
-| `DistributeOptions`           | `distribute` のオプション                                                                                                                                               |
-| `DistributeRules<T>`          | `distribute` のルール `{ [group]: プロパティ名の配列 \| null }`                                                                                                         |
-| `DistributePropertyList<T>`   | `distribute` のルールに指定するプロパティ名の配列                                                                                                                       |
-| `DistributeResult<T, R>`      | `distribute` の戻り値                                                                                                                                                   |
-| `FillDefaultsMutableOptions`  | `fillDefaultsMutable` のオプション                                                                                                                                      |
-| `FillDefaultsOptions`         | `FillDefaultsMutableOptions` と同じ                                                                                                                                     |
-| `FillDefaultsResult<T, V>`    | `fillDefaults`・`fillDefaultsMutable` の戻り値。`target` の値が `undefined`（`overwriteNull` の場合は `null` も）のキーには、`defaultValues` の値の型が加わる           |
-| `FilterByKeysOptions`         | `filterByKeys` のオプション                                                                                                                                             |
-| `FilterByValuesOptions`       | `filterByValues` のオプション                                                                                                                                           |
-| `FlattenObjectOptions`        | `flattenObject` のオプション                                                                                                                                            |
-| `ForEachValueOptions`         | `forEachValue` のオプション                                                                                                                                             |
-| `GetOptions`                  | `get` のオプション                                                                                                                                                      |
-| `PropertyPath`                | `get`・`set`・`unset` などのパス。文字列は `parsePropertyPath` の規則で解釈し、数値・symbol は1つのキー、配列はキーの並びとして扱う                                     |
-| `TransformObjectOptions`      | `transformObject` のオプション                                                                                                                                          |
-| `TransformObjectRule<S, T>`   | `transformObject` のルール                                                                                                                                              |
-| `UpdateMutableOptions`        | `updateMutable` のオプション                                                                                                                                            |
-| `UpdateOptions`               | `UpdateMutableOptions` と同じ                                                                                                                                           |
+| 型                            | 説明                                                                                                                                                                                                                                                                                                      |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AssignDefinedMutableOptions` | `assignDefinedMutable` のオプション                                                                                                                                                                                                                                                                       |
+| `AssignDefinedOptions`        | `AssignDefinedMutableOptions` と同じ                                                                                                                                                                                                                                                                      |
+| `AssignDefinedResult<T, V>`   | `assignDefined`・`assignDefinedMutable` の戻り値。`values` の値が `undefined`（`skipNull` の場合は `null` も）で反映されない可能性があるキーは、`target` の値の型も残る                                                                                                                                   |
+| `DistributeOptions`           | `distribute` のオプション                                                                                                                                                                                                                                                                                 |
+| `DistributeRules<T>`          | `distribute` のルール `{ [group]: プロパティ名の配列 \| null }`                                                                                                                                                                                                                                           |
+| `DistributePropertyList<T>`   | `distribute` のルールに指定するプロパティ名の配列                                                                                                                                                                                                                                                         |
+| `DistributeResult<T, R>`      | `distribute` の戻り値                                                                                                                                                                                                                                                                                     |
+| `FillDefaultsMutableOptions`  | `fillDefaultsMutable` のオプション                                                                                                                                                                                                                                                                        |
+| `FillDefaultsOptions`         | `FillDefaultsMutableOptions` と同じ                                                                                                                                                                                                                                                                       |
+| `FillDefaultsResult<T, V, O>` | `fillDefaults`・`fillDefaultsMutable` の戻り値。`target` の値が `undefined`（`overwriteNull: true` の場合は `null` も）のキーは、その値を除いて `defaultValues` の値の型が加わる。`defaultValues` のリテラル型は保たれる。`overwriteNull` がコンパイル時に決まらない `boolean` の場合は `null` が残りうる |
+| `FilterByKeysOptions`         | `filterByKeys` のオプション                                                                                                                                                                                                                                                                               |
+| `FilterByValuesOptions`       | `filterByValues` のオプション                                                                                                                                                                                                                                                                             |
+| `FlattenObjectOptions`        | `flattenObject` のオプション                                                                                                                                                                                                                                                                              |
+| `ForEachValueOptions`         | `forEachValue` のオプション                                                                                                                                                                                                                                                                               |
+| `GetOptions`                  | `get` のオプション                                                                                                                                                                                                                                                                                        |
+| `PropertyPath`                | `get`・`set`・`unset` などのパス。文字列は `parsePropertyPath` の規則で解釈し、数値・symbol は1つのキー、配列はキーの並びとして扱う                                                                                                                                                                       |
+| `TransformObjectOptions`      | `transformObject` のオプション                                                                                                                                                                                                                                                                            |
+| `TransformObjectRule<S, T>`   | `transformObject` のルール                                                                                                                                                                                                                                                                                |
+| `UpdateMutableOptions`        | `updateMutable` のオプション                                                                                                                                                                                                                                                                              |
+| `UpdateOptions`               | `UpdateMutableOptions` と同じ                                                                                                                                                                                                                                                                             |
 
 ### string
 

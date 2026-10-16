@@ -11,12 +11,13 @@ import type { FillDefaultsMutableOptions, FillDefaultsResult } from './types';
  * @param options オプション
  * @returns デフォルト値を設定した同じオブジェクト
  */
-export default function fillDefaultsMutable<T extends object, V extends object>(
-  target: T,
-  defaultValues: V,
-  options: FillDefaultsMutableOptions = {},
-): FillDefaultsResult<T, V> {
-  const { skipNull, overwriteNull, ...opts } = options;
+export default function fillDefaultsMutable<
+  T extends object,
+  const V extends object,
+  const O extends FillDefaultsMutableOptions = {},
+>(target: T, defaultValues: V, options?: O): FillDefaultsResult<T, V, O> {
+  const { skipNull, overwriteNull, ...opts }: FillDefaultsMutableOptions =
+    options ?? {};
   const isValidValue = skipNull
     ? (value: unknown) => value != null
     : (value: unknown) => value !== undefined;
@@ -37,5 +38,5 @@ export default function fillDefaultsMutable<T extends object, V extends object>(
     },
     opts,
   );
-  return target as FillDefaultsResult<T, V>;
+  return target as FillDefaultsResult<T, V, O>;
 }

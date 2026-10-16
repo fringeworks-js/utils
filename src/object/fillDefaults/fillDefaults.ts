@@ -10,10 +10,10 @@ import type { FillDefaultsOptions } from './types';
  * @param options オプション
  * @returns デフォルト値を設定した新しいオブジェクト
  */
-export default function fillDefaults<T extends object, V extends object>(
-  target: T,
-  defaultValues: V,
-  options: FillDefaultsOptions = {},
-): FillDefaultsResult<T, V> {
+export default function fillDefaults<
+  T extends object,
+  const V extends object,
+  const O extends FillDefaultsOptions = {},
+>(target: T, defaultValues: V, options?: O): FillDefaultsResult<T, V, O> {
   return fillDefaultsMutable({ ...target }, defaultValues, options);
 }
