@@ -20,6 +20,8 @@ export type FillDefaultsMutableOptions = ForEachValueOptions & {
 export type FillDefaultsResult<
   T,
   V,
+  // オプションを指定しない場合（すべて省略）を表すため、空のオブジェクト型にする
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   O extends FillDefaultsMutableOptions = {},
 > = {
   [K in keyof T | keyof V]: K extends keyof T

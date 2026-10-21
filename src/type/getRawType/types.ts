@@ -5,5 +5,4 @@ import type { ToStringResult } from '@fringeworks/types';
  * 主要な組み込みオブジェクトの型ラベルを補完できるようにしつつ、それ以外の型ラベルも受け付ける
  */
 export type GetRawTypeReturn =
-  | ToStringResult
-  | (`[object ${string}]` & Record<never, never>);
+  ToStringResult | (`[object ${string}]` & Record<never, never>);

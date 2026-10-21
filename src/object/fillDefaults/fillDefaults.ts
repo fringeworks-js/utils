@@ -13,6 +13,8 @@ import type { FillDefaultsOptions } from './types';
 export default function fillDefaults<
   T extends object,
   const V extends object,
+  // オプションを指定しない場合（すべて省略）を表すため、空のオブジェクト型にする
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   const O extends FillDefaultsOptions = {},
 >(target: T, defaultValues: V, options?: O): FillDefaultsResult<T, V, O> {
   return fillDefaultsMutable({ ...target }, defaultValues, options);

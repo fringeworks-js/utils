@@ -14,9 +14,8 @@ export type AssignDefinedMutableOptions = ForEachValueOptions & {
 export type AssignDefinedResult<T, V> = {
   [K in keyof T | keyof V]: K extends keyof V
     ? K extends keyof T
-      ?
-          | Exclude<V[K], undefined>
-          | (undefined extends V[K] ? T[K] : null extends V[K] ? T[K] : never)
+      ? | Exclude<V[K], undefined>
+        | (undefined extends V[K] ? T[K] : null extends V[K] ? T[K] : never)
       : V[K]
     : K extends keyof T
       ? T[K]

@@ -46,8 +46,7 @@ export type TransformObjectRule<S extends object, T extends object> =
  * 設定先のパス、または値を設定したオブジェクトを返す関数
  */
 type TransformObjectTarget<T extends object> =
-  | PropertyPath
-  | ((target: T, value: unknown) => T);
+  PropertyPath | ((target: T, value: unknown) => T);
 
 /**
  * オプション設定

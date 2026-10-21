@@ -13,5 +13,4 @@ export type EnsureMapOptions = {
  * - プロパティをエントリーにするオブジェクト
  */
 export type EnsureMapSource<K, V> =
-  | Iterable<readonly [K, V]>
-  | Record<string, V>;
+  Iterable<readonly [K, V]> | Record<string, V>;

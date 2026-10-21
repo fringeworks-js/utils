@@ -13,8 +13,7 @@ export type DistributeRules<T extends object> = {
  * 分配するプロパティ名の一覧
  */
 export type DistributePropertyList<T extends object> = readonly (
-  | keyof T
-  | KeysOfUnion<T>
+  keyof T | KeysOfUnion<T>
 )[];
 
 export type DistributeOptions = {
