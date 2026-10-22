@@ -24,7 +24,7 @@ type IndexEntry = {
  * 索引は作成時に作るため、作成後に map を変更しても反映しない
  *
  * @param map 置換前の文字列をキー、置換後の文字列を値に持つマップ
- * @returns 文字列を置換する関数。空文字・null・undefined はそのまま返す
+ * @returns 文字列を置換する関数。空文字はそのまま返す
  */
 export default function createReplacer(
   map: ReadonlyMap<string, string>,

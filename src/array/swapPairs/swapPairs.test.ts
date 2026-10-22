@@ -34,6 +34,26 @@ describe('swapPairs', () => {
       [4, 3],
     ]);
   });
+  it('readonly の配列を渡せる', () => {
+    const pairs = [
+      ['a', 1],
+      ['b', 2],
+    ] as const;
+    const result = swapPairs(pairs);
+    expectTypeOf(result).toEqualTypeOf<[[1, 'a'], [2, 'b']]>();
+    expect(result).toEqual([
+      [1, 'a'],
+      [2, 'b'],
+    ]);
+  });
+
+  it('書き換えられる配列の変数を渡せる', () => {
+    const pairs: [string, number][] = [['a', 1]];
+    const result = swapPairs(pairs);
+    expectTypeOf(result).toEqualTypeOf<[number, string][]>();
+    expect(result).toEqual([[1, 'a']]);
+  });
+
   it('nullを渡した場合は空配列を返す', () => {
     expect(swapPairs(null)).toEqual([]);
     expect(swapPairs(undefined)).toEqual([]);

@@ -4,7 +4,7 @@
 export type Extractor = {
   /**
    * 囲み文字で囲まれた部分を抽出する
-   * @param str 対象の文字列。空文字・null・undefined は空配列を返す
+   * @param str 対象の文字列。空文字は空配列を返す
    * @param options オプション
    * @returns 抽出した文字列の配列
    */

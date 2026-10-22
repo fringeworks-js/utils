@@ -35,9 +35,4 @@ describe('isSurroundedBy', () => {
   it('空文字はfalse', () => {
     expect(isSurroundedBy('', '"')).toBe(false);
   });
-
-  it('null・undefinedはfalse', () => {
-    expect(isSurroundedBy(null as any, '"')).toBe(false);
-    expect(isSurroundedBy(undefined as any, '"')).toBe(false);
-  });
 });

@@ -17,10 +17,6 @@ describe('lowerFirst', () => {
     const result = lowerFirst('');
     expect(result).toBe('');
   });
-  it('null', () => {
-    const result = lowerFirst(null as any);
-    expect(result).toBe(null);
-  });
   it('サロゲートペアの文字を1文字として扱う', () => {
     expect(lowerFirst('\u{10400}X')).toBe('\u{10428}X');
   });

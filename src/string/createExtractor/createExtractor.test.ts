@@ -101,11 +101,9 @@ describe('createExtractor', () => {
       expect(createExtractor()('no placeholders here')).toEqual([]);
     });
 
-    it('空文字・null・undefinedは空配列を返す', () => {
+    it('空文字は空配列を返す', () => {
       const extract = createExtractor();
       expect(extract('')).toEqual([]);
-      expect(extract(null as any)).toEqual([]);
-      expect(extract(undefined as any)).toEqual([]);
     });
   });
 

@@ -314,10 +314,10 @@ sortDependencies(
 #### `swapPairs`
 
 ```ts
-swapPairs<const T extends [unknown, unknown][]>(pairs: T | null | undefined): SwapPairsResult<T>
+swapPairs<const T extends readonly (readonly [unknown, unknown])[]>(pairs: T | null | undefined): SwapPairsResult<T>
 ```
 
-Takes an array of two-element tuples and returns a new array with `[0]` and `[1]` of each tuple swapped. The types are swapped as well.
+Takes an array of two-element tuples and returns a new array with `[0]` and `[1]` of each tuple swapped. The types are swapped as well. Readonly arrays (such as those declared with `as const`) are also accepted, and the result is always a mutable array.
 
 ```ts
 swapPairs([
@@ -1438,7 +1438,7 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 } (state becomes { a: 9, b: 2 })
 createExtractor(delimiters?: string | readonly [string, string]): Extractor
 ```
 
-Creates a function that extracts the text enclosed in `delimiters`. A single string is used as both the opening and closing delimiter. Defaults to `['{{', '}}']`, which is also used when a delimiter is empty. The created function returns an array of the extracted strings. Whitespace just inside the delimiters is trimmed, and enclosed text containing a line break is not extracted. An empty string, `null`, or `undefined` gives an empty array.
+Creates a function that extracts the text enclosed in `delimiters`. A single string is used as both the opening and closing delimiter. Defaults to `['{{', '}}']`, which is also used when a delimiter is empty. The created function returns an array of the extracted strings. Whitespace just inside the delimiters is trimmed, and enclosed text containing a line break is not extracted. An empty string gives an empty array.
 
 ```ts
 const extract = createExtractor();
@@ -1467,7 +1467,7 @@ The created function has the following options and properties.
 createReplacerByMap(map: ReplacementMap): Replacer
 ```
 
-Creates a function that replaces text by the same rules as `replaceByMap`. The lookup index is built only once, so it is faster than `replaceByMap` when replacing many strings with the same map. Changes to `map` after creation are not reflected in the created function. The created function returns an empty string, `null`, or `undefined` as is.
+Creates a function that replaces text by the same rules as `replaceByMap`. The lookup index is built only once, so it is faster than `replaceByMap` when replacing many strings with the same map. Changes to `map` after creation are not reflected in the created function. The created function returns an empty string as is.
 
 ```ts
 const replace = createReplacerByMap({ hello: 'hi', world: 'earth' });
@@ -1523,7 +1523,7 @@ Converts the first character to lowercase (`lowerFirst`) or uppercase (`upperFir
 replaceByMap(str: string, map: ReplacementMap): string
 ```
 
-Replaces the keys of `map` with their values. All replacements happen in one pass, so replaced text is never replaced again. When keys overlap, longer keys win. An empty string, `null`, or `undefined` is returned as is.
+Replaces the keys of `map` with their values. All replacements happen in one pass, so replaced text is never replaced again. When keys overlap, longer keys win. An empty string is returned as is.
 
 ```ts
 replaceByMap('hello world', { hello: 'hi', world: 'earth' }); // 'hi earth'
@@ -1573,7 +1573,7 @@ toTrainCase(data: string): string
 toUpperCase(data: string): string
 ```
 
-Converts the case of a string. `toLowerCase` and `toUpperCase` convert the whole string without splitting words. The others split the string into words and join them in the form of each case, so any case in the table below except flat case can be used as input. An empty string, `null`, or `undefined` is returned as is.
+Converts the case of a string. `toLowerCase` and `toUpperCase` convert the whole string without splitting words. The others split the string into words and join them in the form of each case, so any case in the table below except flat case can be used as input. An empty string is returned as is.
 
 Words are split by the following rules.
 

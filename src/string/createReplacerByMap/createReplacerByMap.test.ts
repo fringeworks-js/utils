@@ -32,10 +32,4 @@ describe('createReplacerByMap', () => {
   it('空文字はそのまま返す', () => {
     expect(createReplacerByMap({ a: 'b' })('')).toBe('');
   });
-
-  it('null・undefinedはそのまま返す', () => {
-    const replace = createReplacerByMap({ a: 'b' });
-    expect(replace(null as any)).toBeNull();
-    expect(replace(undefined as any)).toBeUndefined();
-  });
 });

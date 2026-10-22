@@ -314,10 +314,10 @@ sortDependencies(
 #### `swapPairs`
 
 ```ts
-swapPairs<const T extends [unknown, unknown][]>(pairs: T | null | undefined): SwapPairsResult<T>
+swapPairs<const T extends readonly (readonly [unknown, unknown])[]>(pairs: T | null | undefined): SwapPairsResult<T>
 ```
 
-2要素のタプルの配列を受け取り、各タプルの `[0]` と `[1]` を入れ替えた新しい配列を返します。型も入れ替わります。
+2要素のタプルの配列を受け取り、各タプルの `[0]` と `[1]` を入れ替えた新しい配列を返します。型も入れ替わります。readonly の配列（`as const` を付けたものなど）も渡せます。戻り値は常に書き換えられる配列です。
 
 ```ts
 swapPairs([
@@ -1440,7 +1440,7 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 }（state は { a: 9, b: 2 }）
 createExtractor(delimiters?: string | readonly [string, string]): Extractor
 ```
 
-`delimiters` で囲まれた部分を抽出する関数を作ります。囲み文字が1つの文字列の場合は、開始・終了で共通にします。省略した場合や空文字の場合は `['{{', '}}']` です。作った関数は、抽出した文字列の配列を返します。囲み文字の内側の前後の空白は削除し、内側に改行を含むものは抽出しません。対象の文字列が空文字・`null`・`undefined` の場合は空配列を返します。
+`delimiters` で囲まれた部分を抽出する関数を作ります。囲み文字が1つの文字列の場合は、開始・終了で共通にします。省略した場合や空文字の場合は `['{{', '}}']` です。作った関数は、抽出した文字列の配列を返します。囲み文字の内側の前後の空白は削除し、内側に改行を含むものは抽出しません。対象の文字列が空文字の場合は空配列を返します。
 
 ```ts
 const extract = createExtractor();
@@ -1469,7 +1469,7 @@ createExtractor('%')('%x% %y%'); // ['x', 'y']
 createReplacerByMap(map: ReplacementMap): Replacer
 ```
 
-`replaceByMap` と同じ規則で置換する関数を作ります。置換用の索引を最初に一度だけ作るため、同じマップで何度も置換する場合は `replaceByMap` より速くなります。作成した後に `map` を変更しても、作成した関数には反映しません。作った関数は、空文字・`null`・`undefined` をそのまま返します。
+`replaceByMap` と同じ規則で置換する関数を作ります。置換用の索引を最初に一度だけ作るため、同じマップで何度も置換する場合は `replaceByMap` より速くなります。作成した後に `map` を変更しても、作成した関数には反映しません。作った関数は、空文字をそのまま返します。
 
 ```ts
 const replace = createReplacerByMap({ hello: 'hi', world: 'earth' });
@@ -1525,7 +1525,7 @@ upperFirst(str: string): string
 replaceByMap(str: string, map: ReplacementMap): string
 ```
 
-`map` のキーの文字列を値の文字列に置換します。一度にまとめて置換するため、置換した結果がさらに置換されることはありません。キーが重なる場合は長いキーを優先します。`str` が空文字・`null`・`undefined` の場合はそのまま返します。
+`map` のキーの文字列を値の文字列に置換します。一度にまとめて置換するため、置換した結果がさらに置換されることはありません。キーが重なる場合は長いキーを優先します。`str` が空文字の場合はそのまま返します。
 
 ```ts
 replaceByMap('hello world', { hello: 'hi', world: 'earth' }); // 'hi earth'
@@ -1575,7 +1575,7 @@ toTrainCase(data: string): string
 toUpperCase(data: string): string
 ```
 
-文字列のケースを変換します。`toLowerCase` / `toUpperCase` は単語を区切らずに全体を小文字・大文字にします。それ以外は文字列を単語に分けてから、各ケースの形でつなぎます。そのため、表のケースはフラットケース以外どれも入力として扱えます。`data` が空文字・`null`・`undefined` の場合はそのまま返します。
+文字列のケースを変換します。`toLowerCase` / `toUpperCase` は単語を区切らずに全体を小文字・大文字にします。それ以外は文字列を単語に分けてから、各ケースの形でつなぎます。そのため、表のケースはフラットケース以外どれも入力として扱えます。`data` が空文字の場合はそのまま返します。
 
 単語は次の規則で分けます。
 

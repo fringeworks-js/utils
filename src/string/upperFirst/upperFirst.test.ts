@@ -17,10 +17,6 @@ describe('upperFirst', () => {
     const result = upperFirst('');
     expect(result).toBe('');
   });
-  it('null', () => {
-    const result = upperFirst(null as any);
-    expect(result).toBe(null);
-  });
   it('サロゲートペアの文字を1文字として扱う', () => {
     expect(upperFirst('\u{10428}x')).toBe('\u{10400}x');
   });

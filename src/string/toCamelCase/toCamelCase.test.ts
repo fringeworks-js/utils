@@ -29,14 +29,6 @@ describe('toCamelCase', () => {
     expect(toCamelCase('')).toBe('');
   });
 
-  it('null', () => {
-    expect(toCamelCase(null as any)).toBeNull();
-  });
-
-  it('undefined', () => {
-    expect(toCamelCase(undefined as any)).toBeUndefined();
-  });
-
   it('英字・数字以外の文字はすべて単語の区切りとして扱う', () => {
     expect(toCamelCase('--main-color')).toBe('mainColor');
     expect(toCamelCase('user:first name')).toBe('userFirstName');
