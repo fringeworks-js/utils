@@ -1,4 +1,5 @@
 import type { StrictRecord } from '@fringeworks/types';
+import _isEnumerable from '../../_internal/_isEnumerable';
 import type { ForEachValueOptions } from './types';
 
 /**
@@ -35,7 +36,7 @@ export default function forEachValue<T extends object>(
   }
   // symbolのキーはfor...inやObject.keysで列挙されないため、自身のものを別に処理する
   for (const symbol of Object.getOwnPropertySymbols(target)) {
-    if (Object.prototype.propertyIsEnumerable.call(target, symbol)) {
+    if (_isEnumerable(target, symbol)) {
       if (!visit(symbol)) {
         return false;
       }

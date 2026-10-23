@@ -1,4 +1,5 @@
 import type { StrictRecord } from '@fringeworks/types';
+import _isEnumerable from '../../_internal/_isEnumerable';
 import _isUnsafeKey from '../../_internal/_isUnsafeKey';
 import { cloneDeep } from '../cloneDeep';
 import { hasOwn } from '../hasOwn';
@@ -30,34 +31,48 @@ export default function distribute<
     : (property: PropertyKey) => hasOwn(data, property);
   const copy = cloneValue ? cloneDeep : (value: unknown) => value;
   // 分配結果
-  const result: Record<string, Record<PropertyKey, unknown>> = {};
-  // 対象をrestにコピーし、分配できたものはrestから削除していく
-  const rest = { ...record };
-  const restGroupKeys: string[] = [];
+  const result: Record<string, StrictRecord> = {};
+  // 分配したプロパティ
+  const distributed = new Set<PropertyKey>();
+  // 分配できなかったプロパティを設定するグループ
+  const restGroups: StrictRecord[] = [];
 
   for (const groupKey in rules) {
     const group: StrictRecord = (result[groupKey] = {});
     const properties = rules[groupKey];
     if (properties == null) {
-      // 分配できなかったプロパティを設定するグループ
-      restGroupKeys.push(groupKey);
+      restGroups.push(group);
     } else {
       // 指定のプロパティを対象のグループへ分配
       for (const property of properties) {
         if (!_isUnsafeKey(property) && has(property)) {
           group[property] = copy(record[property]);
-          delete rest[property];
+          distributed.add(property);
         }
       }
     }
   }
-  for (const groupKey of restGroupKeys) {
-    // restの内容をグループへ設定
-    const group: StrictRecord = {};
-    for (const key of Reflect.ownKeys(rest)) {
-      group[key] = copy(rest[key]);
+
+  if (restGroups.length) {
+    // 自身の列挙可能なプロパティのうち、分配していないものを各グループへ設定
+    // `Reflect.ownKeys`より速いため、文字列とsymbolのキーを分けて列挙する
+    const setRest = (key: PropertyKey) => {
+      if (_isUnsafeKey(key) || distributed.has(key)) {
+        return;
+      }
+      const value = record[key];
+      for (const group of restGroups) {
+        group[key] = copy(value);
+      }
+    };
+    for (const key of Object.keys(record)) {
+      setRest(key);
     }
-    result[groupKey] = group;
+    for (const key of Object.getOwnPropertySymbols(record)) {
+      if (_isEnumerable(record, key)) {
+        setRest(key);
+      }
+    }
   }
 
   return result as DistributeResult<T, DR>;

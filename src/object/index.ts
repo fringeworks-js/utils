@@ -4,6 +4,7 @@ export * from './cloneDeep';
 export * from './cloneShallow';
 export * from './countKeys';
 export * from './createOverrideProxy';
+export * from './createSplitByKeys';
 export * from './distribute';
 export * from './exactKeys';
 export * from './exactKeysFromRecord';

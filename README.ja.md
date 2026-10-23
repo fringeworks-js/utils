@@ -967,6 +967,7 @@ roundToStep(0.3, 0.1); // 0.3
 | `cloneShallow(value)`                                  | 値を浅くコピーする                                                           |
 | `countKeys(obj)`                                       | オブジェクトの列挙可能なプロパティの数を返す                                 |
 | `createOverrideProxy(instance, overrides)`             | インスタンスのプロパティを上書きするプロキシを作る                           |
+| `createSplitByKeys<T>(keys)`                           | 指定したキーのプロパティとそれ以外に分ける関数を作る                         |
 | `distribute(data, rules, options?)`                    | プロパティをルールに従って複数のオブジェクトに分ける                         |
 | `exactKeys<T>()(keys)`                                 | 型のキーを過不足なく列挙した配列であることをコンパイル時に検査する           |
 | `exactKeysFromRecord<T>(keys)`                         | 型の全てのキーを持つオブジェクトからキーの配列を作る                         |
@@ -1056,6 +1057,26 @@ const logger = createOverrideProxy(console, {
       target.log('[app]', ...args),
 });
 logger.log('hello'); // [app] hello
+```
+
+#### `createSplitByKeys`
+
+```ts
+createSplitByKeys<T extends object>(keys: SplitKeyRecord<T>): <D extends object>(data: D) => [T, SplitRest<D, T>]
+```
+
+オブジェクトを、`T` のキーのプロパティとそれ以外のプロパティに分ける関数を作ります。作った関数は `[picked, rest]` のタプルを返します。React のコンポーネントで、ライブラリが使うプロパティと DOM に渡すプロパティを分ける場合などに使います。
+
+- `keys` には `T` の全てのキーを持ち、値が `true` のオブジェクトを指定します。キーの不足・余分は型エラーになります。`T` がユニオン型の場合は、全てのメンバーのキーを指定します
+- 値が `undefined` のプロパティも、キーの種類で振り分けます
+- 自身の列挙可能なプロパティ（symbol のキーを含む）を対象にします
+- `picked` が `T` の型を満たすかは検査しません
+
+```ts
+type Options = { gap?: number; gapX?: number };
+
+const splitOptions = createSplitByKeys<Options>({ gap: true, gapX: true });
+const [options, rest] = splitOptions({ gap: 8, id: 'a' }); // [{ gap: 8 }, { id: 'a' }]
 ```
 
 #### `distribute`
@@ -1414,6 +1435,8 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 }（state は { a: 9, b: 2 }）
 | `ForEachValueOptions`         | `forEachValue` のオプション                                                                                                                                                                                                                                                                               |
 | `GetOptions`                  | `get` のオプション                                                                                                                                                                                                                                                                                        |
 | `PropertyPath`                | `get`・`set`・`unset` などのパス。文字列は `parsePropertyPath` の規則で解釈し、数値・symbol は1つのキー、配列はキーの並びとして扱う                                                                                                                                                                       |
+| `SplitKeyRecord<T>`           | `createSplitByKeys` に渡すキーのオブジェクト。`T` がユニオン型の場合は、全てのメンバーのキーを持つ                                                                                                                                                                                                        |
+| `SplitRest<D, T>`             | `createSplitByKeys` で作った関数の戻り値の `rest`。`D` から `T` のキーを除いたもの                                                                                                                                                                                                                        |
 | `TransformObjectOptions`      | `transformObject` のオプション                                                                                                                                                                                                                                                                            |
 | `TransformObjectRule<S, T>`   | `transformObject` のルール                                                                                                                                                                                                                                                                                |
 | `UpdateMutableOptions`        | `updateMutable` のオプション                                                                                                                                                                                                                                                                              |

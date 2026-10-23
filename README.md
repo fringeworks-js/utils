@@ -967,6 +967,7 @@ To prevent prototype pollution, functions that read or write object keys ignore 
 | `cloneShallow(value)`                                  | Makes a shallow copy of a value                                                  |
 | `countKeys(obj)`                                       | Returns the number of enumerable properties of an object                         |
 | `createOverrideProxy(instance, overrides)`             | Creates a proxy that overrides an instance's properties                          |
+| `createSplitByKeys<T>(keys)`                           | Creates a function that splits the properties of the given keys from the rest    |
 | `distribute(data, rules, options?)`                    | Splits properties into several objects according to rules                        |
 | `exactKeys<T>()(keys)`                                 | Checks at compile time that an array lists exactly the keys of a type            |
 | `exactKeysFromRecord<T>(keys)`                         | Creates an array of keys from an object that has every key of a type             |
@@ -1056,6 +1057,26 @@ const logger = createOverrideProxy(console, {
       target.log('[app]', ...args),
 });
 logger.log('hello'); // [app] hello
+```
+
+#### `createSplitByKeys`
+
+```ts
+createSplitByKeys<T extends object>(keys: SplitKeyRecord<T>): <D extends object>(data: D) => [T, SplitRest<D, T>]
+```
+
+Creates a function that splits an object into the properties with the keys of `T` and the rest. The created function returns a `[picked, rest]` tuple. Use it, for example, in a React component to separate the properties a library uses from those passed to the DOM.
+
+- `keys` is an object that has every key of `T` with the value `true`. Missing or extra keys are type errors. If `T` is a union type, specify the keys of all its members
+- Properties whose values are `undefined` are also split by their keys
+- Own enumerable properties (including symbol keys) are processed
+- Whether `picked` satisfies the type `T` is not checked
+
+```ts
+type Options = { gap?: number; gapX?: number };
+
+const splitOptions = createSplitByKeys<Options>({ gap: true, gapX: true });
+const [options, rest] = splitOptions({ gap: 8, id: 'a' }); // [{ gap: 8 }, { id: 'a' }]
 ```
 
 #### `distribute`
@@ -1412,6 +1433,8 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 } (state becomes { a: 9, b: 2 })
 | `ForEachValueOptions`         | Options for `forEachValue`                                                                                                                                                                                                                                                                                                                                  |
 | `GetOptions`                  | Options for `get`                                                                                                                                                                                                                                                                                                                                           |
 | `PropertyPath`                | A path for `get`, `set`, `unset`, and others. A string is parsed by the rules of `parsePropertyPath`, a number or symbol is a single key, and an array is a sequence of keys                                                                                                                                                                                |
+| `SplitKeyRecord<T>`           | The object of keys passed to `createSplitByKeys`. If `T` is a union type, it has the keys of all its members                                                                                                                                                                                                                                                |
+| `SplitRest<D, T>`             | `rest` returned by the function created by `createSplitByKeys`. `D` without the keys of `T`                                                                                                                                                                                                                                                                 |
 | `TransformObjectOptions`      | Options for `transformObject`                                                                                                                                                                                                                                                                                                                               |
 | `TransformObjectRule<S, T>`   | A rule of `transformObject`                                                                                                                                                                                                                                                                                                                                 |
 | `UpdateMutableOptions`        | Options for `updateMutable`                                                                                                                                                                                                                                                                                                                                 |

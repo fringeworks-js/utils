@@ -348,6 +348,62 @@ describe('distribute', () => {
       expect(fn({ a: 1, b: 'x', c: true })).toEqual({ b: 'x', c: true });
     });
   });
+  describe('残余グループの対象', () => {
+    it('dataのキーの順序を保つ', () => {
+      const result = distribute(
+        { b: 1, 2: 'two', a: 2, 1: 'one' },
+        { g: ['a'], rest: null },
+      );
+      expect(Reflect.ownKeys(result.rest)).toEqual(['1', '2', 'b']);
+    });
+
+    it('symbolのキーも含む', () => {
+      const sym = Symbol('sym');
+      const result = distribute({ a: 1, [sym]: 2 }, { rest: null });
+      expect(result.rest).toEqual({ a: 1, [sym]: 2 });
+    });
+
+    it('列挙できないプロパティは含まない', () => {
+      const sym = Symbol('sym');
+      const data = { a: 1 };
+      Object.defineProperty(data, 'b', { value: 2, enumerable: false });
+      Object.defineProperty(data, sym, { value: 3, enumerable: false });
+      const result = distribute(data, { rest: null });
+      expect(Reflect.ownKeys(result.rest)).toEqual(['a']);
+    });
+
+    it('includeInherited=trueでも継承プロパティは含まない', () => {
+      const data = Object.assign(Object.create({ inherited: 1 }), { a: 1 });
+      const result = distribute(
+        data,
+        { rest: null },
+        { includeInherited: true },
+      );
+      expect(Reflect.ownKeys(result.rest)).toEqual(['a']);
+    });
+
+    it('__proto__は含めず、プロトタイプを書き換えない', () => {
+      const data = JSON.parse('{"__proto__":{"polluted":1},"a":1}');
+      const result: any = distribute(data, { rest: null });
+      expect(Object.getPrototypeOf(result.rest)).toBe(Object.prototype);
+      expect(result.rest.polluted).toBeUndefined();
+      expect(result.rest).toEqual({ a: 1 });
+    });
+
+    it('ゲッターは各プロパティで1回だけ呼ぶ', () => {
+      let count = 0;
+      const data = {
+        get a() {
+          count++;
+          return 1;
+        },
+        b: 2,
+      };
+      const result = distribute(data, { g: ['a'], rest1: null, rest2: null });
+      expect(result).toEqual({ g: { a: 1 }, rest1: { b: 2 }, rest2: { b: 2 } });
+      expect(count).toBe(1);
+    });
+  });
   it('__proto__は分配しない', () => {
     const data = JSON.parse('{"__proto__":{"polluted":1},"a":1}');
     const result: any = distribute(data, { g: ['__proto__', 'a'] });
