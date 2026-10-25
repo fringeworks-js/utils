@@ -89,10 +89,10 @@ Removes all elements from the array (mutating) and returns an array of the remov
 #### `compactMap`
 
 ```ts
-compactMap<V, R = V>(data: V[] | null | undefined, callback: CompactMapIteratee<V, R>, options?: CompactMapOptions): R[]
+compactMap<V, R = V>(data: V[] | null | undefined, callback: IndexedIteratee<V, R>, options?: CompactMapOptions): R[]
 ```
 
-Maps each element with `callback` and returns an array without the values specified by `options.exclude`.
+Maps each element with `callback` and returns an array without the values specified by `options.exclude`. `callback` has the form `(value, index, data) => R` (`IndexedIteratee` of `@fringeworks/types`).
 
 ```ts
 compactMap([1, 2, 3], (v) => (v === 2 ? undefined : v * 10)); // [10, 30]
@@ -350,7 +350,6 @@ toArray(1); // [1]
 | ------------------------------------ | ------------------------------------------------------------------- |
 | `CompactMapOptions`                  | Options for `compactMap`                                            |
 | `CompactMapExclude`                  | The kinds of values `compactMap` excludes                           |
-| `CompactMapIteratee<V, R>`           | The `compactMap` callback `(value, index, data) => R`               |
 | `EnsureArrayOptions`                 | Options for `ensureArray`                                           |
 | `NestedGroupByOptions`               | Options for `nestedGroupBy`                                         |
 | `NestedGroupByResult<I>`             | The return value of `nestedGroupBy`                                 |

@@ -13,9 +13,3 @@ export type CompactMapOptions = {
 };
 
 export type CompactMapExclude = 'undefined' | 'nullish' | 'empty' | 'falsy';
-
-export type CompactMapIteratee<V, R> = (
-  value: V,
-  index: number,
-  data: V[],
-) => R;

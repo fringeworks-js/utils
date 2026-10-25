@@ -1,4 +1,5 @@
-import type { CompactMapIteratee, CompactMapOptions } from './types';
+import type { IndexedIteratee } from '@fringeworks/types';
+import type { CompactMapOptions } from './types';
 
 const IS_TARGET = {
   undefined: <T>(value: T): value is T => value !== undefined,
@@ -16,7 +17,7 @@ const IS_TARGET = {
  */
 export default function compactMap<V, R = V>(
   data: V[] | null | undefined,
-  callback: CompactMapIteratee<V, R>,
+  callback: IndexedIteratee<V, R>,
   options: CompactMapOptions = {},
 ): R[] {
   const result: R[] = [];

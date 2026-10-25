@@ -89,10 +89,10 @@ clearArrayMutable<T>(data: T[]): T[]
 #### `compactMap`
 
 ```ts
-compactMap<V, R = V>(data: V[] | null | undefined, callback: CompactMapIteratee<V, R>, options?: CompactMapOptions): R[]
+compactMap<V, R = V>(data: V[] | null | undefined, callback: IndexedIteratee<V, R>, options?: CompactMapOptions): R[]
 ```
 
-各要素を `callback` で変換し、`options.exclude` で指定した値を除いた配列を返します。
+各要素を `callback` で変換し、`options.exclude` で指定した値を除いた配列を返します。`callback` は `(value, index, data) => R` の形です（`@fringeworks/types` の `IndexedIteratee`）。
 
 ```ts
 compactMap([1, 2, 3], (v) => (v === 2 ? undefined : v * 10)); // [10, 30]
@@ -346,25 +346,24 @@ toArray(1); // [1]
 
 #### 型
 
-| 型                                   | 説明                                                    |
-| ------------------------------------ | ------------------------------------------------------- |
-| `CompactMapOptions`                  | `compactMap` のオプション                               |
-| `CompactMapExclude`                  | `compactMap` で除外する値の種類                         |
-| `CompactMapIteratee<V, R>`           | `compactMap` のコールバック `(value, index, data) => R` |
-| `EnsureArrayOptions`                 | `ensureArray` のオプション                              |
-| `NestedGroupByOptions`               | `nestedGroupBy` のオプション                            |
-| `NestedGroupByResult<I>`             | `nestedGroupBy` の戻り値                                |
-| `NestedKeyByOptions`                 | `nestedKeyBy` のオプション                              |
-| `NestedKeyByResult<I>`               | `nestedKeyBy` の戻り値                                  |
-| `PushUniqueMutableOptions<T>`        | `pushUniqueMutable` のオプション                        |
-| `PushUniqueOptions<T>`               | `PushUniqueMutableOptions<T>` と同じ                    |
-| `RotateArrayMutableOptions`          | `rotateArrayMutable` のオプション                       |
-| `RotateArrayOptions`                 | `RotateArrayMutableOptions` と同じ                      |
-| `SortDependenciesOptions<I>`         | `sortDependencies` のオプション                         |
-| `SortDependenciesGetId<I>`           | 要素から ID を返す関数 `(item) => unknown`              |
-| `SortDependenciesGetDependencies<I>` | 要素から依存先を返す関数 `(item) => I \| I[]`           |
-| `SwapPairsResult<T>`                 | `swapPairs` の戻り値（各タプルの要素を入れ替えた型）    |
-| `ToArrayOptions`                     | `toArray` のオプション                                  |
+| 型                                   | 説明                                                 |
+| ------------------------------------ | ---------------------------------------------------- |
+| `CompactMapOptions`                  | `compactMap` のオプション                            |
+| `CompactMapExclude`                  | `compactMap` で除外する値の種類                      |
+| `EnsureArrayOptions`                 | `ensureArray` のオプション                           |
+| `NestedGroupByOptions`               | `nestedGroupBy` のオプション                         |
+| `NestedGroupByResult<I>`             | `nestedGroupBy` の戻り値                             |
+| `NestedKeyByOptions`                 | `nestedKeyBy` のオプション                           |
+| `NestedKeyByResult<I>`               | `nestedKeyBy` の戻り値                               |
+| `PushUniqueMutableOptions<T>`        | `pushUniqueMutable` のオプション                     |
+| `PushUniqueOptions<T>`               | `PushUniqueMutableOptions<T>` と同じ                 |
+| `RotateArrayMutableOptions`          | `rotateArrayMutable` のオプション                    |
+| `RotateArrayOptions`                 | `RotateArrayMutableOptions` と同じ                   |
+| `SortDependenciesOptions<I>`         | `sortDependencies` のオプション                      |
+| `SortDependenciesGetId<I>`           | 要素から ID を返す関数 `(item) => unknown`           |
+| `SortDependenciesGetDependencies<I>` | 要素から依存先を返す関数 `(item) => I \| I[]`        |
+| `SwapPairsResult<T>`                 | `swapPairs` の戻り値（各タプルの要素を入れ替えた型） |
+| `ToArrayOptions`                     | `toArray` のオプション                               |
 
 ### boolean
 
