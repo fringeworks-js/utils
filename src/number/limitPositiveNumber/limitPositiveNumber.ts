@@ -12,8 +12,8 @@ export default function limitPositiveNumber(
   options: LimitPositiveNumberOptions = {},
 ): number | null | undefined {
   if (value == null) {
-    // null,undefinedの場合
-    return 'defaultValue' in options ? options.defaultValue : value;
+    // null,undefinedの場合はそのまま返す
+    return value;
   } else if (Number.isNaN(value)) {
     // NaNの場合
     return 'nanValue' in options ? options.nanValue : null;

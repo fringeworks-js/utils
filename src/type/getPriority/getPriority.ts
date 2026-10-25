@@ -10,20 +10,20 @@ const DEFAULT_PRIORITY_MAP: Partial<Record<Kind, number>> = {
 /**
  * 値の型種別（`getKind` の結果）に応じた優先度を返す。\
  * デフォルトでは undefined は-2、null は-1、それ以外は0
- * @param data 値
+ * @param value 値
  * @param options オプション
  * @returns 優先度
  */
 export default function getPriority(
-  data: unknown,
+  value: unknown,
   options: GetPriorityOptions = {},
 ): number {
   const { priorityMap, getFallbackPriority } = options;
-  const kind = getKind(data);
+  const kind = getKind(value);
   return (
     priorityMap?.[kind] ??
     DEFAULT_PRIORITY_MAP[kind] ??
-    getFallbackPriority?.(data) ??
+    getFallbackPriority?.(value) ??
     0
   );
 }

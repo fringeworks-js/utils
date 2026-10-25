@@ -14,7 +14,7 @@ import type {
  * @returns 新しい配列
  */
 export default function sortDependencies<I>(
-  data: I[] | null | undefined,
+  data: readonly I[] | null | undefined,
   options: SortDependenciesOptions<I> = {},
 ): I[] {
   if (!data) {
@@ -33,7 +33,7 @@ export default function sortDependencies<I>(
     : (item: I) => getProperty(item, id);
   const getDeps: SortDependenciesGetDependencies<I> = R.isFunction(dependencies)
     ? dependencies
-    : (item: I) => getProperty(item, dependencies) as I | I[];
+    : (item: I) => getProperty(item, dependencies) as I | readonly I[];
   const getDepId: SortDependenciesGetId<I> =
     dependencyId === undefined
       ? // 依存先が要素そのものならidと同じ方法で、IDならその値をそのまま使う
@@ -74,7 +74,7 @@ function getProperty<I>(item: I, key: string | number): unknown {
  */
 function getUniqItems<I>(
   results: Map<unknown, I>,
-  items: I[],
+  items: readonly I[],
   getId: SortDependenciesGetId<I>,
   getDeps: SortDependenciesGetDependencies<I>,
   getDepId: SortDependenciesGetId<I>,
@@ -100,7 +100,7 @@ function getUniqItems<I>(
  */
 function _getUniqItems<I>(
   results: Map<unknown, I>,
-  items: I[],
+  items: readonly I[],
   getDepId: SortDependenciesGetId<I>,
   getDeps: SortDependenciesGetDependencies<I>,
 ) {
@@ -241,7 +241,7 @@ function makeDependenciesMap<I>(
  * @returns
  */
 function makeReverseLookupMap<I>(
-  distinctArray: I[],
+  distinctArray: readonly I[],
   getId: SortDependenciesGetId<I>,
 ): Map<unknown, number> {
   return distinctArray.reduce((map, item, index) => {

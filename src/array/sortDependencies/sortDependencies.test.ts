@@ -230,4 +230,17 @@ describe('sortDependencies', () => {
       sortDependencies([a], { id: 'id', dependencies: 'deps', tree: true }),
     ).toThrow('Cyclic dependency');
   });
+
+  it('readonly の配列と、readonly の配列を返す getDependencies を受け付ける', () => {
+    type Node = { id: string; deps: readonly Node[] };
+    const leaf: Node = { id: 'b', deps: [] };
+    const data: readonly Node[] = [{ id: 'a', deps: [leaf] }];
+    const result = sortDependencies(data, {
+      id: 'id',
+      dependencies: (node) => node.deps,
+      tree: true,
+    });
+    expect(result.map((node) => node.id)).toEqual(['b', 'a']);
+    expectTypeOf(result).toEqualTypeOf<Node[]>();
+  });
 });

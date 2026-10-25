@@ -36,4 +36,9 @@ describe('firstDefined', () => {
     expect(firstDefined(null)).toBeUndefined();
     expect(firstDefined(undefined)).toBeUndefined();
   });
+
+  it('readonly の配列を受け付ける', () => {
+    const data: readonly (number | undefined)[] = [undefined, 1];
+    expect(firstDefined(data)).toBe(1);
+  });
 });

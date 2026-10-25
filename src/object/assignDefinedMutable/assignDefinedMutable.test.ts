@@ -9,10 +9,10 @@ describe('assignDefinedMutable', () => {
     expect(result).toBe(target);
   });
 
-  it('skipNull: trueでnullも除外する', () => {
-    const target = { a: 1 };
-    assignDefinedMutable(target, { a: null as any }, { skipNull: true });
-    expect(target.a).toBe(1);
+  it('nullは代入する', () => {
+    const target: { a: number | null } = { a: 1 };
+    assignDefinedMutable(target, { a: null });
+    expect(target.a).toBeNull();
   });
 
   it('__proto__キーは反映しない', () => {

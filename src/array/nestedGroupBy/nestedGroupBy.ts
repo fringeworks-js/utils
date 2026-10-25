@@ -39,8 +39,8 @@ import type { NestedGroupByOptions, NestedGroupByResult } from './types';
  * @returns
  */
 export default function nestedGroupBy<I extends object>(
-  data: I[] | null | undefined,
-  properties: keyof I | (keyof I)[],
+  data: readonly I[] | null | undefined,
+  properties: keyof I | readonly (keyof I)[],
   options: NestedGroupByOptions = {},
 ): NestedGroupByResult<I> {
   return _nestedBy<I, I[]>(

@@ -7,11 +7,11 @@
  * @param data 任意の値
  * @returns 数値
  */
-export default function ensureNumber(target: unknown): number {
-  if (typeof target === 'number') {
-    return Number.isNaN(target) ? 0 : target;
-  } else if (typeof target === 'string') {
-    const num = Number(target);
+export default function ensureNumber(data: unknown): number {
+  if (typeof data === 'number') {
+    return Number.isNaN(data) ? 0 : data;
+  } else if (typeof data === 'string') {
+    const num = Number(data);
     return Number.isNaN(num) ? 0 : num;
   }
   return 0;

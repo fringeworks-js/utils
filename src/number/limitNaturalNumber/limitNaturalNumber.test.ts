@@ -51,6 +51,5 @@ describe('limitNaturalNumber', () => {
     expect(limitNaturalNumber(NaN, { nanValue: 0.5 })).toBe(0.5);
     expect(limitNaturalNumber(-1, { negativeValue: 2.5 })).toBe(2.5);
     expect(limitNaturalNumber(0, { zeroValue: 0.5 })).toBe(0.5);
-    expect(limitNaturalNumber(null, { defaultValue: 1.5 })).toBe(1.5);
   });
 });

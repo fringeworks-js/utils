@@ -84,4 +84,27 @@ describe('ensureMap', () => {
     const source = {} as Record<string, number> | [string, number][];
     expectTypeOf(ensureMap(source)).toEqualTypeOf<Map<string, number>>();
   });
+
+  describe('readonly', () => {
+    it('ReadonlyMap を受け付け、複製した Map を返す', () => {
+      const data: ReadonlyMap<string, number> = new Map([['a', 1]]);
+      const result = ensureMap(data);
+      expect(result).not.toBe(data);
+      expect(result).toEqual(new Map([['a', 1]]));
+      expectTypeOf(result).toEqualTypeOf<Map<string, number>>();
+    });
+
+    it('raw: true の戻り値は ReadonlyMap', () => {
+      const data: ReadonlyMap<string, number> = new Map([['a', 1]]);
+      const result = ensureMap(data, { raw: true });
+      expect(result).toBe(data);
+      expectTypeOf(result).toEqualTypeOf<ReadonlyMap<string, number>>();
+    });
+
+    it('プロパティから作る場合は raw: true でも Map を返す', () => {
+      expectTypeOf(ensureMap({ a: 1 }, { raw: true })).toEqualTypeOf<
+        Map<string, number>
+      >();
+    });
+  });
 });

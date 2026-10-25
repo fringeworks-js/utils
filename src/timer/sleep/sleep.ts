@@ -39,5 +39,6 @@ export default function sleep(
  */
 function getAbortReason(signal: AbortSignal): unknown {
   // reasonに対応していないブラウザ向けにAbortErrorを補う
+  // TODO: Chrome / Edge 97・Firefox 96・Safari 15.3 以前が対応範囲外になったら削除する
   return signal.reason ?? new DOMException('Aborted.', 'AbortError');
 }

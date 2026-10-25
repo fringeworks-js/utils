@@ -6,7 +6,7 @@
  */
 export default function pushAllMutable<T>(
   data: T[],
-  source: T[] | null | undefined,
+  source: readonly T[] | null | undefined,
 ): T[] {
   if (source) {
     // push(...source) は要素数が多いと引数の上限を超えるため1つずつ追加する

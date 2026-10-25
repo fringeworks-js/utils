@@ -5,8 +5,8 @@
  * @returns 要素を追加した新しい配列
  */
 export default function pushAll<T>(
-  data: T[] | null | undefined,
-  source: T[] | null | undefined,
+  data: readonly T[] | null | undefined,
+  source: readonly T[] | null | undefined,
 ): T[] {
   return [...(data ?? []), ...(source ?? [])];
 }

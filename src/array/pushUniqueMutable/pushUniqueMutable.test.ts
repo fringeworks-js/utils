@@ -69,23 +69,28 @@ describe('pushUniqueMutable', () => {
     });
   });
 
-  describe('comparator オプション', () => {
-    it('comparatorによる同一性判定で重複を除外する', () => {
+  describe('isEqual オプション', () => {
+    it('isEqualによる同一性判定で重複を除外する', () => {
       const data = [{ id: 1 }, { id: 2 }];
       const result = pushUniqueMutable(data, [{ id: 2 }, { id: 3 }], {
-        comparator: (a, b) => a.id === b.id,
+        isEqual: (a, b) => a.id === b.id,
       });
       expect(result).toEqual([{ id: 1 }, { id: 2 }, { id: 3 }]);
     });
 
-    it('comparator指定時はthresholdに関わらず線形探索する', () => {
+    it('isEqual指定時はthresholdに関わらず線形探索する', () => {
       const data = Array.from({ length: 200 }, (_, i) => ({ id: i }));
       const result = pushUniqueMutable(data, [{ id: 0 }, { id: 200 }], {
-        comparator: (a, b) => a.id === b.id,
+        isEqual: (a, b) => a.id === b.id,
         threshold: 10,
       });
       expect(result?.filter((v) => v.id === 0)).toHaveLength(1);
       expect(result?.some((v) => v.id === 200)).toBe(true);
     });
+  });
+
+  it('追加する要素は readonly の配列を受け付ける', () => {
+    const items: readonly number[] = [2, 3];
+    expect(pushUniqueMutable([1, 2], items)).toEqual([1, 2, 3]);
   });
 });

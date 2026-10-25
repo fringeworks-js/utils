@@ -36,4 +36,9 @@ describe('firstPresent', () => {
     expect(firstPresent(null)).toBeUndefined();
     expect(firstPresent(undefined)).toBeUndefined();
   });
+
+  it('readonly の配列を受け付ける', () => {
+    const data: readonly (number | null)[] = [null, 1];
+    expect(firstPresent(data)).toBe(1);
+  });
 });

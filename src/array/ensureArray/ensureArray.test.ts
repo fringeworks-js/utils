@@ -47,4 +47,38 @@ describe('ensureArray', () => {
       expect(result).toBe(array);
     });
   });
+
+  describe('readonly', () => {
+    it('readonly の配列を受け付け、複製した配列を返す', () => {
+      const data: readonly number[] = [1, 2];
+      const result = ensureArray(data);
+      expect(result).not.toBe(data);
+      expect(result).toEqual([1, 2]);
+      expectTypeOf(result).toEqualTypeOf<number[]>();
+    });
+
+    it('raw: true の戻り値は readonly の配列', () => {
+      const data: readonly number[] = [1, 2];
+      expectTypeOf(ensureArray(data, { raw: true })).toEqualTypeOf<
+        readonly number[]
+      >();
+      expectTypeOf(ensureArray([1, 2], { raw: true })).toEqualTypeOf<
+        readonly number[]
+      >();
+    });
+
+    it('raw が boolean の場合の戻り値は readonly の配列', () => {
+      const raw = Math.random() > 0.5;
+      expectTypeOf(ensureArray([1, 2], { raw })).toEqualTypeOf<
+        readonly number[]
+      >();
+    });
+
+    it('型引数を指定した場合も raw の指定で戻り値の型が決まる', () => {
+      expectTypeOf(ensureArray<number>(1)).toEqualTypeOf<number[]>();
+      expectTypeOf(ensureArray<number>(1, { raw: true })).toEqualTypeOf<
+        readonly number[]
+      >();
+    });
+  });
 });

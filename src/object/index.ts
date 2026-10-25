@@ -1,5 +1,7 @@
 export * from './assignDefined';
 export * from './assignDefinedMutable';
+export * from './assignPresent';
+export * from './assignPresentMutable';
 export * from './cloneDeep';
 export * from './cloneShallow';
 export * from './countKeys';

@@ -11,7 +11,7 @@ import { pushAllMutable } from '../pushAllMutable';
 export default function insertAtMutable<T, U = T>(
   data: T[],
   index: number,
-  items: U[] | null | undefined,
+  items: readonly U[] | null | undefined,
 ): (T | U)[] {
   // 追加した後は U の要素も含む配列になる
   const array: (T | U)[] = data;

@@ -6,8 +6,8 @@ export type PushUniqueMutableOptions<T> = {
   threshold?: number;
 
   /**
-   * 同一性の判定ロジック。指定した場合はthresholdに関わらず線形探索になる。
+   * 2つの要素が等しいかを判定する関数。指定した場合はthresholdに関わらず線形探索になる。
    * デフォルト: `===`
    */
-  comparator?: (a: T, b: T) => boolean;
+  isEqual?: (value1: T, value2: T) => boolean;
 };

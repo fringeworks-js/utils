@@ -91,4 +91,15 @@ describe('nestedGroupBy', () => {
   it('nullを渡した場合は空オブジェクトを返す', () => {
     expect(nestedGroupBy<{ id: string }>(null, 'id')).toEqual({});
   });
+
+  it('readonly の配列を受け付ける', () => {
+    const data: readonly { a: string; b: number }[] = [
+      { a: 'x', b: 1 },
+      { a: 'x', b: 2 },
+    ];
+    const properties = ['a'] as const;
+    expect(nestedGroupBy(data, properties)).toEqual(
+      nestedGroupBy([...data], ['a']),
+    );
+  });
 });

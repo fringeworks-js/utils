@@ -15,11 +15,11 @@ const nativeEscape = (RegExp as RegExpConstructorWithEscape).escape;
  *
  * `u` / `v` フラグを指定した場合や、文字クラスの中に埋め込んだ場合も、元の文字列として扱われる。
  * 前後の文字とつながって意味が変わらないよう、先頭の英数字もエスケープする
- * @param target エスケープする文字列
+ * @param data エスケープする文字列
  * @returns エスケープした文字列
  * @example
  * new RegExp(escapeRegExp('1.5*2')); // /\x31\.5\*2/
  */
-export default function escapeRegExp(target: string): string {
-  return nativeEscape ? nativeEscape(target) : _escapeRegExp(target);
+export default function escapeRegExp(data: string): string {
+  return nativeEscape ? nativeEscape(data) : _escapeRegExp(data);
 }

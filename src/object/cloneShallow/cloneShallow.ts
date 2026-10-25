@@ -18,6 +18,7 @@ export default function cloneShallow<T>(value: T): T {
   }
 
   const type = Object.prototype.toString.call(value);
+  // 配列・Map・Set・Date など、型ごとに異なる方法で複製するため any で扱う
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const original = value as any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

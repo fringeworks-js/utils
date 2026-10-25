@@ -89,7 +89,7 @@ Removes all elements from the array (mutating) and returns an array of the remov
 #### `compactMap`
 
 ```ts
-compactMap<V, R = V>(data: V[] | null | undefined, callback: IndexedIteratee<V, R>, options?: CompactMapOptions): R[]
+compactMap<V, R = V>(data: readonly V[] | null | undefined, callback: IndexedIteratee<V, R>, options?: CompactMapOptions): R[]
 ```
 
 Maps each element with `callback` and returns an array without the values specified by `options.exclude`. `callback` has the form `(value, index, data) => R` (`IndexedIteratee` of `@fringeworks/types`).
@@ -106,7 +106,9 @@ compactMap(['a', '', null], (v) => v, { exclude: 'empty' }); // ['a']
 #### `ensureArray`
 
 ```ts
-ensureArray<T>(data: T | T[] | null | undefined, options?: EnsureArrayOptions): T[]
+ensureArray<T>(data: T | readonly T[] | null | undefined, options: EnsureArrayOptions & { raw: true }): readonly T[]
+ensureArray<T>(data: T | readonly T[] | null | undefined, options?: EnsureArrayOptions & { raw?: false }): T[]
+ensureArray<T>(data: T | readonly T[] | null | undefined, options?: EnsureArrayOptions): readonly T[]
 ```
 
 Wraps a non-array value in a single-element array. `null` and `undefined` become an empty array, and an array is returned as a copy. Iterables such as `Set` are not spread (use `toArray` for that).
@@ -117,14 +119,14 @@ ensureArray([1, 2]); // [1, 2] (a copy)
 ensureArray(null); // []
 ```
 
-| Option | Type      | Description                                                                                    |
-| ------ | --------- | ---------------------------------------------------------------------------------------------- |
-| `raw?` | `boolean` | If `true`, returns the same array without copying when `data` is an array. Defaults to `false` |
+| Option | Type      | Description                                                                                                                                                                      |
+| ------ | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `raw?` | `boolean` | If `true`, returns the same array without copying when `data` is an array. The return type is then `readonly T[]` (also when `raw` is a `boolean` variable). Defaults to `false` |
 
 #### `firstDefined`
 
 ```ts
-firstDefined<V>(data: V[] | null | undefined): V | undefined
+firstDefined<V>(data: readonly V[] | null | undefined): V | undefined
 ```
 
 Returns the first element that is not `undefined`. `null` counts as a match.
@@ -132,7 +134,7 @@ Returns the first element that is not `undefined`. `null` counts as a match.
 #### `firstPresent`
 
 ```ts
-firstPresent<V>(data: V[] | null | undefined): V | undefined
+firstPresent<V>(data: readonly V[] | null | undefined): V | undefined
 ```
 
 Returns the first element that is neither `null` nor `undefined`.
@@ -140,7 +142,7 @@ Returns the first element that is neither `null` nor `undefined`.
 #### `insertAt`
 
 ```ts
-insertAt<T, U = T>(data: T[] | null | undefined, index: number, items: U[] | null | undefined): (T | U)[]
+insertAt<T, U = T>(data: readonly T[] | null | undefined, index: number, items: readonly U[] | null | undefined): (T | U)[]
 ```
 
 Returns a new array with the elements of `items` inserted at `index`. `index` is kept between 0 and the array length (a negative index inserts at the start, and an index beyond the length inserts at the end).
@@ -152,7 +154,7 @@ insertAt([1, 2, 3], 1, ['a', 'b']); // [1, 'a', 'b', 2, 3]
 #### `insertAtMutable`
 
 ```ts
-insertAtMutable<T, U = T>(data: T[], index: number, items: U[] | null | undefined): (T | U)[]
+insertAtMutable<T, U = T>(data: T[], index: number, items: readonly U[] | null | undefined): (T | U)[]
 ```
 
 The mutating version of `insertAt`. Inserts into `data` directly and returns the same array.
@@ -160,7 +162,7 @@ The mutating version of `insertAt`. Inserts into `data` directly and returns the
 #### `nestedGroupBy`
 
 ```ts
-nestedGroupBy<I extends object>(data: I[] | null | undefined, properties: keyof I | (keyof I)[], options?: NestedGroupByOptions): NestedGroupByResult<I>
+nestedGroupBy<I extends object>(data: readonly I[] | null | undefined, properties: keyof I | readonly (keyof I)[], options?: NestedGroupByOptions): NestedGroupByResult<I>
 ```
 
 Builds a nested object keyed by the values of `properties` and collects elements with the same keys into arrays. Keys are the property values converted to strings.
@@ -185,7 +187,7 @@ nestedGroupBy(items, ['pref', 'city'], { flat: true });
 #### `nestedKeyBy`
 
 ```ts
-nestedKeyBy<I extends object>(data: I[] | null | undefined, properties: keyof I | (keyof I)[], options?: NestedKeyByOptions): NestedKeyByResult<I>
+nestedKeyBy<I extends object>(data: readonly I[] | null | undefined, properties: keyof I | readonly (keyof I)[], options?: NestedKeyByOptions): NestedKeyByResult<I>
 ```
 
 Builds the same shape of object as `nestedGroupBy`, but stores a single element under each key. When several elements share the same keys, the first one is kept by default.
@@ -199,7 +201,7 @@ Builds the same shape of object as `nestedGroupBy`, but stores a single element 
 #### `pushAll`
 
 ```ts
-pushAll<T>(data: T[] | null | undefined, source: T[] | null | undefined): T[]
+pushAll<T>(data: readonly T[] | null | undefined, source: readonly T[] | null | undefined): T[]
 ```
 
 Returns a new array with all elements of `source` appended to `data`.
@@ -207,7 +209,7 @@ Returns a new array with all elements of `source` appended to `data`.
 #### `pushAllMutable`
 
 ```ts
-pushAllMutable<T>(data: T[], source: T[] | null | undefined): T[]
+pushAllMutable<T>(data: T[], source: readonly T[] | null | undefined): T[]
 ```
 
 The mutating version of `pushAll`. Appends to `data` directly and returns the same array.
@@ -215,7 +217,7 @@ The mutating version of `pushAll`. Appends to `data` directly and returns the sa
 #### `pushUnique`
 
 ```ts
-pushUnique<T>(data: T[] | null | undefined, items: T[] | null | undefined, options?: PushUniqueOptions<T>): T[]
+pushUnique<T>(data: readonly T[] | null | undefined, items: readonly T[] | null | undefined, options?: PushUniqueOptions<T>): T[]
 ```
 
 Returns a new array with only the elements of `items` that `data` does not contain yet. Duplicates within `items` are not added either.
@@ -224,15 +226,15 @@ Returns a new array with only the elements of `items` that `data` does not conta
 pushUnique([1, 2], [2, 3, 3]); // [1, 2, 3]
 ```
 
-| Option        | Type                      | Description                                                                                                                       |
-| ------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `threshold?`  | `number`                  | Uses a `Set` for the check when the total number of elements is at least this value. Defaults to `100`                            |
-| `comparator?` | `(a: T, b: T) => boolean` | How to decide whether two elements are the same. When given, a linear search is used regardless of `threshold`. Defaults to `===` |
+| Option       | Type                                | Description                                                                                                                              |
+| ------------ | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `threshold?` | `number`                            | Uses a `Set` for the check when the total number of elements is at least this value. Defaults to `100`                                   |
+| `isEqual?`   | `(value1: T, value2: T) => boolean` | A function that decides whether two elements are equal. When given, a linear search is used regardless of `threshold`. Defaults to `===` |
 
 #### `pushUniqueMutable`
 
 ```ts
-pushUniqueMutable<T>(data: T[], items: T[] | null | undefined, options?: PushUniqueMutableOptions<T>): T[]
+pushUniqueMutable<T>(data: T[], items: readonly T[] | null | undefined, options?: PushUniqueMutableOptions<T>): T[]
 ```
 
 The mutating version of `pushUnique`. Appends to `data` directly and returns the same array. The options are the same as `pushUnique`.
@@ -240,7 +242,7 @@ The mutating version of `pushUnique`. Appends to `data` directly and returns the
 #### `repeatToLength`
 
 ```ts
-repeatToLength<T>(data: T[] | null | undefined, length: number): T[]
+repeatToLength<T>(data: readonly T[] | null | undefined, length: number): T[]
 ```
 
 Returns a new array of length `length` made by repeating the elements of `data`. When `length` is negative, the reversed array is repeated. A fractional `length` is truncated, and `NaN` / `Infinity` are treated as `0`. Returns an empty array when `data` is empty.
@@ -253,7 +255,7 @@ repeatToLength([1, 2, 3], -5); // [3, 2, 1, 3, 2]
 #### `rotateArray`
 
 ```ts
-rotateArray<I>(data: I[] | null | undefined, options?: RotateArrayOptions): I[]
+rotateArray<I>(data: readonly I[] | null | undefined, options?: RotateArrayOptions): I[]
 ```
 
 Returns a new array with the first `count` elements moved to the end.
@@ -278,7 +280,7 @@ The mutating version of `rotateArray`. Modifies `data` directly and returns the 
 #### `sortDependencies`
 
 ```ts
-sortDependencies<I>(data: I[] | null | undefined, options?: SortDependenciesOptions<I>): I[]
+sortDependencies<I>(data: readonly I[] | null | undefined, options?: SortDependenciesOptions<I>): I[]
 ```
 
 Returns a new array sorted so that each element comes after the elements it depends on (topological sort). Elements with the same ID are merged into one. Throws an `Error` (`Cyclic dependency: <ID>`) when the dependencies form a cycle.
@@ -329,7 +331,9 @@ swapPairs([
 #### `toArray`
 
 ```ts
-toArray<T>(data: unknown, options?: ToArrayOptions): T[]
+toArray<T>(data: unknown, options: ToArrayOptions & { raw: true }): readonly T[]
+toArray<T>(data: unknown, options?: ToArrayOptions & { raw?: false }): T[]
+toArray<T>(data: unknown, options?: ToArrayOptions): readonly T[]
 ```
 
 Converts a value to an array. Iterables other than strings (`Set`, `Map`, and so on) are spread, and any other value is wrapped in a single-element array. `null` and `undefined` become an empty array, and an array is returned as a copy.
@@ -346,24 +350,24 @@ toArray(1); // [1]
 
 #### Types
 
-| Type                                 | Description                                                         |
-| ------------------------------------ | ------------------------------------------------------------------- |
-| `CompactMapOptions`                  | Options for `compactMap`                                            |
-| `CompactMapExclude`                  | The kinds of values `compactMap` excludes                           |
-| `EnsureArrayOptions`                 | Options for `ensureArray`                                           |
-| `NestedGroupByOptions`               | Options for `nestedGroupBy`                                         |
-| `NestedGroupByResult<I>`             | The return value of `nestedGroupBy`                                 |
-| `NestedKeyByOptions`                 | Options for `nestedKeyBy`                                           |
-| `NestedKeyByResult<I>`               | The return value of `nestedKeyBy`                                   |
-| `PushUniqueMutableOptions<T>`        | Options for `pushUniqueMutable`                                     |
-| `PushUniqueOptions<T>`               | Same as `PushUniqueMutableOptions<T>`                               |
-| `RotateArrayMutableOptions`          | Options for `rotateArrayMutable`                                    |
-| `RotateArrayOptions`                 | Same as `RotateArrayMutableOptions`                                 |
-| `SortDependenciesOptions<I>`         | Options for `sortDependencies`                                      |
-| `SortDependenciesGetId<I>`           | A function returning an element's ID `(item) => unknown`            |
-| `SortDependenciesGetDependencies<I>` | A function returning an element's dependencies `(item) => I \| I[]` |
-| `SwapPairsResult<T>`                 | The return value of `swapPairs` (the type with each pair swapped)   |
-| `ToArrayOptions`                     | Options for `toArray`                                               |
+| Type                                 | Description                                                                  |
+| ------------------------------------ | ---------------------------------------------------------------------------- |
+| `CompactMapOptions`                  | Options for `compactMap`                                                     |
+| `CompactMapExclude`                  | The kinds of values `compactMap` excludes                                    |
+| `EnsureArrayOptions`                 | Options for `ensureArray`                                                    |
+| `NestedGroupByOptions`               | Options for `nestedGroupBy`                                                  |
+| `NestedGroupByResult<I>`             | The return value of `nestedGroupBy`                                          |
+| `NestedKeyByOptions`                 | Options for `nestedKeyBy`                                                    |
+| `NestedKeyByResult<I>`               | The return value of `nestedKeyBy`                                            |
+| `PushUniqueMutableOptions<T>`        | Options for `pushUniqueMutable`                                              |
+| `PushUniqueOptions<T>`               | Same as `PushUniqueMutableOptions<T>`                                        |
+| `RotateArrayMutableOptions`          | Options for `rotateArrayMutable`                                             |
+| `RotateArrayOptions`                 | Same as `RotateArrayMutableOptions`                                          |
+| `SortDependenciesOptions<I>`         | Options for `sortDependencies`                                               |
+| `SortDependenciesGetId<I>`           | A function returning an element's ID `(item) => unknown`                     |
+| `SortDependenciesGetDependencies<I>` | A function returning an element's dependencies `(item) => I \| readonly I[]` |
+| `SwapPairsResult<T>`                 | The return value of `swapPairs` (the type with each pair swapped)            |
+| `ToArrayOptions`                     | Options for `toArray`                                                        |
 
 ### boolean
 
@@ -400,11 +404,11 @@ ensureBoolean(1); // true
 
 ### compare
 
-| Function                                | Description                                                       |
-| --------------------------------------- | ----------------------------------------------------------------- |
-| `compare(left, operator, right)`        | Compares two values with an operator                              |
-| `isEqual(value1, value2)`               | Checks recursively whether two values have the same structure     |
-| `isEqualWith(value, other, customizer)` | Compares two values recursively with a custom comparison function |
+| Function                                  | Description                                                       |
+| ----------------------------------------- | ----------------------------------------------------------------- |
+| `compare(left, operator, right)`          | Compares two values with an operator                              |
+| `isEqual(value1, value2)`                 | Checks recursively whether two values have the same structure     |
+| `isEqualWith(value1, value2, customizer)` | Compares two values recursively with a custom comparison function |
 
 #### `compare`
 
@@ -455,7 +459,7 @@ isEqual([1], { 0: 1 }); // false
 #### `isEqualWith`
 
 ```ts
-isEqualWith(value: unknown, other: unknown, customizer: IsEqualWithCustomizer): boolean
+isEqualWith(value1: unknown, value2: unknown, customizer: IsEqualWithCustomizer): boolean
 ```
 
 Compares two values recursively. `customizer` is called at each step; a returned `boolean` is used as the result, and `undefined` falls back to the default comparison.
@@ -492,17 +496,17 @@ isEqualWith({ a: 'Hello' }, { a: 'hello' }, (v1, v2) =>
 
 | Function                                  | Description                                                                 |
 | ----------------------------------------- | --------------------------------------------------------------------------- |
-| `asUtcDate(date)`                         | Returns a `Date` that treats the local date and time as the same UTC values |
+| `asUtcDate(value)`                        | Returns a `Date` that treats the local date and time as the same UTC values |
 | `createUtcDate(year, month?, date?, ...)` | Creates a `Date` from UTC date and time values                              |
 | `lerpDate(value, ratio, options?)`        | Interpolates between a base date and a target date by a ratio               |
 
 #### `asUtcDate`
 
 ```ts
-asUtcDate(date: Date): Date
+asUtcDate(value: Date): Date
 ```
 
-Returns a new `Date` whose UTC year, month, day, hours, minutes, seconds, and milliseconds are the local values of `date`.
+Returns a new `Date` whose UTC year, month, day, hours, minutes, seconds, and milliseconds are the local values of `value`.
 
 ```ts
 // In a UTC+9 time zone
@@ -564,9 +568,12 @@ Functions that return a fixed result regardless of their arguments, useful as ca
 #### `ensureMap`
 
 ```ts
-ensureMap<K, V>(data: Iterable<readonly [K, V]> | null | undefined, options?: EnsureMapOptions): Map<K, V>
+ensureMap<K, V>(data: Iterable<readonly [K, V]> | null | undefined, options: EnsureMapOptions & { raw: true }): ReadonlyMap<K, V>
+ensureMap<K, V>(data: Iterable<readonly [K, V]> | null | undefined, options?: EnsureMapOptions & { raw?: false }): Map<K, V>
 ensureMap<V>(data: Record<string, V> | null | undefined, options?: EnsureMapOptions): Map<string, V>
-ensureMap<K, V>(data: EnsureMapSource<K, V> | null | undefined, options?: EnsureMapOptions): Map<K | string, V>
+ensureMap<K, V>(data: EnsureMapSource<K, V> | null | undefined, options: EnsureMapOptions & { raw: true }): ReadonlyMap<K | string, V>
+ensureMap<K, V>(data: EnsureMapSource<K, V> | null | undefined, options?: EnsureMapOptions & { raw?: false }): Map<K | string, V>
+ensureMap<K, V>(data: EnsureMapSource<K, V> | null | undefined, options?: EnsureMapOptions): ReadonlyMap<K | string, V>
 ```
 
 Converts a value to a `Map`. A `Map` is returned as a copy. Any other iterable (an array of entries, a `Set`, and so on) is treated like the `Map` constructor does, with each element as a `[key, value]` pair. Any other object has its properties turned into entries. `null`, `undefined`, and primitive values become an empty `Map`.
@@ -579,9 +586,9 @@ ensureMap(['x', 'y'].entries()); // Map { 0 => 'x', 1 => 'y' }
 
 If an iterable has elements that are not entries (such as `[1, 2]`), a `TypeError` is thrown, just like the `Map` constructor.
 
-| Option | Type      | Description                                                                                   |
-| ------ | --------- | --------------------------------------------------------------------------------------------- |
-| `raw?` | `boolean` | If `true`, returns the same `Map` without copying when `data` is a `Map`. Defaults to `false` |
+| Option | Type      | Description                                                                                                                                                                                                                                    |
+| ------ | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `raw?` | `boolean` | If `true`, returns the same `Map` without copying when `data` is a `Map`. The return type is then `ReadonlyMap` (also when `raw` is a `boolean` variable). A `Map` made from an object's properties is always a new `Map`. Defaults to `false` |
 
 #### Types
 
@@ -589,118 +596,6 @@ If an iterable has elements that are not entries (such as `[1, 2]`), a `TypeErro
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | `EnsureMapOptions`      | Options for `ensureMap`                                                                                            |
 | `EnsureMapSource<K, V>` | The values `ensureMap` accepts (an iterable of `[key, value]` pairs, or an object whose properties become entries) |
-
-### measure
-
-| Function                           | Description                                                          |
-| ---------------------------------- | -------------------------------------------------------------------- |
-| `comparePerformance(options)`      | Measures and compares the execution time of several functions        |
-| `comparePerformanceAsync(options)` | Measures and compares the execution time of several async functions  |
-| `measure(fn, options?)`            | Runs a function a number of times and measures the time taken        |
-| `measureAsync(fn, options?)`       | Runs an async function a number of times and measures the time taken |
-
-#### `comparePerformance`
-
-```ts
-comparePerformance<A extends unknown[] = unknown[], R = unknown>(options: ComparePerformanceOptions<A, R>): ComparePerformanceResult<A, R>
-```
-
-Measures and compares the execution time of the functions in `targets`. Each round runs every function `iterations` times and records the time, and this is repeated for `rounds` rounds. The order of the functions changes every round to reduce bias from running order. Within a round, every function receives the same arguments.
-
-An error is thrown if two `targets` share the same `id`.
-
-```ts
-const result = comparePerformance({
-  targets: [
-    { id: 'spread', fn: (a: number[]) => [...a] },
-    { id: 'slice', fn: (a: number[]) => a.slice() },
-  ],
-  args: [Array.from({ length: 1000 }, (_, i) => i)],
-  iterations: 100,
-  rounds: 10,
-});
-result.order.map((target) => target.id); // fastest first
-```
-
-| Option              | Type                               | Description                                                                                                              |
-| ------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `targets`           | `ComparePerformanceTarget<A, R>[]` | The functions to measure, as `{ id, fn }`. Each `id` must be unique                                                      |
-| `iterations?`       | `number`                           | How many times each function runs per round. Decimals are truncated, and values below 1 become 1. Defaults to `10`       |
-| `rounds?`           | `number`                           | How many rounds to measure. Decimals are truncated, and values below 1 become 1. Defaults to `10`                        |
-| `args?`             | `A`                                | The arguments passed to the functions                                                                                    |
-| `getArgs?`          | `() => A`                          | A function that creates the arguments for each run. Takes precedence over `args`. Same as `measure`                      |
-| `warmUpIterations?` | `number`                           | How many times each function runs before measuring. Decimals are truncated, and values below 0 become 0. Defaults to `0` |
-| `id?`               | `string`                           | An ID included in the result as is. Defaults to the start time in milliseconds                                           |
-
-| Property       | Type                               | Description                                                         |
-| -------------- | ---------------------------------- | ------------------------------------------------------------------- |
-| `average`      | `ElapsedTimes`                     | The average time per round for each function (ms)                   |
-| `totalAverage` | `number`                           | The average time over all functions (ms). `0` if `targets` is empty |
-| `order`        | `ComparePerformanceTarget<A, R>[]` | The targets sorted from the shortest average time                   |
-| `results`      | `ElapsedTimes[]`                   | The time of each function in each round                             |
-| `returnValues` | `{ [id: string]: R }`              | The last return value of each function                              |
-| `start`        | `Date`                             | When the measurement started                                        |
-| `end`          | `Date`                             | When the measurement ended                                          |
-| `id`           | `string`                           | The measurement ID                                                  |
-
-#### `comparePerformanceAsync`
-
-```ts
-comparePerformanceAsync<A extends unknown[] = unknown[], R = unknown>(options: ComparePerformanceAsyncOptions<A, R>): Promise<ComparePerformanceAsyncResult<A, R>>
-```
-
-The async-function version of `comparePerformance`. The functions are run one at a time, including the warm-up. The options and the result are the same as `comparePerformance`.
-
-#### `measure`
-
-```ts
-measure<R>(fn: () => R, options?: MeasureOptions<[]>): MeasureResult<R>
-measure<A extends unknown[], R>(fn: (...args: A) => R, options: MeasureOptions<A>): MeasureResult<R>
-```
-
-Runs `fn` `iterations` times and returns the total execution time (ms) and the last return value. The time is measured with `performance.now()`. Because some environments reduce the precision of `performance.now()`, all runs are measured together rather than one by one.
-
-If `fn` has required parameters, either `args` or `getArgs` is required.
-
-```ts
-const { time, returnValue } = measure(() => heavyCalc(), { iterations: 100 });
-```
-
-| Option        | Type      | Description                                                                                                                                      |
-| ------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `iterations?` | `number`  | How many times to run. Decimals are truncated, and values below 1 become 1. Defaults to `10`                                                     |
-| `args?`       | `A`       | The arguments passed to the function                                                                                                             |
-| `getArgs?`    | `() => A` | A function that creates the arguments for each run. Takes precedence over `args`. It is called for all runs before measuring, so it is not timed |
-
-| Property      | Type     | Description                      |
-| ------------- | -------- | -------------------------------- |
-| `time`        | `number` | The total execution time (ms)    |
-| `returnValue` | `R`      | The return value of the last run |
-
-#### `measureAsync`
-
-```ts
-measureAsync<R>(fn: () => Promise<R>, options?: MeasureAsyncOptions<[]>): Promise<MeasureAsyncResult<R>>
-measureAsync<A extends unknown[], R>(fn: (...args: A) => Promise<R>, options: MeasureAsyncOptions<A>): Promise<MeasureAsyncResult<R>>
-```
-
-The async-function version of `measure`. Runs `fn` one call at a time, waiting for each to finish. The options and the result are the same as `measure`.
-
-#### Types
-
-| Type                                   | Description                                                                                                                                |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `ComparePerformanceOptions<A, R>`      | Options for `comparePerformance`                                                                                                           |
-| `ComparePerformanceResult<A, R>`       | The return value of `comparePerformance`                                                                                                   |
-| `ComparePerformanceTarget<A, R>`       | A function to measure `{ id, fn }`                                                                                                         |
-| `ComparePerformanceAsyncOptions<A, R>` | Same as `ComparePerformanceOptions<A, Promise<R>>`                                                                                         |
-| `ComparePerformanceAsyncResult<A, R>`  | The return value of `comparePerformanceAsync`. Same as `ComparePerformanceResult<A, R>`, except that `order` functions return `Promise<R>` |
-| `ElapsedTimes`                         | Times per function ID `{ [id: string]: number }`                                                                                           |
-| `MeasureArgsOptions<A>`                | Options for the arguments passed to the function (`args` / `getArgs`)                                                                      |
-| `MeasureOptions<A>`                    | Options for `measure`                                                                                                                      |
-| `MeasureResult<R>`                     | The return value of `measure`                                                                                                              |
-| `MeasureAsyncOptions<A>`               | Same as `MeasureOptions<A>`                                                                                                                |
-| `MeasureAsyncResult<R>`                | Same as `MeasureResult<R>`                                                                                                                 |
 
 ### number
 
@@ -719,7 +614,7 @@ The async-function version of `measure`. Runs `fn` one call at a time, waiting f
 | `loopInRange(value, min, max)`                    | Keeps a value within a range by treating the range as a loop               |
 | `pingpongInRange(value, min, max)`                | Keeps a value within a range by bouncing back at the ends                  |
 | `replaceOutOfRange(value, min, max, replacement)` | Replaces a value outside a range with a given value                        |
-| `roundToStep(data, step)`                         | Rounds a value to the nearest multiple of a step                           |
+| `roundToStep(value, step)`                        | Rounds a value to the nearest multiple of a step                           |
 
 Functions that take a range (`clampInRange`, `isStrictlyWithinRange`, `isWithinRange`, `keepInRange`, `loopInRange`, `pingpongInRange`, `replaceOutOfRange`) swap `min` and `max` when `min` is greater than `max`.
 
@@ -869,7 +764,7 @@ limitNaturalNumber(-3.5, { negativeValue: 'abs' }); // 3
 limitPositiveNumber(value: number | null | undefined, options?: LimitPositiveNumberOptions): number | null | undefined
 ```
 
-Limits a value to a positive number (greater than 0). Positive numbers are returned as is; otherwise the value set in the options is returned.
+Limits a value to a positive number (greater than 0). Positive numbers are returned as is; otherwise the value set in the options is returned. `null` and `undefined` are returned as is (use `??` before calling to give a default value).
 
 ```ts
 limitPositiveNumber(1.5); // 1.5
@@ -883,7 +778,6 @@ limitPositiveNumber(0, { zeroValue: 0 }); // 0
 | `negativeValue?` | `number \| null \| undefined \| 'abs'` | The value returned for a negative number. `'abs'` returns the absolute value. Defaults to `null` |
 | `zeroValue?`     | `number \| null \| undefined`          | The value returned for `0`. Defaults to `null`                                                   |
 | `nanValue?`      | `number \| null \| undefined`          | The value returned for `NaN`. Defaults to `null`                                                 |
-| `defaultValue?`  | `number`                               | The value returned for `null` or `undefined`. The value is returned as is by default             |
 
 #### `loopInRange`
 
@@ -923,10 +817,10 @@ Returns `value` when it is within the range (at least `min` and at most `max`), 
 #### `roundToStep`
 
 ```ts
-roundToStep(data: number, step: number): number
+roundToStep(value: number, step: number): number
 ```
 
-Rounds `data` to the nearest multiple of `step`. Values exactly halfway are rounded toward positive infinity (the same as `Math.round`, so `-2.5` becomes `-2`). The result is rounded again to the number of decimal places in `step`, so errors like `0.30000000000000004` do not appear. If `step` is `0` or not finite, `data` is returned as is.
+Rounds `value` to the nearest multiple of `step`. Values exactly halfway are rounded toward positive infinity (the same as `Math.round`, so `-2.5` becomes `-2`). The result is rounded again to the number of decimal places in `step`, so errors like `0.30000000000000004` do not appear. If `step` is `0` or not finite, `value` is returned as is.
 
 Rounding works on the floating-point (double) value. `1.15` is `1.1499…` as a double, so `roundToStep(1.15, 0.1)` returns `1.1`. Use `@fringeworks/numeric-string` to round decimals exactly as written.
 
@@ -958,37 +852,39 @@ roundToStep(0.3, 0.1); // 0.3
 
 To prevent prototype pollution, functions that read or write object keys ignore the `__proto__` key. Functions that take a path, such as `set` and `unset`, do nothing when the path contains `__proto__`.
 
-| Function                                               | Description                                                                      |
-| ------------------------------------------------------ | -------------------------------------------------------------------------------- |
-| `assignDefined(target, values, options?)`              | Returns a new object with only the values that are not `undefined` assigned      |
-| `assignDefinedMutable(target, values, options?)`       | Assigns only the values that are not `undefined` (mutating)                      |
-| `cloneDeep(value)`                                     | Makes a deep copy of a value                                                     |
-| `cloneShallow(value)`                                  | Makes a shallow copy of a value                                                  |
-| `countKeys(obj)`                                       | Returns the number of enumerable properties of an object                         |
-| `createOverrideProxy(instance, overrides)`             | Creates a proxy that overrides an instance's properties                          |
-| `createSplitByKeys<T>(keys)`                           | Creates a function that splits the properties of the given keys from the rest    |
-| `distribute(data, rules, options?)`                    | Splits properties into several objects according to rules                        |
-| `exactKeys<T>()(keys)`                                 | Checks at compile time that an array lists exactly the keys of a type            |
-| `exactKeysFromRecord<T>(keys)`                         | Creates an array of keys from an object that has every key of a type             |
-| `fillDefaults(target, defaultValues, options?)`        | Returns a new object with missing properties filled with defaults                |
-| `fillDefaultsMutable(target, defaultValues, options?)` | Fills missing properties with defaults (mutating)                                |
-| `filterByKeys(target, condition, options?)`            | Keeps only the properties whose keys match a condition                           |
-| `filterByValues(target, condition, options?)`          | Keeps only the values that match a condition                                     |
-| `flattenObject(data, options?)`                        | Flattens a nested object into a single level                                     |
-| `forEachValue(target, callback, options?)`             | Runs a callback for the value of each property                                   |
-| `get(data, path, options?)`                            | Returns the value of the property at a path                                      |
-| `hasOwn(data, key)`                                    | Checks whether an object has an own property (equivalent to `Object.hasOwn`)     |
-| `maybeHasOwn(data, key)`                               | Checks whether an object has an own property (safe for `null`)                   |
-| `omit(data, keys)`                                     | Returns a new object without the given keys                                      |
-| `parsePropertyPath(path)`                              | Converts a property path to an array of keys                                     |
-| `set(data, path, value)`                               | Returns a new object with a value set at a path                                  |
-| `setMutable(data, path, value)`                        | Sets a value at a path (mutating)                                                |
-| `stableStringify(value, space?)`                       | Converts a value to a JSON string with sorted keys                               |
-| `transformObject(source, rules, options?)`             | Reshapes an object according to rules                                            |
-| `unset(data, path)`                                    | Returns a new object without the property at a path                              |
-| `unsetMutable(data, path)`                             | Removes the property at a path (mutating)                                        |
-| `update(object, values, options?)`                     | Returns a new object with only the changed properties updated                    |
-| `updateMutable(object, values, options?)`              | Updates only the changed properties and returns their previous values (mutating) |
+| Function                                               | Description                                                                          |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| `assignDefined(target, values, options?)`              | Returns a new object with only the values that are not `undefined` assigned          |
+| `assignDefinedMutable(target, values, options?)`       | Assigns only the values that are not `undefined` (mutating)                          |
+| `assignPresent(target, values, options?)`              | Returns a new object with only the values that are not `null` / `undefined` assigned |
+| `assignPresentMutable(target, values, options?)`       | Assigns only the values that are not `null` / `undefined` (mutating)                 |
+| `cloneDeep(value)`                                     | Makes a deep copy of a value                                                         |
+| `cloneShallow(value)`                                  | Makes a shallow copy of a value                                                      |
+| `countKeys(data)`                                      | Returns the number of enumerable properties of an object                             |
+| `createOverrideProxy(instance, overrides)`             | Creates a proxy that overrides an instance's properties                              |
+| `createSplitByKeys<T>(keys)`                           | Creates a function that splits the properties of the given keys from the rest        |
+| `distribute(data, rules, options?)`                    | Splits properties into several objects according to rules                            |
+| `exactKeys<T>()(keys)`                                 | Checks at compile time that an array lists exactly the keys of a type                |
+| `exactKeysFromRecord<T>(keys)`                         | Creates an array of keys from an object that has every key of a type                 |
+| `fillDefaults(target, defaultValues, options?)`        | Returns a new object with missing properties filled with defaults                    |
+| `fillDefaultsMutable(target, defaultValues, options?)` | Fills missing properties with defaults (mutating)                                    |
+| `filterByKeys(data, condition, options?)`              | Keeps only the properties whose keys match a condition                               |
+| `filterByValues(data, condition, options?)`            | Keeps only the values that match a condition                                         |
+| `flattenObject(data, options?)`                        | Flattens a nested object into a single level                                         |
+| `forEachValue(data, callback, options?)`               | Runs a callback for the value of each property                                       |
+| `get(data, path, options?)`                            | Returns the value of the property at a path                                          |
+| `hasOwn(data, key)`                                    | Checks whether an object has an own property (equivalent to `Object.hasOwn`)         |
+| `maybeHasOwn(data, key)`                               | Checks whether an object has an own property (safe for `null`)                       |
+| `omit(data, keys)`                                     | Returns a new object without the given keys                                          |
+| `parsePropertyPath(path)`                              | Converts a property path to an array of keys                                         |
+| `set(data, path, value)`                               | Returns a new object with a value set at a path                                      |
+| `setMutable(data, path, value)`                        | Sets a value at a path (mutating)                                                    |
+| `stableStringify(value, space?)`                       | Converts a value to a JSON string with sorted keys                                   |
+| `transformObject(source, rules, options?)`             | Reshapes an object according to rules                                                |
+| `unset(data, path)`                                    | Returns a new object without the property at a path                                  |
+| `unsetMutable(data, path)`                             | Removes the property at a path (mutating)                                            |
+| `update(target, values, options?)`                     | Returns a new object with only the changed properties updated                        |
+| `updateMutable(target, values, options?)`              | Updates only the changed properties and returns their previous values (mutating)     |
 
 #### `assignDefined`
 
@@ -996,17 +892,15 @@ To prevent prototype pollution, functions that read or write object keys ignore 
 assignDefined<T extends object, V extends object>(target: T, values: V, options?: AssignDefinedOptions): AssignDefinedResult<T, V>
 ```
 
-Returns a new object with only the properties of `values` that are not `undefined` assigned to `target`. Symbol keys are included.
+Returns a new object with only the properties of `values` that are not `undefined` assigned to `target`. Symbol keys are included. Use `assignPresent` to skip `null` as well.
 
 ```ts
 assignDefined({ a: 1, b: 2 }, { a: undefined, b: null, c: 3 }); // { a: 1, b: null, c: 3 }
-assignDefined({ a: 1, b: 2 }, { b: null }, { skipNull: true }); // { a: 1, b: 2 }
 ```
 
-| Option              | Type      | Description                                                         |
-| ------------------- | --------- | ------------------------------------------------------------------- |
-| `skipNull?`         | `boolean` | If `true`, properties whose value is `null` are not assigned either |
-| `includeInherited?` | `boolean` | If `true`, inherited properties of `values` are assigned too        |
+| Option              | Type      | Description                                                  |
+| ------------------- | --------- | ------------------------------------------------------------ |
+| `includeInherited?` | `boolean` | If `true`, inherited properties of `values` are assigned too |
 
 #### `assignDefinedMutable`
 
@@ -1015,6 +909,30 @@ assignDefinedMutable<T extends object, V extends object>(target: T, values: V, o
 ```
 
 The mutating version of `assignDefined`. Assigns to `target` directly and returns the same object. The options are the same as `assignDefined`.
+
+#### `assignPresent`
+
+```ts
+assignPresent<T extends object, V extends object>(target: T, values: V, options?: AssignPresentOptions): AssignPresentResult<T, V>
+```
+
+Returns a new object with only the properties of `values` that are not `null` / `undefined` assigned to `target`. Symbol keys are included. Use `assignDefined` to assign `null` as well.
+
+```ts
+assignPresent({ a: 1, b: 2 }, { a: undefined, b: null, c: 3 }); // { a: 1, b: 2, c: 3 }
+```
+
+| Option              | Type      | Description                                                  |
+| ------------------- | --------- | ------------------------------------------------------------ |
+| `includeInherited?` | `boolean` | If `true`, inherited properties of `values` are assigned too |
+
+#### `assignPresentMutable`
+
+```ts
+assignPresentMutable<T extends object, V extends object>(target: T, values: V, options?: AssignPresentMutableOptions): AssignPresentResult<T, V>
+```
+
+The mutating version of `assignPresent`. Assigns to `target` directly and returns the same object. The options are the same as `assignPresent`.
 
 #### `cloneDeep`
 
@@ -1035,7 +953,7 @@ Makes a shallow copy of a value. Supports objects (keeping their prototype), arr
 #### `countKeys`
 
 ```ts
-countKeys(obj: unknown): number
+countKeys(data: unknown): number
 ```
 
 Returns the number of own enumerable properties of an object (`Object.keys(obj).length`). Returns `0` for values that are not objects.
@@ -1158,7 +1076,7 @@ The mutating version of `fillDefaults`. Sets the values on `target` directly and
 #### `filterByKeys`
 
 ```ts
-filterByKeys(target: unknown, condition: string | number, options?: FilterByKeysOptions): unknown
+filterByKeys(data: unknown, condition: string | number, options?: FilterByKeysOptions): unknown
 ```
 
 Walks objects and arrays recursively and returns a new value that keeps only the properties whose keys match the condition. When `condition` is a string, a key matches if it contains `condition` (substring match); when it is a number, the key must equal it (`0` matches `'0'`). A matching property is kept with its whole value, and a non-matching property is searched further. Returns `null` when nothing matches. The remaining structure is only known at runtime, so the return type is `unknown`. Arrays keep their original indexes, leaving holes where nothing matched.
@@ -1179,7 +1097,7 @@ filterByKeys({ UserName: 'A', age: 1 }, 'username', {
 #### `filterByValues`
 
 ```ts
-filterByValues(target: unknown, condition: unknown, options?: FilterByValuesOptions): unknown
+filterByValues(data: unknown, condition: unknown, options?: FilterByValuesOptions): unknown
 ```
 
 Walks objects and arrays recursively and returns a new value that keeps only the values matching the condition. When `condition` is a string, a string value matches if it contains `condition` (substring match); otherwise the value must equal `condition` (`===`). What is kept, when `null` is returned, and how arrays are handled are the same as `filterByKeys`.
@@ -1216,7 +1134,7 @@ flattenObject({ a: { b: [1] } }, { keepArrays: true }); // { 'a.b': [1] }
 #### `forEachValue`
 
 ```ts
-forEachValue<T extends object>(target: T, callback: (value: T[keyof T], key: string | symbol, obj: T) => void | boolean, options?: ForEachValueOptions): boolean
+forEachValue<T extends object>(data: T, callback: (value: T[keyof T], key: string | symbol, obj: T) => void | boolean, options?: ForEachValueOptions): boolean
 ```
 
 Runs `callback` for each own enumerable property of an object. Like spread syntax and `Object.assign`, symbol keys are included. Stops when `callback` returns `false`. Returns `true` when every property was processed and `false` when it stopped early.
@@ -1383,10 +1301,10 @@ The mutating version of `unset`. Modifies `data` directly and returns the same o
 #### `update`
 
 ```ts
-update<T extends object>(object: T, values: Partial<T>, options?: UpdateOptions): T
+update<T extends object>(target: T, values: Partial<T>, options?: UpdateOptions): T
 ```
 
-Returns a new object with only the properties of `values` that differ from `object` updated. When nothing changes, `object` itself is returned, so a reference comparison tells whether anything changed. How values are compared is set with the `isEqual` option.
+Returns a new object with only the properties of `values` that differ from `target` updated. When nothing changes, `target` itself is returned, so a reference comparison tells whether anything changed. How values are compared is set with the `isEqual` option.
 
 ```ts
 const state = { a: 1, b: 2 };
@@ -1402,10 +1320,10 @@ update({ a: { x: 1 } }, { a: { x: 1 } }, { isEqual }); // the original object
 #### `updateMutable`
 
 ```ts
-updateMutable<T extends object>(object: T, values: Partial<T>, options?: UpdateMutableOptions): Partial<T>
+updateMutable<T extends object>(target: T, values: Partial<T>, options?: UpdateMutableOptions): Partial<T>
 ```
 
-The mutating version of `update`. Updates `object` directly and returns an object with the previous values of the updated properties. The options are the same as `update`.
+The mutating version of `update`. Updates `target` directly and returns an object with the previous values of the updated properties. The options are the same as `update`.
 
 ```ts
 const state = { a: 1, b: 2 };
@@ -1418,7 +1336,10 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 } (state becomes { a: 9, b: 2 })
 | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `AssignDefinedMutableOptions` | Options for `assignDefinedMutable`                                                                                                                                                                                                                                                                                                                          |
 | `AssignDefinedOptions`        | Same as `AssignDefinedMutableOptions`                                                                                                                                                                                                                                                                                                                       |
-| `AssignDefinedResult<T, V>`   | The return type of `assignDefined` and `assignDefinedMutable`. Keys whose values in `values` may be skipped as `undefined` (also `null` with `skipNull`) keep the type of the value in `target`                                                                                                                                                             |
+| `AssignDefinedResult<T, V>`   | The return type of `assignDefined` and `assignDefinedMutable`. Keys whose values in `values` may be skipped as `undefined` keep the type of the value in `target`                                                                                                                                                                                           |
+| `AssignPresentMutableOptions` | Options for `assignPresentMutable`                                                                                                                                                                                                                                                                                                                          |
+| `AssignPresentOptions`        | Same as `AssignPresentMutableOptions`                                                                                                                                                                                                                                                                                                                       |
+| `AssignPresentResult<T, V>`   | The return type of `assignPresent` and `assignPresentMutable`. Keys whose values in `values` may be skipped as `null` / `undefined` keep the type of the value in `target` (or `undefined` if `target` does not have the key)                                                                                                                               |
 | `DistributeOptions`           | Options for `distribute`                                                                                                                                                                                                                                                                                                                                    |
 | `DistributeRules<T>`          | The rules of `distribute` `{ [group]: array of property names \| null }`                                                                                                                                                                                                                                                                                    |
 | `DistributePropertyList<T>`   | An array of property names in the rules of `distribute`                                                                                                                                                                                                                                                                                                     |
@@ -1446,13 +1367,13 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 } (state becomes { a: 9, b: 2 })
 | `createExtractor(delimiters?)`                    | Creates a function that extracts text enclosed in delimiters |
 | `createReplacerByMap(map)`                        | Creates a function that replaces text according to a map     |
 | `ensureString(data)`                              | Converts a value to a string                                 |
-| `escapeRegExp(target)`                            | Escapes special regular expression characters                |
-| `isSurroundedBy(str, prefix, suffix?)`            | Checks whether a string is enclosed by given strings         |
-| `lowerFirst(str)`                                 | Converts the first character to lowercase                    |
-| `replaceByMap(str, map)`                          | Replaces text according to a map                             |
+| `escapeRegExp(data)`                              | Escapes special regular expression characters                |
+| `isSurroundedBy(data, prefix, suffix?)`           | Checks whether a string is enclosed by given strings         |
+| `lowerFirst(data)`                                | Converts the first character to lowercase                    |
+| `replaceByMap(data, map)`                         | Replaces text according to a map                             |
 | `replacePlaceholders(template, values, options?)` | Replaces placeholders in a template with values              |
 | `toCamelCase(data)`, ...                          | Converts the case of a string                                |
-| `upperFirst(str)`                                 | Converts the first character to uppercase                    |
+| `upperFirst(data)`                                | Converts the first character to uppercase                    |
 
 #### `createExtractor`
 
@@ -1507,7 +1428,7 @@ Converts a value to a string. Strings are returned as is, `null` and `undefined`
 #### `escapeRegExp`
 
 ```ts
-escapeRegExp(target: string): string
+escapeRegExp(data: string): string
 ```
 
 Escapes a string so that it matches itself inside a regular expression. Returns the same result as the standard `RegExp.escape`, and uses it when available. The result is treated as the original text even with the `u` and `v` flags and inside character classes. A leading letter or digit is also escaped (as in `\x31`) so that it cannot combine with the preceding text.
@@ -1519,10 +1440,10 @@ new RegExp(escapeRegExp('1.5*2')); // /\x31\.5\*2/
 #### `isSurroundedBy`
 
 ```ts
-isSurroundedBy(str: string, prefix: string, suffix?: string): boolean
+isSurroundedBy(data: string, prefix: string, suffix?: string): boolean
 ```
 
-Checks whether `str` starts with `prefix` and ends with `suffix`. Nothing is required between them, but `false` is returned when `prefix` and `suffix` overlap. `suffix` defaults to `prefix`.
+Checks whether `data` starts with `prefix` and ends with `suffix`. Nothing is required between them, but `false` is returned when `prefix` and `suffix` overlap. `suffix` defaults to `prefix`.
 
 ```ts
 isSurroundedBy('(a)', '(', ')'); // true
@@ -1533,8 +1454,8 @@ isSurroundedBy('"', '"'); // false
 #### `lowerFirst` / `upperFirst`
 
 ```ts
-lowerFirst(str: string): string
-upperFirst(str: string): string
+lowerFirst(data: string): string
+upperFirst(data: string): string
 ```
 
 Converts the first character to lowercase (`lowerFirst`) or uppercase (`upperFirst`). A surrogate pair is treated as one character.
@@ -1542,7 +1463,7 @@ Converts the first character to lowercase (`lowerFirst`) or uppercase (`upperFir
 #### `replaceByMap`
 
 ```ts
-replaceByMap(str: string, map: ReplacementMap): string
+replaceByMap(data: string, map: ReplacementMap): string
 ```
 
 Replaces the keys of `map` with their values. All replacements happen in one pass, so replaced text is never replaced again. When keys overlap, longer keys win. An empty string is returned as is.
@@ -1725,8 +1646,8 @@ const onScroll = throttle(() => updatePosition(), { wait: 100 });
 
 | Function                         | Description                                                                                 |
 | -------------------------------- | ------------------------------------------------------------------------------------------- |
-| `getKind(data)`                  | Returns the kind of a value in more detail than `typeof`                                    |
-| `getPriority(data, options?)`    | Returns a priority based on the kind of a value                                             |
+| `getKind(value)`                 | Returns the kind of a value in more detail than `typeof`                                    |
+| `getPriority(value, options?)`   | Returns a priority based on the kind of a value                                             |
 | `getRawType(value)`              | Returns the type label from `Object.prototype.toString`                                     |
 | `isAsyncIterable(value)`         | Checks whether a value is async iterable                                                    |
 | `isBlank(value)`                 | Checks whether a value is `null`, `undefined`, an empty string, or a whitespace-only string |
@@ -1748,7 +1669,7 @@ const onScroll = throttle(() => updatePosition(), { wait: 100 });
 #### `getKind`
 
 ```ts
-getKind(data: unknown): Kind
+getKind(value: unknown): Kind
 ```
 
 Returns the kind of a value. Values other than objects return the result of `typeof`. Objects are divided into `null`, `array`, `plainobject` (an object whose prototype is `Object.prototype` or `null`), `date`, `regexp`, `error`, `map`, `set`, `weakmap`, `weakset`, `promise`, `arraybuffer`, and `sharedarraybuffer`. Any other object (class instances, DOM elements, typed arrays, ...) is `instance`.
@@ -1766,7 +1687,7 @@ getKind(new (class {})()); // 'instance'
 #### `getPriority`
 
 ```ts
-getPriority(data: unknown, options?: GetPriorityOptions): number
+getPriority(value: unknown, options?: GetPriorityOptions): number
 ```
 
 Returns a priority based on the kind of a value from `getKind`, for example to move `null` and `undefined` to the end when sorting. By default `undefined` is `-2`, `null` is `-1`, and everything else is `0`.
@@ -1785,7 +1706,7 @@ getPriority(null, { priorityMap: { array: 3 } }); // -1 (merged with the default
 #### `getRawType`
 
 ```ts
-getRawType(value: unknown): GetRawTypeReturn
+getRawType(value: unknown): GetRawTypeResult
 ```
 
 Returns the result of `Object.prototype.toString.call(value)`, such as `'[object Array]'`.
@@ -1905,7 +1826,7 @@ Returns a value as the inferred type, bypassing type checking. Use it instead of
 | Type                   | Description                           |
 | ---------------------- | ------------------------------------- |
 | `GetPriorityOptions`   | Options for `getPriority`             |
-| `GetRawTypeReturn`     | The return value of `getRawType`      |
+| `GetRawTypeResult`     | The return value of `getRawType`      |
 | `IsValidNumberOptions` | Options for `isValidNumber`           |
 | `Kind`                 | The kind values returned by `getKind` |
 

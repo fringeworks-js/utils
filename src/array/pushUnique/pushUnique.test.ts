@@ -78,22 +78,30 @@ describe('pushUnique', () => {
     });
   });
 
-  describe('comparator オプション', () => {
-    it('comparatorによる同一性判定で重複を除外する', () => {
+  describe('isEqual オプション', () => {
+    it('isEqualによる同一性判定で重複を除外する', () => {
       const result = pushUnique(
         [{ id: 1 }, { id: 2 }],
         [{ id: 2 }, { id: 3 }],
         {
-          comparator: (a, b) => a.id === b.id,
+          isEqual: (a, b) => a.id === b.id,
         },
       );
       expect(result).toEqual([{ id: 1 }, { id: 2 }, { id: 3 }]);
     });
 
-    it('comparator指定時もdataを破壊的に変更しない', () => {
+    it('isEqual指定時もdataを破壊的に変更しない', () => {
       const data = [{ id: 1 }];
-      pushUnique(data, [{ id: 2 }], { comparator: (a, b) => a.id === b.id });
+      pushUnique(data, [{ id: 2 }], { isEqual: (a, b) => a.id === b.id });
       expect(data).toEqual([{ id: 1 }]);
     });
+  });
+
+  it('readonly の配列を受け付ける', () => {
+    const data: readonly number[] = [1, 2];
+    const items: readonly number[] = [2, 3];
+    const result = pushUnique(data, items);
+    expect(result).toEqual([1, 2, 3]);
+    expectTypeOf(result).toEqualTypeOf<number[]>();
   });
 });

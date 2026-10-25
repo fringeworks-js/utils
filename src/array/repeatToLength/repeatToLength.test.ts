@@ -79,4 +79,11 @@ describe('repeatToLength', () => {
     expect(repeatToLength(null, 3)).toEqual([]);
     expect(repeatToLength(undefined, 3)).toEqual([]);
   });
+
+  it('readonly の配列を受け付ける', () => {
+    const data: readonly number[] = [1, 2];
+    const result = repeatToLength(data, 5);
+    expect(result).toEqual(repeatToLength([...data], 5));
+    expectTypeOf(result).toEqualTypeOf<number[]>();
+  });
 });

@@ -32,8 +32,8 @@ import type { NestedKeyByOptions, NestedKeyByResult } from './types';
  * @returns
  */
 export default function nestedKeyBy<I extends object>(
-  data: I[] | null | undefined,
-  properties: keyof I | (keyof I)[],
+  data: readonly I[] | null | undefined,
+  properties: keyof I | readonly (keyof I)[],
   options: NestedKeyByOptions = {},
 ): NestedKeyByResult<I> {
   const { overwrite, ...rest } = options;

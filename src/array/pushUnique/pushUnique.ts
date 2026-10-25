@@ -8,8 +8,8 @@ import type { PushUniqueOptions } from './types';
  * @param options オプション
  */
 export default function pushUnique<T>(
-  data: T[] | null | undefined,
-  items: T[] | null | undefined,
+  data: readonly T[] | null | undefined,
+  items: readonly T[] | null | undefined,
   options: PushUniqueOptions<T> = {},
 ): T[] {
   return pushUniqueMutable(data ? [...data] : [], items, options);

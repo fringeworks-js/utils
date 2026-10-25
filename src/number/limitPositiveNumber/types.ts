@@ -18,9 +18,4 @@ export type LimitPositiveNumberOptions = {
    * 未指定の場合はnullを返す
    */
   nanValue?: number | null | undefined;
-  /**
-   * 値がnull,undefinedだった場合に返す値
-   * 未指定の場合はnull,undefinedをそのまま返す
-   */
-  defaultValue?: number;
 };

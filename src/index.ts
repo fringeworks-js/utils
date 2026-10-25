@@ -4,7 +4,6 @@ export * from './compare';
 export * from './date';
 export * from './function';
 export * from './map';
-export * from './measure';
 export * from './number';
 export * from './object';
 export * from './string';

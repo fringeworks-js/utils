@@ -18,4 +18,9 @@ describe('insertAtMutable', () => {
     expect(result[0]).toBe(1);
     expect(result[300001]).toBe(2);
   });
+
+  it('挿入する要素は readonly の配列を受け付ける', () => {
+    const items: readonly number[] = [2, 3];
+    expect(insertAtMutable([1, 4], 1, items)).toEqual([1, 2, 3, 4]);
+  });
 });

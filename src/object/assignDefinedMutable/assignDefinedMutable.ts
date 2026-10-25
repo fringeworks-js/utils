@@ -1,6 +1,4 @@
-import type { StrictRecord } from '@fringeworks/types';
-import _isUnsafeKey from '../../_internal/_isUnsafeKey';
-import { forEachValue } from '../forEachValue';
+import _assignValues from '../../_internal/_assignValues';
 import type { AssignDefinedMutableOptions, AssignDefinedResult } from './types';
 
 /**
@@ -18,19 +16,6 @@ export default function assignDefinedMutable<
   values: V,
   options: AssignDefinedMutableOptions = {},
 ): AssignDefinedResult<T, V> {
-  const { skipNull, ...opts } = options;
-  const isValidValue = skipNull
-    ? (value: unknown) => value != null
-    : (value: unknown) => value !== undefined;
-  const record = target as StrictRecord;
-  forEachValue(
-    values,
-    (value, key) => {
-      if (!_isUnsafeKey(key) && isValidValue(value)) {
-        record[key] = value;
-      }
-    },
-    opts,
-  );
+  _assignValues(target, values, (value) => value !== undefined, options);
   return target as AssignDefinedResult<T, V>;
 }

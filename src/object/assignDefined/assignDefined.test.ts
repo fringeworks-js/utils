@@ -25,16 +25,16 @@ describe('assignDefined', () => {
     expect(target.a).toBe(1);
   });
 
-  it('skipNull: trueでnullも除外する', () => {
-    const result = assignDefined({ a: 1 }, { a: null as any });
+  it('nullは代入する', () => {
+    const result = assignDefined({ a: 1 as number | null }, { a: null });
     expect(result.a).toBeNull();
+  });
 
-    const result2 = assignDefined(
-      { a: 1 },
-      { a: null as any },
-      { skipNull: true },
-    );
-    expect(result2.a).toBe(1);
+  it('型: undefinedになりうるキーだけtargetの型を残す', () => {
+    const values = {} as { a: number | null; b: number | undefined };
+    const result = assignDefined({ a: 'x', b: 'y' }, values);
+    expectTypeOf(result.a).toEqualTypeOf<number | null>();
+    expectTypeOf(result.b).toEqualTypeOf<number | string>();
   });
 
   it('symbolのキーも反映する', () => {

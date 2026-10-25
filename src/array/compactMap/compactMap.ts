@@ -16,7 +16,7 @@ const IS_TARGET = {
  * @returns 変換した値の配列
  */
 export default function compactMap<V, R = V>(
-  data: V[] | null | undefined,
+  data: readonly V[] | null | undefined,
   callback: IndexedIteratee<V, R>,
   options: CompactMapOptions = {},
 ): R[] {

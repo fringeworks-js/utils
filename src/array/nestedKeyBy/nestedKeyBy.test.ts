@@ -120,4 +120,15 @@ describe('nestedKeyBy', () => {
       });
     });
   });
+
+  it('readonly の配列を受け付ける', () => {
+    const data: readonly { a: string; b: number }[] = [
+      { a: 'x', b: 1 },
+      { a: 'y', b: 2 },
+    ];
+    const properties = ['a'] as const;
+    expect(nestedKeyBy(data, properties)).toEqual(
+      nestedKeyBy([...data], ['a']),
+    );
+  });
 });

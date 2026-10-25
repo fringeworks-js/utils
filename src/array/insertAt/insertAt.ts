@@ -9,9 +9,9 @@ import { insertAtMutable } from '../insertAtMutable';
  * @returns 要素を追加した新しい配列
  */
 export default function insertAt<T, U = T>(
-  data: T[] | null | undefined,
+  data: readonly T[] | null | undefined,
   index: number,
-  items: U[] | null | undefined,
+  items: readonly U[] | null | undefined,
 ): (T | U)[] {
   return insertAtMutable<T | U>(data ? [...data] : [], index, items);
 }

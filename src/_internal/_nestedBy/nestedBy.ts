@@ -15,8 +15,8 @@ import type { NestedByOptions, NestedByResult } from './types';
  * @param options オプション
  */
 export default function _nestedBy<I extends object, V>(
-  data: I[] | null | undefined,
-  properties: keyof I | (keyof I)[],
+  data: readonly I[] | null | undefined,
+  properties: keyof I | readonly (keyof I)[],
   merge: (current: V | undefined, item: I) => V,
   options: NestedByOptions,
 ): NestedByResult<V> {

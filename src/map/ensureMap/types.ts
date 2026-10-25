@@ -2,6 +2,7 @@ export type EnsureMapOptions = {
   /**
    * valueがMapの時、そのまま返却するか。
    * デフォルトはfalseで、Mapのコピーを返却する。
+   * trueの場合、戻り値は`ReadonlyMap`になる。
    * @default false
    */
   raw?: boolean;

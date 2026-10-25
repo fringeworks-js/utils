@@ -4,7 +4,7 @@
  * @param length 配列の長さ。負の数は逆順に繰り返す。小数は切り捨て、NaN・Infinityは0として扱う
  */
 export default function repeatToLength<T>(
-  data: T[] | null | undefined,
+  data: readonly T[] | null | undefined,
   length: number,
 ): T[] {
   // 小数は切り捨て、NaN・Infinityは0として扱う

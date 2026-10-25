@@ -6,18 +6,18 @@ import type { UpdateOptions } from './types';
 /**
  * valuesに設定された値でobjectを更新した新しいオブジェクトを返す（非破壊的変更）
  * 値の変更が無いキーは更新しない。全てのキーに変更が無い場合はobjectをそのまま返す
- * @param object 更新対象のオブジェクト
+ * @param target 更新対象のオブジェクト
  * @param values 更新する値を持ったオブジェクト
  * @param options オプション
  * @returns 更新された新しいオブジェクト
  */
 export default function update<T extends object>(
-  object: T,
+  target: T,
   values: Partial<T>,
   options?: UpdateOptions,
 ): T {
   const isEqual = options?.isEqual ?? Object.is;
-  const record = object as StrictRecord;
+  const record = target as StrictRecord;
   let result: StrictRecord | undefined;
   forEachValue(values, (value, key) => {
     if (!_isUnsafeKey(key) && !isEqual(record[key], value)) {
@@ -26,5 +26,5 @@ export default function update<T extends object>(
       result[key] = value;
     }
   });
-  return (result as T | undefined) ?? object;
+  return (result as T | undefined) ?? target;
 }

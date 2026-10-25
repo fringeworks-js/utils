@@ -14,6 +14,6 @@ export default function replaceOutOfRange(
   min: number,
   max: number,
   replacement: number,
-) {
+): number {
   return isWithinRange(value, min, max) ? value : replacement;
 }

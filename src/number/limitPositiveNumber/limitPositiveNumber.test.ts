@@ -35,11 +35,9 @@ describe('limitPositiveNumber', () => {
     expect(limitPositiveNumber(NaN, { nanValue: 0 })).toBe(0);
   });
 
-  describe('defaultValue', () => {
-    it('null/undefinedのときにdefaultValueを返す', () => {
-      expect(limitPositiveNumber(null, { defaultValue: 0 })).toBe(0);
-      expect(limitPositiveNumber(undefined, { defaultValue: 10 })).toBe(10);
-    });
+  it('null/undefinedはそのまま返す', () => {
+    expect(limitPositiveNumber(null)).toBeNull();
+    expect(limitPositiveNumber(undefined)).toBeUndefined();
   });
 
   describe('negativeValue', () => {

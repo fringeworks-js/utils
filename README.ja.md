@@ -89,7 +89,7 @@ clearArrayMutable<T>(data: T[]): T[]
 #### `compactMap`
 
 ```ts
-compactMap<V, R = V>(data: V[] | null | undefined, callback: IndexedIteratee<V, R>, options?: CompactMapOptions): R[]
+compactMap<V, R = V>(data: readonly V[] | null | undefined, callback: IndexedIteratee<V, R>, options?: CompactMapOptions): R[]
 ```
 
 各要素を `callback` で変換し、`options.exclude` で指定した値を除いた配列を返します。`callback` は `(value, index, data) => R` の形です（`@fringeworks/types` の `IndexedIteratee`）。
@@ -106,7 +106,9 @@ compactMap(['a', '', null], (v) => v, { exclude: 'empty' }); // ['a']
 #### `ensureArray`
 
 ```ts
-ensureArray<T>(data: T | T[] | null | undefined, options?: EnsureArrayOptions): T[]
+ensureArray<T>(data: T | readonly T[] | null | undefined, options: EnsureArrayOptions & { raw: true }): readonly T[]
+ensureArray<T>(data: T | readonly T[] | null | undefined, options?: EnsureArrayOptions & { raw?: false }): T[]
+ensureArray<T>(data: T | readonly T[] | null | undefined, options?: EnsureArrayOptions): readonly T[]
 ```
 
 配列でない値を1要素の配列で包みます。`null` / `undefined` は空配列になり、配列はコピーを返します。イテラブル（`Set` など）は展開しません（展開する場合は `toArray` を使います）。
@@ -117,14 +119,14 @@ ensureArray([1, 2]); // [1, 2]（コピー）
 ensureArray(null); // []
 ```
 
-| オプション | 型        | 説明                                                                                 |
-| ---------- | --------- | ------------------------------------------------------------------------------------ |
-| `raw?`     | `boolean` | `true` の場合、`data` が配列のときはコピーせずに同じ配列を返す。デフォルトは `false` |
+| オプション | 型        | 説明                                                                                                                                                                      |
+| ---------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `raw?`     | `boolean` | `true` の場合、`data` が配列のときはコピーせずに同じ配列を返す。このとき戻り値の型は `readonly T[]` になる（`raw` が `boolean` の変数の場合も同じ）。デフォルトは `false` |
 
 #### `firstDefined`
 
 ```ts
-firstDefined<V>(data: V[] | null | undefined): V | undefined
+firstDefined<V>(data: readonly V[] | null | undefined): V | undefined
 ```
 
 先頭から見て最初の `undefined` でない要素を返します。`null` は対象になります。
@@ -132,7 +134,7 @@ firstDefined<V>(data: V[] | null | undefined): V | undefined
 #### `firstPresent`
 
 ```ts
-firstPresent<V>(data: V[] | null | undefined): V | undefined
+firstPresent<V>(data: readonly V[] | null | undefined): V | undefined
 ```
 
 先頭から見て最初の `null` / `undefined` でない要素を返します。
@@ -140,7 +142,7 @@ firstPresent<V>(data: V[] | null | undefined): V | undefined
 #### `insertAt`
 
 ```ts
-insertAt<T, U = T>(data: T[] | null | undefined, index: number, items: U[] | null | undefined): (T | U)[]
+insertAt<T, U = T>(data: readonly T[] | null | undefined, index: number, items: readonly U[] | null | undefined): (T | U)[]
 ```
 
 `index` の位置に `items` の要素を挿入した新しい配列を返します。`index` は 0 〜配列の長さの範囲に収めます（負の数は先頭、長さを超える数は末尾）。
@@ -152,7 +154,7 @@ insertAt([1, 2, 3], 1, ['a', 'b']); // [1, 'a', 'b', 2, 3]
 #### `insertAtMutable`
 
 ```ts
-insertAtMutable<T, U = T>(data: T[], index: number, items: U[] | null | undefined): (T | U)[]
+insertAtMutable<T, U = T>(data: T[], index: number, items: readonly U[] | null | undefined): (T | U)[]
 ```
 
 `insertAt` の破壊的な版です。`data` に直接挿入し、同じ配列を返します。
@@ -160,7 +162,7 @@ insertAtMutable<T, U = T>(data: T[], index: number, items: U[] | null | undefine
 #### `nestedGroupBy`
 
 ```ts
-nestedGroupBy<I extends object>(data: I[] | null | undefined, properties: keyof I | (keyof I)[], options?: NestedGroupByOptions): NestedGroupByResult<I>
+nestedGroupBy<I extends object>(data: readonly I[] | null | undefined, properties: keyof I | readonly (keyof I)[], options?: NestedGroupByOptions): NestedGroupByResult<I>
 ```
 
 `properties` に指定したプロパティの値をキーにしてネストしたオブジェクトを作り、同じキーの要素を配列にまとめます。キーはプロパティの値を文字列にしたものです。
@@ -185,7 +187,7 @@ nestedGroupBy(items, ['pref', 'city'], { flat: true });
 #### `nestedKeyBy`
 
 ```ts
-nestedKeyBy<I extends object>(data: I[] | null | undefined, properties: keyof I | (keyof I)[], options?: NestedKeyByOptions): NestedKeyByResult<I>
+nestedKeyBy<I extends object>(data: readonly I[] | null | undefined, properties: keyof I | readonly (keyof I)[], options?: NestedKeyByOptions): NestedKeyByResult<I>
 ```
 
 `nestedGroupBy` と同じ形のオブジェクトを作りますが、各キーには要素を1つだけ格納します。同じキーの要素が複数ある場合は、デフォルトでは先の要素が残ります。
@@ -199,7 +201,7 @@ nestedKeyBy<I extends object>(data: I[] | null | undefined, properties: keyof I 
 #### `pushAll`
 
 ```ts
-pushAll<T>(data: T[] | null | undefined, source: T[] | null | undefined): T[]
+pushAll<T>(data: readonly T[] | null | undefined, source: readonly T[] | null | undefined): T[]
 ```
 
 `data` の末尾に `source` の全要素を追加した新しい配列を返します。
@@ -207,7 +209,7 @@ pushAll<T>(data: T[] | null | undefined, source: T[] | null | undefined): T[]
 #### `pushAllMutable`
 
 ```ts
-pushAllMutable<T>(data: T[], source: T[] | null | undefined): T[]
+pushAllMutable<T>(data: T[], source: readonly T[] | null | undefined): T[]
 ```
 
 `pushAll` の破壊的な版です。`data` に直接追加し、同じ配列を返します。
@@ -215,7 +217,7 @@ pushAllMutable<T>(data: T[], source: T[] | null | undefined): T[]
 #### `pushUnique`
 
 ```ts
-pushUnique<T>(data: T[] | null | undefined, items: T[] | null | undefined, options?: PushUniqueOptions<T>): T[]
+pushUnique<T>(data: readonly T[] | null | undefined, items: readonly T[] | null | undefined, options?: PushUniqueOptions<T>): T[]
 ```
 
 `items` のうち、`data` にまだ含まれていない要素だけを追加した新しい配列を返します。`items` 内の重複も追加しません。
@@ -224,15 +226,15 @@ pushUnique<T>(data: T[] | null | undefined, items: T[] | null | undefined, optio
 pushUnique([1, 2], [2, 3, 3]); // [1, 2, 3]
 ```
 
-| オプション    | 型                        | 説明                                                                                                       |
-| ------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `threshold?`  | `number`                  | 要素数の合計がこの値以上の場合は `Set` を使って判定する。デフォルトは `100`                                |
-| `comparator?` | `(a: T, b: T) => boolean` | 同じ要素かどうかの判定方法。指定した場合は `threshold` に関わらず線形探索になる。デフォルトは `===` で判定 |
+| オプション   | 型                                  | 説明                                                                                                              |
+| ------------ | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `threshold?` | `number`                            | 要素数の合計がこの値以上の場合は `Set` を使って判定する。デフォルトは `100`                                       |
+| `isEqual?`   | `(value1: T, value2: T) => boolean` | 2つの要素が等しいかを判定する関数。指定した場合は `threshold` に関わらず線形探索になる。デフォルトは `===` で判定 |
 
 #### `pushUniqueMutable`
 
 ```ts
-pushUniqueMutable<T>(data: T[], items: T[] | null | undefined, options?: PushUniqueMutableOptions<T>): T[]
+pushUniqueMutable<T>(data: T[], items: readonly T[] | null | undefined, options?: PushUniqueMutableOptions<T>): T[]
 ```
 
 `pushUnique` の破壊的な版です。`data` に直接追加し、同じ配列を返します。オプションは `pushUnique` と同じです。
@@ -240,7 +242,7 @@ pushUniqueMutable<T>(data: T[], items: T[] | null | undefined, options?: PushUni
 #### `repeatToLength`
 
 ```ts
-repeatToLength<T>(data: T[] | null | undefined, length: number): T[]
+repeatToLength<T>(data: readonly T[] | null | undefined, length: number): T[]
 ```
 
 `data` の要素を繰り返し並べて、長さ `length` の新しい配列を返します。`length` が負の数の場合は、逆順にした配列を繰り返します。`length` の小数は切り捨て、`NaN`・`Infinity` は `0` として扱います。`data` が空の場合は空配列を返します。
@@ -253,7 +255,7 @@ repeatToLength([1, 2, 3], -5); // [3, 2, 1, 3, 2]
 #### `rotateArray`
 
 ```ts
-rotateArray<I>(data: I[] | null | undefined, options?: RotateArrayOptions): I[]
+rotateArray<I>(data: readonly I[] | null | undefined, options?: RotateArrayOptions): I[]
 ```
 
 先頭の `count` 個の要素を末尾に移動した新しい配列を返します。
@@ -278,7 +280,7 @@ rotateArrayMutable<I>(data: I[], options?: RotateArrayMutableOptions): I[]
 #### `sortDependencies`
 
 ```ts
-sortDependencies<I>(data: I[] | null | undefined, options?: SortDependenciesOptions<I>): I[]
+sortDependencies<I>(data: readonly I[] | null | undefined, options?: SortDependenciesOptions<I>): I[]
 ```
 
 要素の依存関係に従って、依存される側が先に来るように並べ替えた新しい配列を返します（トポロジカルソート）。同じ ID の要素は1つにまとめます。循環した依存関係がある場合は `Error`（`Cyclic dependency: <ID>`）を投げます。
@@ -329,7 +331,9 @@ swapPairs([
 #### `toArray`
 
 ```ts
-toArray<T>(data: unknown, options?: ToArrayOptions): T[]
+toArray<T>(data: unknown, options: ToArrayOptions & { raw: true }): readonly T[]
+toArray<T>(data: unknown, options?: ToArrayOptions & { raw?: false }): T[]
+toArray<T>(data: unknown, options?: ToArrayOptions): readonly T[]
 ```
 
 値を配列にします。文字列以外のイテラブル（`Set`、`Map` など）は展開し、それ以外の値は1要素の配列で包みます。`null` / `undefined` は空配列になり、配列はコピーを返します。
@@ -346,24 +350,24 @@ toArray(1); // [1]
 
 #### 型
 
-| 型                                   | 説明                                                 |
-| ------------------------------------ | ---------------------------------------------------- |
-| `CompactMapOptions`                  | `compactMap` のオプション                            |
-| `CompactMapExclude`                  | `compactMap` で除外する値の種類                      |
-| `EnsureArrayOptions`                 | `ensureArray` のオプション                           |
-| `NestedGroupByOptions`               | `nestedGroupBy` のオプション                         |
-| `NestedGroupByResult<I>`             | `nestedGroupBy` の戻り値                             |
-| `NestedKeyByOptions`                 | `nestedKeyBy` のオプション                           |
-| `NestedKeyByResult<I>`               | `nestedKeyBy` の戻り値                               |
-| `PushUniqueMutableOptions<T>`        | `pushUniqueMutable` のオプション                     |
-| `PushUniqueOptions<T>`               | `PushUniqueMutableOptions<T>` と同じ                 |
-| `RotateArrayMutableOptions`          | `rotateArrayMutable` のオプション                    |
-| `RotateArrayOptions`                 | `RotateArrayMutableOptions` と同じ                   |
-| `SortDependenciesOptions<I>`         | `sortDependencies` のオプション                      |
-| `SortDependenciesGetId<I>`           | 要素から ID を返す関数 `(item) => unknown`           |
-| `SortDependenciesGetDependencies<I>` | 要素から依存先を返す関数 `(item) => I \| I[]`        |
-| `SwapPairsResult<T>`                 | `swapPairs` の戻り値（各タプルの要素を入れ替えた型） |
-| `ToArrayOptions`                     | `toArray` のオプション                               |
+| 型                                   | 説明                                                   |
+| ------------------------------------ | ------------------------------------------------------ |
+| `CompactMapOptions`                  | `compactMap` のオプション                              |
+| `CompactMapExclude`                  | `compactMap` で除外する値の種類                        |
+| `EnsureArrayOptions`                 | `ensureArray` のオプション                             |
+| `NestedGroupByOptions`               | `nestedGroupBy` のオプション                           |
+| `NestedGroupByResult<I>`             | `nestedGroupBy` の戻り値                               |
+| `NestedKeyByOptions`                 | `nestedKeyBy` のオプション                             |
+| `NestedKeyByResult<I>`               | `nestedKeyBy` の戻り値                                 |
+| `PushUniqueMutableOptions<T>`        | `pushUniqueMutable` のオプション                       |
+| `PushUniqueOptions<T>`               | `PushUniqueMutableOptions<T>` と同じ                   |
+| `RotateArrayMutableOptions`          | `rotateArrayMutable` のオプション                      |
+| `RotateArrayOptions`                 | `RotateArrayMutableOptions` と同じ                     |
+| `SortDependenciesOptions<I>`         | `sortDependencies` のオプション                        |
+| `SortDependenciesGetId<I>`           | 要素から ID を返す関数 `(item) => unknown`             |
+| `SortDependenciesGetDependencies<I>` | 要素から依存先を返す関数 `(item) => I \| readonly I[]` |
+| `SwapPairsResult<T>`                 | `swapPairs` の戻り値（各タプルの要素を入れ替えた型）   |
+| `ToArrayOptions`                     | `toArray` のオプション                                 |
 
 ### boolean
 
@@ -400,11 +404,11 @@ ensureBoolean(1); // true
 
 ### compare
 
-| 関数                                    | 説明                                            |
-| --------------------------------------- | ----------------------------------------------- |
-| `compare(left, operator, right)`        | 演算子を指定して2つの値を比較する               |
-| `isEqual(value1, value2)`               | 2つの値の構造が等しいかを再帰的に比較する       |
-| `isEqualWith(value, other, customizer)` | 独自の比較関数を使って2つの値を再帰的に比較する |
+| 関数                                      | 説明                                            |
+| ----------------------------------------- | ----------------------------------------------- |
+| `compare(left, operator, right)`          | 演算子を指定して2つの値を比較する               |
+| `isEqual(value1, value2)`                 | 2つの値の構造が等しいかを再帰的に比較する       |
+| `isEqualWith(value1, value2, customizer)` | 独自の比較関数を使って2つの値を再帰的に比較する |
 
 #### `compare`
 
@@ -455,7 +459,7 @@ isEqual([1], { 0: 1 }); // false
 #### `isEqualWith`
 
 ```ts
-isEqualWith(value: unknown, other: unknown, customizer: IsEqualWithCustomizer): boolean
+isEqualWith(value1: unknown, value2: unknown, customizer: IsEqualWithCustomizer): boolean
 ```
 
 2つの値が等しいかを再帰的に比較します。比較の各段階で `customizer` を呼び、`boolean` を返した場合はそれを結果とし、`undefined` を返した場合は既定の比較を行います。
@@ -492,17 +496,17 @@ isEqualWith({ a: 'Hello' }, { a: 'hello' }, (v1, v2) =>
 
 | 関数                                      | 説明                                                            |
 | ----------------------------------------- | --------------------------------------------------------------- |
-| `asUtcDate(date)`                         | ローカル時刻の日時を、同じ日時の UTC として扱った `Date` を返す |
+| `asUtcDate(value)`                        | ローカル時刻の日時を、同じ日時の UTC として扱った `Date` を返す |
 | `createUtcDate(year, month?, date?, ...)` | UTC の日時を指定して `Date` を作る                              |
 | `lerpDate(value, ratio, options?)`        | 基準の日時と目標の日時の間を割合で補間する                      |
 
 #### `asUtcDate`
 
 ```ts
-asUtcDate(date: Date): Date
+asUtcDate(value: Date): Date
 ```
 
-`date` のローカル時刻の年月日・時分秒・ミリ秒を、そのまま UTC の値として持つ新しい `Date` を返します。
+`value` のローカル時刻の年月日・時分秒・ミリ秒を、そのまま UTC の値として持つ新しい `Date` を返します。
 
 ```ts
 // 日本時間（UTC+9）の環境で
@@ -564,9 +568,12 @@ alwaysVoid(...args: unknown[]): void
 #### `ensureMap`
 
 ```ts
-ensureMap<K, V>(data: Iterable<readonly [K, V]> | null | undefined, options?: EnsureMapOptions): Map<K, V>
+ensureMap<K, V>(data: Iterable<readonly [K, V]> | null | undefined, options: EnsureMapOptions & { raw: true }): ReadonlyMap<K, V>
+ensureMap<K, V>(data: Iterable<readonly [K, V]> | null | undefined, options?: EnsureMapOptions & { raw?: false }): Map<K, V>
 ensureMap<V>(data: Record<string, V> | null | undefined, options?: EnsureMapOptions): Map<string, V>
-ensureMap<K, V>(data: EnsureMapSource<K, V> | null | undefined, options?: EnsureMapOptions): Map<K | string, V>
+ensureMap<K, V>(data: EnsureMapSource<K, V> | null | undefined, options: EnsureMapOptions & { raw: true }): ReadonlyMap<K | string, V>
+ensureMap<K, V>(data: EnsureMapSource<K, V> | null | undefined, options?: EnsureMapOptions & { raw?: false }): Map<K | string, V>
+ensureMap<K, V>(data: EnsureMapSource<K, V> | null | undefined, options?: EnsureMapOptions): ReadonlyMap<K | string, V>
 ```
 
 値を `Map` にします。`Map` はコピーを返します。それ以外の反復可能なオブジェクト（エントリーの配列、`Set` など）は、`Map` のコンストラクターと同じく各要素を `[キー, 値]` として扱います。それ以外のオブジェクトは、プロパティをエントリーにします。`null` / `undefined` やプリミティブ値は空の `Map` になります。
@@ -579,9 +586,9 @@ ensureMap(['x', 'y'].entries()); // Map { 0 => 'x', 1 => 'y' }
 
 反復可能なオブジェクトの要素がエントリーでない場合（`[1, 2]` など）は、`Map` のコンストラクターと同じく `TypeError` になります。
 
-| オプション | 型        | 説明                                                                                       |
-| ---------- | --------- | ------------------------------------------------------------------------------------------ |
-| `raw?`     | `boolean` | `true` の場合、`data` が `Map` のときはコピーせずに同じ `Map` を返す。デフォルトは `false` |
+| オプション | 型        | 説明                                                                                                                                                                                                                                            |
+| ---------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `raw?`     | `boolean` | `true` の場合、`data` が `Map` のときはコピーせずに同じ `Map` を返す。このとき戻り値の型は `ReadonlyMap` になる（`raw` が `boolean` の変数の場合も同じ）。オブジェクトのプロパティから作る場合は、常に新しい `Map` になる。デフォルトは `false` |
 
 #### 型
 
@@ -589,118 +596,6 @@ ensureMap(['x', 'y'].entries()); // Map { 0 => 'x', 1 => 'y' }
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | `EnsureMapOptions`      | `ensureMap` のオプション                                                                                              |
 | `EnsureMapSource<K, V>` | `ensureMap` が受け取る値（`[キー, 値]` を返す反復可能なオブジェクト、またはプロパティをエントリーにするオブジェクト） |
-
-### measure
-
-| 関数                               | 説明                                                 |
-| ---------------------------------- | ---------------------------------------------------- |
-| `comparePerformance(options)`      | 複数の関数の実行時間を測定して比較する               |
-| `comparePerformanceAsync(options)` | 複数の非同期関数の実行時間を測定して比較する         |
-| `measure(fn, options?)`            | 関数を指定の回数実行し、かかった時間を測定する       |
-| `measureAsync(fn, options?)`       | 非同期関数を指定の回数実行し、かかった時間を測定する |
-
-#### `comparePerformance`
-
-```ts
-comparePerformance<A extends unknown[] = unknown[], R = unknown>(options: ComparePerformanceOptions<A, R>): ComparePerformanceResult<A, R>
-```
-
-`targets` の関数の実行時間を測定して比較します。1周ごとに各関数を `iterations` 回ずつ実行して時間を測り、これを `rounds` 周繰り返します。周ごとに実行する順番を入れ替え、順番による偏りを減らします。同じ周の中では、すべての関数に同じ引数を渡します。
-
-`targets` の `id` が重複している場合はエラーになります。
-
-```ts
-const result = comparePerformance({
-  targets: [
-    { id: 'spread', fn: (a: number[]) => [...a] },
-    { id: 'slice', fn: (a: number[]) => a.slice() },
-  ],
-  args: [Array.from({ length: 1000 }, (_, i) => i)],
-  iterations: 100,
-  rounds: 10,
-});
-result.order.map((target) => target.id); // 速い順
-```
-
-| オプション          | 型                                 | 説明                                                                                      |
-| ------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------- |
-| `targets`           | `ComparePerformanceTarget<A, R>[]` | 測定する関数 `{ id, fn }` の配列。`id` は関数ごとに異なる値にする                         |
-| `iterations?`       | `number`                           | 1周の中で各関数を実行する回数。小数は切り捨て、1 未満の場合は 1 にする。デフォルトは `10` |
-| `rounds?`           | `number`                           | 測定を繰り返す周数。小数は切り捨て、1 未満の場合は 1 にする。デフォルトは `10`            |
-| `args?`             | `A`                                | 関数に渡す引数                                                                            |
-| `getArgs?`          | `() => A`                          | 実行するたびに引数を作る関数。指定した場合は `args` より優先する。`measure` と同じ        |
-| `warmUpIterations?` | `number`                           | 測定前に各関数を実行する回数。小数は切り捨て、0 未満の場合は 0 にする。デフォルトは `0`   |
-| `id?`               | `string`                           | 測定の ID。結果にそのまま含める。デフォルトは開始時刻のミリ秒                             |
-
-| プロパティ     | 型                                 | 説明                                                   |
-| -------------- | ---------------------------------- | ------------------------------------------------------ |
-| `average`      | `ElapsedTimes`                     | 関数ごとの1周あたりの平均時間（ミリ秒）                |
-| `totalAverage` | `number`                           | 全関数の平均時間（ミリ秒）。`targets` が空の場合は `0` |
-| `order`        | `ComparePerformanceTarget<A, R>[]` | 平均時間が短い順に並べた測定対象                       |
-| `results`      | `ElapsedTimes[]`                   | 周ごとの関数ごとの時間                                 |
-| `returnValues` | `{ [id: string]: R }`              | 関数ごとの最後の戻り値                                 |
-| `start`        | `Date`                             | 測定の開始日時                                         |
-| `end`          | `Date`                             | 測定の終了日時                                         |
-| `id`           | `string`                           | 測定の ID                                              |
-
-#### `comparePerformanceAsync`
-
-```ts
-comparePerformanceAsync<A extends unknown[] = unknown[], R = unknown>(options: ComparePerformanceAsyncOptions<A, R>): Promise<ComparePerformanceAsyncResult<A, R>>
-```
-
-`comparePerformance` の非同期関数版です。ウォームアップも含め、各関数の実行は1つずつ順番に行います。オプションと戻り値は `comparePerformance` と同じです。
-
-#### `measure`
-
-```ts
-measure<R>(fn: () => R, options?: MeasureOptions<[]>): MeasureResult<R>
-measure<A extends unknown[], R>(fn: (...args: A) => R, options: MeasureOptions<A>): MeasureResult<R>
-```
-
-`fn` を `iterations` 回実行し、合計の実行時間（ミリ秒）と最後の戻り値を返します。時間は `performance.now()` で測定します。`performance.now()` の精度は環境によって粗くされているため、1回ごとではなく全体をまとめて測定します。
-
-`fn` に必須の引数がある場合は、`args` か `getArgs` のどちらかが必須です。
-
-```ts
-const { time, returnValue } = measure(() => heavyCalc(), { iterations: 100 });
-```
-
-| オプション    | 型        | 説明                                                                                                                   |
-| ------------- | --------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `iterations?` | `number`  | 実行する回数。小数は切り捨て、1 未満の場合は 1 にする。デフォルトは `10`                                               |
-| `args?`       | `A`       | 関数に渡す引数                                                                                                         |
-| `getArgs?`    | `() => A` | 実行するたびに引数を作る関数。指定した場合は `args` より優先する。測定を始める前にまとめて呼ぶため、時間には含まれない |
-
-| プロパティ    | 型       | 説明                       |
-| ------------- | -------- | -------------------------- |
-| `time`        | `number` | 合計の実行時間（ミリ秒）   |
-| `returnValue` | `R`      | 最後に実行したときの戻り値 |
-
-#### `measureAsync`
-
-```ts
-measureAsync<R>(fn: () => Promise<R>, options?: MeasureAsyncOptions<[]>): Promise<MeasureAsyncResult<R>>
-measureAsync<A extends unknown[], R>(fn: (...args: A) => Promise<R>, options: MeasureAsyncOptions<A>): Promise<MeasureAsyncResult<R>>
-```
-
-`measure` の非同期関数版です。`fn` を1回ずつ順番に実行し、完了を待ってから次を実行します。オプションと戻り値は `measure` と同じです。
-
-#### 型
-
-| 型                                     | 説明                                                                                                                   |
-| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `ComparePerformanceOptions<A, R>`      | `comparePerformance` のオプション                                                                                      |
-| `ComparePerformanceResult<A, R>`       | `comparePerformance` の戻り値                                                                                          |
-| `ComparePerformanceTarget<A, R>`       | 測定する関数 `{ id, fn }`                                                                                              |
-| `ComparePerformanceAsyncOptions<A, R>` | `ComparePerformanceOptions<A, Promise<R>>` と同じ                                                                      |
-| `ComparePerformanceAsyncResult<A, R>`  | `comparePerformanceAsync` の戻り値。`order` の関数が `Promise<R>` を返す以外は `ComparePerformanceResult<A, R>` と同じ |
-| `ElapsedTimes`                         | 関数の ID ごとの時間 `{ [id: string]: number }`                                                                        |
-| `MeasureArgsOptions<A>`                | 関数に渡す引数のオプション（`args` / `getArgs`）                                                                       |
-| `MeasureOptions<A>`                    | `measure` のオプション                                                                                                 |
-| `MeasureResult<R>`                     | `measure` の戻り値                                                                                                     |
-| `MeasureAsyncOptions<A>`               | `MeasureOptions<A>` と同じ                                                                                             |
-| `MeasureAsyncResult<R>`                | `MeasureResult<R>` と同じ                                                                                              |
 
 ### number
 
@@ -719,7 +614,7 @@ measureAsync<A extends unknown[], R>(fn: (...args: A) => Promise<R>, options: Me
 | `loopInRange(value, min, max)`                    | 範囲がループしているものとして、値を範囲内に収める |
 | `pingpongInRange(value, min, max)`                | 範囲の端で折り返すものとして、値を範囲内に収める   |
 | `replaceOutOfRange(value, min, max, replacement)` | 範囲外の場合に指定の値に置き換える                 |
-| `roundToStep(data, step)`                         | 値を指定の刻み幅で丸める                           |
+| `roundToStep(value, step)`                        | 値を指定の刻み幅で丸める                           |
 
 範囲を受け取る関数（`clampInRange`、`isStrictlyWithinRange`、`isWithinRange`、`keepInRange`、`loopInRange`、`pingpongInRange`、`replaceOutOfRange`）は、`min` が `max` より大きい場合は入れ替えて扱います。
 
@@ -869,7 +764,7 @@ limitNaturalNumber(-3.5, { negativeValue: 'abs' }); // 3
 limitPositiveNumber(value: number | null | undefined, options?: LimitPositiveNumberOptions): number | null | undefined
 ```
 
-値を正の数（0 より大きい数）にします。正の数はそのまま返し、それ以外の場合はオプションで指定した値を返します。
+値を正の数（0 より大きい数）にします。正の数はそのまま返し、それ以外の場合はオプションで指定した値を返します。`null` / `undefined` はそのまま返します（既定値を使う場合は、呼び出す前に `??` で補います）。
 
 ```ts
 limitPositiveNumber(1.5); // 1.5
@@ -883,7 +778,6 @@ limitPositiveNumber(0, { zeroValue: 0 }); // 0
 | `negativeValue?` | `number \| null \| undefined \| 'abs'` | 値が負の数の場合に返す値。`'abs'` の場合は絶対値を返す。デフォルトは `null` |
 | `zeroValue?`     | `number \| null \| undefined`          | 値が `0` の場合に返す値。デフォルトは `null`                                |
 | `nanValue?`      | `number \| null \| undefined`          | 値が `NaN` の場合に返す値。デフォルトは `null`                              |
-| `defaultValue?`  | `number`                               | 値が `null` / `undefined` の場合に返す値。デフォルトは値をそのまま返す      |
 
 #### `loopInRange`
 
@@ -923,10 +817,10 @@ replaceOutOfRange(value: number, min: number, max: number, replacement: number):
 #### `roundToStep`
 
 ```ts
-roundToStep(data: number, step: number): number
+roundToStep(value: number, step: number): number
 ```
 
-`data` を `step` の倍数のうち最も近い値に丸めます。ちょうど中間の値は正の方向へ丸めます（`Math.round` と同じで、`-2.5` は `-2`）。結果は `step` の小数の桁数で丸め直すため、`0.30000000000000004` のような誤差は出ません。`step` が `0` や有限の数でない場合は `data` をそのまま返します。
+`value` を `step` の倍数のうち最も近い値に丸めます。ちょうど中間の値は正の方向へ丸めます（`Math.round` と同じで、`-2.5` は `-2`）。結果は `step` の小数の桁数で丸め直すため、`0.30000000000000004` のような誤差は出ません。`step` が `0` や有限の数でない場合は `value` をそのまま返します。
 
 丸めは浮動小数点数（double）の値に対して行います。`1.15` は double では `1.1499…` なので、`roundToStep(1.15, 0.1)` は `1.1` になります。表記どおりに十進数で丸める場合は `@fringeworks/numeric-string` を使います。
 
@@ -962,9 +856,11 @@ roundToStep(0.3, 0.1); // 0.3
 | ------------------------------------------------------ | ---------------------------------------------------------------------------- |
 | `assignDefined(target, values, options?)`              | `undefined` でない値だけを代入した新しいオブジェクトを返す                   |
 | `assignDefinedMutable(target, values, options?)`       | `undefined` でない値だけを代入する（破壊的）                                 |
+| `assignPresent(target, values, options?)`              | `null` / `undefined` でない値だけを代入した新しいオブジェクトを返す          |
+| `assignPresentMutable(target, values, options?)`       | `null` / `undefined` でない値だけを代入する（破壊的）                        |
 | `cloneDeep(value)`                                     | 値を深くコピーする                                                           |
 | `cloneShallow(value)`                                  | 値を浅くコピーする                                                           |
-| `countKeys(obj)`                                       | オブジェクトの列挙可能なプロパティの数を返す                                 |
+| `countKeys(data)`                                      | オブジェクトの列挙可能なプロパティの数を返す                                 |
 | `createOverrideProxy(instance, overrides)`             | インスタンスのプロパティを上書きするプロキシを作る                           |
 | `createSplitByKeys<T>(keys)`                           | 指定したキーのプロパティとそれ以外に分ける関数を作る                         |
 | `distribute(data, rules, options?)`                    | プロパティをルールに従って複数のオブジェクトに分ける                         |
@@ -972,10 +868,10 @@ roundToStep(0.3, 0.1); // 0.3
 | `exactKeysFromRecord<T>(keys)`                         | 型の全てのキーを持つオブジェクトからキーの配列を作る                         |
 | `fillDefaults(target, defaultValues, options?)`        | 値の無いプロパティをデフォルト値で埋めた新しいオブジェクトを返す             |
 | `fillDefaultsMutable(target, defaultValues, options?)` | 値の無いプロパティをデフォルト値で埋める（破壊的）                           |
-| `filterByKeys(target, condition, options?)`            | 条件に合うキーのプロパティだけを残す                                         |
-| `filterByValues(target, condition, options?)`          | 条件に合う値だけを残す                                                       |
+| `filterByKeys(data, condition, options?)`              | 条件に合うキーのプロパティだけを残す                                         |
+| `filterByValues(data, condition, options?)`            | 条件に合う値だけを残す                                                       |
 | `flattenObject(data, options?)`                        | ネストしたオブジェクトを1階層にする                                          |
-| `forEachValue(target, callback, options?)`             | 各プロパティの値でコールバックを実行する                                     |
+| `forEachValue(data, callback, options?)`               | 各プロパティの値でコールバックを実行する                                     |
 | `get(data, path, options?)`                            | パスで指定したプロパティの値を返す                                           |
 | `hasOwn(data, key)`                                    | オブジェクトが指定のプロパティを自身で持つか判定する（`Object.hasOwn` 相当） |
 | `maybeHasOwn(data, key)`                               | オブジェクトが指定のプロパティを自身で持つか判定する（`null` でも安全）      |
@@ -987,8 +883,8 @@ roundToStep(0.3, 0.1); // 0.3
 | `transformObject(source, rules, options?)`             | ルールに従ってオブジェクトの構造を変換する                                   |
 | `unset(data, path)`                                    | パスで指定したプロパティを削除した新しいオブジェクトを返す                   |
 | `unsetMutable(data, path)`                             | パスで指定したプロパティを削除する（破壊的）                                 |
-| `update(object, values, options?)`                     | 値が変わるプロパティだけを更新した新しいオブジェクトを返す                   |
-| `updateMutable(object, values, options?)`              | 値が変わるプロパティだけを更新し、更新前の値を返す（破壊的）                 |
+| `update(target, values, options?)`                     | 値が変わるプロパティだけを更新した新しいオブジェクトを返す                   |
+| `updateMutable(target, values, options?)`              | 値が変わるプロパティだけを更新し、更新前の値を返す（破壊的）                 |
 
 #### `assignDefined`
 
@@ -996,16 +892,14 @@ roundToStep(0.3, 0.1); // 0.3
 assignDefined<T extends object, V extends object>(target: T, values: V, options?: AssignDefinedOptions): AssignDefinedResult<T, V>
 ```
 
-`values` の各プロパティのうち、値が `undefined` でないものだけを `target` に代入した新しいオブジェクトを返します。symbol のキーも対象にします。
+`values` の各プロパティのうち、値が `undefined` でないものだけを `target` に代入した新しいオブジェクトを返します。symbol のキーも対象にします。`null` も代入しない場合は `assignPresent` を使います。
 
 ```ts
 assignDefined({ a: 1, b: 2 }, { a: undefined, b: null, c: 3 }); // { a: 1, b: null, c: 3 }
-assignDefined({ a: 1, b: 2 }, { b: null }, { skipNull: true }); // { a: 1, b: 2 }
 ```
 
 | オプション          | 型        | 説明                                                           |
 | ------------------- | --------- | -------------------------------------------------------------- |
-| `skipNull?`         | `boolean` | `true` の場合、値が `null` のプロパティも代入しない            |
 | `includeInherited?` | `boolean` | `true` の場合、`values` の継承したプロパティも代入の対象にする |
 
 #### `assignDefinedMutable`
@@ -1015,6 +909,30 @@ assignDefinedMutable<T extends object, V extends object>(target: T, values: V, o
 ```
 
 `assignDefined` の破壊的な版です。`target` に直接代入し、同じオブジェクトを返します。オプションは `assignDefined` と同じです。
+
+#### `assignPresent`
+
+```ts
+assignPresent<T extends object, V extends object>(target: T, values: V, options?: AssignPresentOptions): AssignPresentResult<T, V>
+```
+
+`values` の各プロパティのうち、値が `null` / `undefined` でないものだけを `target` に代入した新しいオブジェクトを返します。symbol のキーも対象にします。`null` も代入する場合は `assignDefined` を使います。
+
+```ts
+assignPresent({ a: 1, b: 2 }, { a: undefined, b: null, c: 3 }); // { a: 1, b: 2, c: 3 }
+```
+
+| オプション          | 型        | 説明                                                           |
+| ------------------- | --------- | -------------------------------------------------------------- |
+| `includeInherited?` | `boolean` | `true` の場合、`values` の継承したプロパティも代入の対象にする |
+
+#### `assignPresentMutable`
+
+```ts
+assignPresentMutable<T extends object, V extends object>(target: T, values: V, options?: AssignPresentMutableOptions): AssignPresentResult<T, V>
+```
+
+`assignPresent` の破壊的な版です。`target` に直接代入し、同じオブジェクトを返します。オプションは `assignPresent` と同じです。
 
 #### `cloneDeep`
 
@@ -1035,7 +953,7 @@ cloneShallow<T>(value: T): T
 #### `countKeys`
 
 ```ts
-countKeys(obj: unknown): number
+countKeys(data: unknown): number
 ```
 
 オブジェクトの自身の列挙可能なプロパティの数（`Object.keys(obj).length`）を返します。オブジェクトでない値の場合は `0` を返します。
@@ -1158,7 +1076,7 @@ fillDefaultsMutable<T extends object, const V extends object, const O extends Fi
 #### `filterByKeys`
 
 ```ts
-filterByKeys(target: unknown, condition: string | number, options?: FilterByKeysOptions): unknown
+filterByKeys(data: unknown, condition: string | number, options?: FilterByKeysOptions): unknown
 ```
 
 オブジェクトや配列を再帰的にたどり、キーが条件に合うプロパティだけを残した新しい値を返します。`condition` が文字列の場合はキーに含まれるか（部分一致）、数値の場合はキーと等しいか（`0` は `'0'` に一致）で判定します。条件に合ったプロパティは値ごと残し、合わなかったプロパティは値の中をさらにたどります。条件に合うものが1つもない場合は `null` を返します。残る構造は実行時に決まるため、戻り値の型は `unknown` です。配列は元のインデックスを保ち、条件に合わなかった位置は空き要素になります。
@@ -1179,7 +1097,7 @@ filterByKeys({ UserName: 'A', age: 1 }, 'username', {
 #### `filterByValues`
 
 ```ts
-filterByValues(target: unknown, condition: unknown, options?: FilterByValuesOptions): unknown
+filterByValues(data: unknown, condition: unknown, options?: FilterByValuesOptions): unknown
 ```
 
 オブジェクトや配列を再帰的にたどり、値が条件に合う要素だけを残した新しい値を返します。`condition` が文字列の場合は文字列の値に含まれるか（部分一致）、それ以外の場合は値と等しいか（`===`）で判定します。残す要素や `null` を返す条件、配列の扱いは `filterByKeys` と同じです。
@@ -1216,7 +1134,7 @@ flattenObject({ a: { b: [1] } }, { keepArrays: true }); // { 'a.b': [1] }
 #### `forEachValue`
 
 ```ts
-forEachValue<T extends object>(target: T, callback: (value: T[keyof T], key: string | symbol, obj: T) => void | boolean, options?: ForEachValueOptions): boolean
+forEachValue<T extends object>(data: T, callback: (value: T[keyof T], key: string | symbol, obj: T) => void | boolean, options?: ForEachValueOptions): boolean
 ```
 
 オブジェクトの自身の列挙可能なプロパティごとに `callback` を実行します。スプレッド構文や `Object.assign` と同じく、symbol のキーも対象にします。`callback` が `false` を返すと処理を中断します。最後まで処理した場合は `true`、中断した場合は `false` を返します。
@@ -1385,10 +1303,10 @@ unsetMutable<T extends object>(data: T, path: PropertyPath): T
 #### `update`
 
 ```ts
-update<T extends object>(object: T, values: Partial<T>, options?: UpdateOptions): T
+update<T extends object>(target: T, values: Partial<T>, options?: UpdateOptions): T
 ```
 
-`values` の各プロパティのうち、`object` の値と異なるものだけを更新した新しいオブジェクトを返します。どのプロパティも変わらない場合は `object` をそのまま返すため、参照の比較で変更の有無を判定できます。値の比較方法は `isEqual` オプションで指定します。
+`values` の各プロパティのうち、`target` の値と異なるものだけを更新した新しいオブジェクトを返します。どのプロパティも変わらない場合は `target` をそのまま返すため、参照の比較で変更の有無を判定できます。値の比較方法は `isEqual` オプションで指定します。
 
 ```ts
 const state = { a: 1, b: 2 };
@@ -1404,10 +1322,10 @@ update({ a: { x: 1 } }, { a: { x: 1 } }, { isEqual }); // 元のオブジェク�
 #### `updateMutable`
 
 ```ts
-updateMutable<T extends object>(object: T, values: Partial<T>, options?: UpdateMutableOptions): Partial<T>
+updateMutable<T extends object>(target: T, values: Partial<T>, options?: UpdateMutableOptions): Partial<T>
 ```
 
-`update` の破壊的な版です。`object` を直接更新し、更新したプロパティの更新前の値を持つオブジェクトを返します。オプションは `update` と同じです。
+`update` の破壊的な版です。`target` を直接更新し、更新したプロパティの更新前の値を持つオブジェクトを返します。オプションは `update` と同じです。
 
 ```ts
 const state = { a: 1, b: 2 };
@@ -1420,7 +1338,10 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 }（state は { a: 9, b: 2 }）
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `AssignDefinedMutableOptions` | `assignDefinedMutable` のオプション                                                                                                                                                                                                                                                                       |
 | `AssignDefinedOptions`        | `AssignDefinedMutableOptions` と同じ                                                                                                                                                                                                                                                                      |
-| `AssignDefinedResult<T, V>`   | `assignDefined`・`assignDefinedMutable` の戻り値。`values` の値が `undefined`（`skipNull` の場合は `null` も）で反映されない可能性があるキーは、`target` の値の型も残る                                                                                                                                   |
+| `AssignDefinedResult<T, V>`   | `assignDefined`・`assignDefinedMutable` の戻り値。`values` の値が `undefined` で反映されない可能性があるキーは、`target` の値の型も残る                                                                                                                                                                   |
+| `AssignPresentMutableOptions` | `assignPresentMutable` のオプション                                                                                                                                                                                                                                                                       |
+| `AssignPresentOptions`        | `AssignPresentMutableOptions` と同じ                                                                                                                                                                                                                                                                      |
+| `AssignPresentResult<T, V>`   | `assignPresent`・`assignPresentMutable` の戻り値。`values` の値が `null` / `undefined` で反映されない可能性があるキーは、`target` の値の型も残る（`target` に無いキーは `undefined`）                                                                                                                     |
 | `DistributeOptions`           | `distribute` のオプション                                                                                                                                                                                                                                                                                 |
 | `DistributeRules<T>`          | `distribute` のルール `{ [group]: プロパティ名の配列 \| null }`                                                                                                                                                                                                                                           |
 | `DistributePropertyList<T>`   | `distribute` のルールに指定するプロパティ名の配列                                                                                                                                                                                                                                                         |
@@ -1448,13 +1369,13 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 }（state は { a: 9, b: 2 }）
 | `createExtractor(delimiters?)`                    | 囲み文字で囲まれた部分を抽出する関数を作る   |
 | `createReplacerByMap(map)`                        | マップに従って文字列を置換する関数を作る     |
 | `ensureString(data)`                              | 値を文字列にする                             |
-| `escapeRegExp(target)`                            | 正規表現の特殊文字をエスケープする           |
-| `isSurroundedBy(str, prefix, suffix?)`            | 指定の文字列で囲まれているか判定する         |
-| `lowerFirst(str)`                                 | 先頭の文字を小文字にする                     |
-| `replaceByMap(str, map)`                          | マップに従って文字列を置換する               |
+| `escapeRegExp(data)`                              | 正規表現の特殊文字をエスケープする           |
+| `isSurroundedBy(data, prefix, suffix?)`           | 指定の文字列で囲まれているか判定する         |
+| `lowerFirst(data)`                                | 先頭の文字を小文字にする                     |
+| `replaceByMap(data, map)`                         | マップに従って文字列を置換する               |
 | `replacePlaceholders(template, values, options?)` | テンプレートのプレースホルダーを値で置換する |
 | `toCamelCase(data)` など                          | 文字列のケースを変換する                     |
-| `upperFirst(str)`                                 | 先頭の文字を大文字にする                     |
+| `upperFirst(data)`                                | 先頭の文字を大文字にする                     |
 
 #### `createExtractor`
 
@@ -1509,7 +1430,7 @@ ensureString(data: unknown): string
 #### `escapeRegExp`
 
 ```ts
-escapeRegExp(target: string): string
+escapeRegExp(data: string): string
 ```
 
 文字列を、正規表現の中でその文字列自体に一致するようにエスケープします。標準の `RegExp.escape` と同じ結果を返し、標準の機能がある環境ではそちらを使います。`u` / `v` フラグを指定した場合や、文字クラスの中に埋め込んだ場合も、元の文字列として扱われます。前後の文字とつながって意味が変わらないよう、先頭の英数字も `\x31` のような形でエスケープします。
@@ -1521,10 +1442,10 @@ new RegExp(escapeRegExp('1.5*2')); // /\x31\.5\*2/
 #### `isSurroundedBy`
 
 ```ts
-isSurroundedBy(str: string, prefix: string, suffix?: string): boolean
+isSurroundedBy(data: string, prefix: string, suffix?: string): boolean
 ```
 
-`str` が `prefix` で始まり `suffix` で終わるか判定します。`prefix` と `suffix` の間は0文字でもかまいませんが、`prefix` と `suffix` が重なっている場合は `false` です。`suffix` を省略した場合は `prefix` と同じです。
+`data` が `prefix` で始まり `suffix` で終わるか判定します。`prefix` と `suffix` の間は0文字でもかまいませんが、`prefix` と `suffix` が重なっている場合は `false` です。`suffix` を省略した場合は `prefix` と同じです。
 
 ```ts
 isSurroundedBy('(a)', '(', ')'); // true
@@ -1535,8 +1456,8 @@ isSurroundedBy('"', '"'); // false
 #### `lowerFirst` / `upperFirst`
 
 ```ts
-lowerFirst(str: string): string
-upperFirst(str: string): string
+lowerFirst(data: string): string
+upperFirst(data: string): string
 ```
 
 先頭の文字を小文字（`lowerFirst`）・大文字（`upperFirst`）にします。サロゲートペアの文字も1文字として扱います。
@@ -1544,10 +1465,10 @@ upperFirst(str: string): string
 #### `replaceByMap`
 
 ```ts
-replaceByMap(str: string, map: ReplacementMap): string
+replaceByMap(data: string, map: ReplacementMap): string
 ```
 
-`map` のキーの文字列を値の文字列に置換します。一度にまとめて置換するため、置換した結果がさらに置換されることはありません。キーが重なる場合は長いキーを優先します。`str` が空文字の場合はそのまま返します。
+`map` のキーの文字列を値の文字列に置換します。一度にまとめて置換するため、置換した結果がさらに置換されることはありません。キーが重なる場合は長いキーを優先します。`data` が空文字の場合はそのまま返します。
 
 ```ts
 replaceByMap('hello world', { hello: 'hi', world: 'earth' }); // 'hi earth'
@@ -1727,8 +1648,8 @@ const onScroll = throttle(() => updatePosition(), { wait: 100 });
 
 | 関数                             | 説明                                                       |
 | -------------------------------- | ---------------------------------------------------------- |
-| `getKind(data)`                  | 値の種類を `typeof` より詳しく返す                         |
-| `getPriority(data, options?)`    | 値の種類に応じた優先度を返す                               |
+| `getKind(value)`                 | 値の種類を `typeof` より詳しく返す                         |
+| `getPriority(value, options?)`   | 値の種類に応じた優先度を返す                               |
 | `getRawType(value)`              | `Object.prototype.toString` による型のラベルを返す         |
 | `isAsyncIterable(value)`         | 非同期イテラブルか判定する                                 |
 | `isBlank(value)`                 | `null` / `undefined` / 空文字 / 空白だけの文字列か判定する |
@@ -1750,7 +1671,7 @@ const onScroll = throttle(() => updatePosition(), { wait: 100 });
 #### `getKind`
 
 ```ts
-getKind(data: unknown): Kind
+getKind(value: unknown): Kind
 ```
 
 値の種類を返します。オブジェクト以外の値は `typeof` の結果を返します。オブジェクトは `null`、`array`、`plainobject`（プロトタイプが `Object.prototype` か `null` のオブジェクト）、`date`、`regexp`、`error`、`map`、`set`、`weakmap`、`weakset`、`promise`、`arraybuffer`、`sharedarraybuffer` に分けます。どれにも当てはまらないオブジェクト（クラスのインスタンス、DOM 要素、TypedArray など）は `instance` です。
@@ -1768,7 +1689,7 @@ getKind(new (class {})()); // 'instance'
 #### `getPriority`
 
 ```ts
-getPriority(data: unknown, options?: GetPriorityOptions): number
+getPriority(value: unknown, options?: GetPriorityOptions): number
 ```
 
 `getKind` による値の種類に応じた優先度を返します。並べ替えで `null` / `undefined` を後ろに回す場合などに使います。デフォルトでは `undefined` は `-2`、`null` は `-1`、それ以外は `0` です。
@@ -1787,7 +1708,7 @@ getPriority(null, { priorityMap: { array: 3 } }); // -1（デフォルトとマ�
 #### `getRawType`
 
 ```ts
-getRawType(value: unknown): GetRawTypeReturn
+getRawType(value: unknown): GetRawTypeResult
 ```
 
 `Object.prototype.toString.call(value)` の結果（`'[object Array]'` など）を返します。
@@ -1907,7 +1828,7 @@ unsafeCast<T>(value: unknown): T
 | 型                     | 説明                         |
 | ---------------------- | ---------------------------- |
 | `GetPriorityOptions`   | `getPriority` のオプション   |
-| `GetRawTypeReturn`     | `getRawType` の戻り値        |
+| `GetRawTypeResult`     | `getRawType` の戻り値        |
 | `IsValidNumberOptions` | `isValidNumber` のオプション |
 | `Kind`                 | `getKind` が返す値の種類の値 |
 

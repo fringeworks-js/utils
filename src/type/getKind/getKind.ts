@@ -6,55 +6,55 @@ import { Kind } from './constants';
  * どれにも当たらないものを `'instance'` とする。\
  * 組み込みオブジェクトは `instanceof` で判定するため、iframe など別の realm の値は `'instance'` になる
  *
- * @param data 任意の値
+ * @param value 任意の値
  * @returns 型種別
  */
-export default function getKind(data: unknown): Kind {
-  const type = typeof data;
+export default function getKind(value: unknown): Kind {
+  const type = typeof value;
   if (type !== 'object') {
     return type as Exclude<typeof type, 'object'>;
   }
-  if (data === null) {
+  if (value === null) {
     return Kind.null;
   }
-  if (Array.isArray(data)) {
+  if (Array.isArray(value)) {
     return Kind.array;
   }
-  const proto: unknown = Object.getPrototypeOf(data);
+  const proto: unknown = Object.getPrototypeOf(value);
   if (proto === Object.prototype || proto === null) {
     return Kind.plainobject;
   }
-  if (data instanceof Date) {
+  if (value instanceof Date) {
     return Kind.date;
   }
-  if (data instanceof RegExp) {
+  if (value instanceof RegExp) {
     return Kind.regexp;
   }
-  if (data instanceof Error) {
+  if (value instanceof Error) {
     return Kind.error;
   }
-  if (data instanceof Map) {
+  if (value instanceof Map) {
     return Kind.map;
   }
-  if (data instanceof Set) {
+  if (value instanceof Set) {
     return Kind.set;
   }
-  if (data instanceof WeakMap) {
+  if (value instanceof WeakMap) {
     return Kind.weakmap;
   }
-  if (data instanceof WeakSet) {
+  if (value instanceof WeakSet) {
     return Kind.weakset;
   }
-  if (data instanceof Promise) {
+  if (value instanceof Promise) {
     return Kind.promise;
   }
-  if (data instanceof ArrayBuffer) {
+  if (value instanceof ArrayBuffer) {
     return Kind.arraybuffer;
   }
   // cross-origin isolated でないページでは SharedArrayBuffer が定義されていない
   if (
     typeof SharedArrayBuffer !== 'undefined' &&
-    data instanceof SharedArrayBuffer
+    value instanceof SharedArrayBuffer
   ) {
     return Kind.sharedarraybuffer;
   }

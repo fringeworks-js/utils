@@ -33,4 +33,9 @@ describe('pushAllMutable', () => {
     const result = pushAllMutable([1], new Array(300000).fill(0));
     expect(result.length).toBe(300001);
   });
+
+  it('追加する要素は readonly の配列を受け付ける', () => {
+    const source: readonly number[] = [2, 3];
+    expect(pushAllMutable([1], source)).toEqual([1, 2, 3]);
+  });
 });

@@ -8,16 +8,16 @@ import type { PushUniqueMutableOptions } from './types';
  */
 export default function pushUniqueMutable<T>(
   data: T[],
-  items: T[] | null | undefined,
+  items: readonly T[] | null | undefined,
   options: PushUniqueMutableOptions<T> = {},
 ): T[] {
   if (items) {
-    const { threshold = 100, comparator } = options;
+    const { threshold = 100, isEqual } = options;
 
-    if (comparator) {
-      // comparator指定時は常に線形探索
+    if (isEqual) {
+      // isEqual指定時は常に線形探索
       for (const item of items) {
-        if (!data.some((existing) => comparator(existing, item))) {
+        if (!data.some((existing) => isEqual(existing, item))) {
           data.push(item);
         }
       }

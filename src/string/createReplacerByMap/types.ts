@@ -4,7 +4,7 @@
  */
 export type ReplacementMap =
   | ReadonlyMap<string, string>
-  | Readonly<Record<string, string>>
+  | Record<string, string>
   | Iterable<readonly [string, string]>;
 
 /**

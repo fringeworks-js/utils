@@ -17,11 +17,11 @@ type Stack = [object, object][];
  * - 循環参照は、比較中の組に再び到達した時点で等しいとみなす
  */
 export default function isEqualWith(
-  value: unknown,
-  other: unknown,
+  value1: unknown,
+  value2: unknown,
   customizer: IsEqualWithCustomizer,
 ): boolean {
-  return _isEqualWith(value, other, customizer, [], undefined);
+  return _isEqualWith(value1, value2, customizer, [], undefined);
 }
 
 function _isEqualWith(

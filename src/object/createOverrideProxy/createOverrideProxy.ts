@@ -16,6 +16,7 @@ export default function createOverrideProxy<
   I extends object,
   O extends Record<
     PropertyKey,
+    // 標準の ProxyHandler の get と同じく、receiver と戻り値は any にする
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (target: I, prop: string | symbol, receiver: any) => any
   >,

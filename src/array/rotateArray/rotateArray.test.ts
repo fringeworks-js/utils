@@ -31,4 +31,11 @@ describe('rotateArray', () => {
     expect(rotateArray(null)).toEqual([]);
     expect(rotateArray(undefined)).toEqual([]);
   });
+
+  it('readonly の配列を受け付ける', () => {
+    const data: readonly number[] = [1, 2, 3];
+    const result = rotateArray(data);
+    expect(result).toEqual(rotateArray([...data]));
+    expectTypeOf(result).toEqualTypeOf<number[]>();
+  });
 });

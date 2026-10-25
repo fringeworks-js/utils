@@ -38,4 +38,12 @@ describe('pushAll', () => {
   it('dataもsourceもnullの場合は空配列を返す', () => {
     expect(pushAll(null, null)).toEqual([]);
   });
+
+  it('readonly の配列を受け付ける', () => {
+    const data: readonly number[] = [1];
+    const source: readonly number[] = [2, 3];
+    const result = pushAll(data, source);
+    expect(result).toEqual([1, 2, 3]);
+    expectTypeOf(result).toEqualTypeOf<number[]>();
+  });
 });

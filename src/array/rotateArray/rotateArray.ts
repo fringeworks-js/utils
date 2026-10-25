@@ -8,7 +8,7 @@ import type { RotateArrayOptions } from './types';
  * @returns ローテーションした新しい配列
  */
 export default function rotateArray<I>(
-  data: I[] | null | undefined,
+  data: readonly I[] | null | undefined,
   options?: RotateArrayOptions,
 ): I[] {
   return rotateArrayMutable(data ? [...data] : [], options);

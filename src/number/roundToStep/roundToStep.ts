@@ -3,15 +3,15 @@
  * ちょうど中間の値は正の方向へ丸める（Math.roundと同じ）。
  * 結果はstepの小数の桁数で丸め直し、0.30000000000000004のような誤差を除く。
  * 丸めはdoubleの値に対して行うため、1.15（実際は1.1499…）のように表記どおりにならない場合がある
- * @param data 元の値
- * @param step 刻み幅 (例: 0.5, 10, 0.01)。0や有限の数でない場合はdataをそのまま返す
+ * @param value 元の値
+ * @param step 刻み幅 (例: 0.5, 10, 0.01)。0や有限の数でない場合はvalueをそのまま返す
  * @returns 刻み幅に丸められた値
  */
-export default function roundToStep(data: number, step: number): number {
+export default function roundToStep(value: number, step: number): number {
   if (step === 0 || !Number.isFinite(step)) {
-    return data;
+    return value;
   }
-  const rounded = Math.round(data / step) * step;
+  const rounded = Math.round(value / step) * step;
   return Number(rounded.toFixed(countDecimals(step)));
 }
 

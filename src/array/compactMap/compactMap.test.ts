@@ -54,4 +54,11 @@ describe('compactMap', () => {
       expect(result).toEqual([1, 2, 3]);
     });
   });
+
+  it('readonly の配列を受け付ける', () => {
+    const data: readonly number[] = [1, 2, 3];
+    const result = compactMap(data, (value) => value * 10);
+    expect(result).toEqual([10, 20, 30]);
+    expectTypeOf(result).toEqualTypeOf<number[]>();
+  });
 });

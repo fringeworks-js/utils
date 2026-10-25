@@ -71,4 +71,12 @@ describe('insertAt', () => {
     expect(result).toEqual([1, 2]);
     expect(result).not.toBe(array);
   });
+
+  it('readonly の配列を受け付ける', () => {
+    const data: readonly number[] = [1, 4];
+    const items: readonly number[] = [2, 3];
+    const result = insertAt(data, 1, items);
+    expect(result).toEqual([1, 2, 3, 4]);
+    expectTypeOf(result).toEqualTypeOf<number[]>();
+  });
 });

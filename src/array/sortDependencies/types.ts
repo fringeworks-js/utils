@@ -1,5 +1,5 @@
 export type SortDependenciesGetId<I> = (item: I) => unknown;
-export type SortDependenciesGetDependencies<I> = (item: I) => I | I[];
+export type SortDependenciesGetDependencies<I> = (item: I) => I | readonly I[];
 
 export type SortDependenciesOptions<I> = {
   /**

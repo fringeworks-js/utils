@@ -9,13 +9,13 @@ import type { FilterByKeysOptions } from './types';
  * 条件に合うキーのプロパティだけを残す
  * 文字列の条件はキーに含まれるか（部分一致）、数値の条件はキーと等しいかで判定する
  * 残る構造は実行時に決まるため、戻り値は unknown とする
- * @param target 対象の値
+ * @param data 対象の値
  * @param condition 条件
  * @param options オプション
  * @returns 条件に合うものだけを残した新しい値。1つも無い場合は null
  */
 export default function filterByKeys(
-  target: unknown,
+  data: unknown,
   condition: string | number,
   options: FilterByKeysOptions = {},
 ): unknown {
@@ -36,15 +36,15 @@ export default function filterByKeys(
     isMatch = (key) => key === conditionKey;
   }
 
-  return _filter(target, isMatch) ?? null;
+  return _filter(data, isMatch) ?? null;
 }
 
-function _filter(target: unknown, isMatch: (key: string) => boolean): unknown {
-  if (Array.isArray(target)) {
+function _filter(data: unknown, isMatch: (key: string) => boolean): unknown {
+  if (Array.isArray(data)) {
     // array
     const array: unknown[] = [];
-    for (let i = 0; i < target.length; i++) {
-      const item = target[i];
+    for (let i = 0; i < data.length; i++) {
+      const item = data[i];
       const result = _filter(item, isMatch);
       if (result != null) {
         array[i] = result;
@@ -53,14 +53,14 @@ function _filter(target: unknown, isMatch: (key: string) => boolean): unknown {
     if (array.length) {
       return array;
     }
-  } else if (R.isPlainObject(target)) {
+  } else if (R.isPlainObject(data)) {
     // object
     const obj: StrictRecord = {};
-    for (const key in target) {
+    for (const key in data) {
       if (_isUnsafeKey(key)) {
         continue;
       }
-      const value = target[key];
+      const value = data[key];
       if (isMatch(key)) {
         // 条件に合うキーは値ごと残す
         obj[key] = value;

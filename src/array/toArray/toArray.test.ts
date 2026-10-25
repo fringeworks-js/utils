@@ -61,4 +61,13 @@ describe('toArray', () => {
     }
     expect(toArray(gen())).toEqual([1, 2]);
   });
+
+  describe('readonly', () => {
+    it('raw: true の戻り値は readonly の配列', () => {
+      expectTypeOf(toArray<number>([1, 2], { raw: true })).toEqualTypeOf<
+        readonly number[]
+      >();
+      expectTypeOf(toArray<number>([1, 2])).toEqualTypeOf<number[]>();
+    });
+  });
 });

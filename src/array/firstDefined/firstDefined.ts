@@ -3,7 +3,7 @@
  * @param data 配列。null・undefinedの場合はundefinedを返す
  */
 export default function firstDefined<V>(
-  data: V[] | null | undefined,
+  data: readonly V[] | null | undefined,
 ): V | undefined {
   return data?.find(_isTarget);
 }
