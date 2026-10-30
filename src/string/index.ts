@@ -1,5 +1,6 @@
 export * from './createExtractor';
 export * from './createReplacerByMap';
+export * from './createStringMatcher';
 export * from './ensureString';
 export * from './escapeRegExp';
 export * from './isSurroundedBy';

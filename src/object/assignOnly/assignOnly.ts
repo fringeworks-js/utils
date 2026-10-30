@@ -11,7 +11,7 @@ import type { AssignOnlyOptions } from './types';
  * valuesの値のうち、条件に合うものだけをtargetへ適用した新しいオブジェクトを返す（非破壊的変更）
  * @param target 適用先のオブジェクト
  * @param values 適用する値を持ったオブジェクト
- * @param condition 条件。キー・キーの配列・正規表現（キーと照合する）・関数（値・キー・targetの今の値を受け取る）
+ * @param condition 条件。キー・正規表現・StringComparison（キーと照合する）とその配列、または関数（値・キー・targetの今の値を受け取る）
  * @param options オプション
  * @returns 値を適用した新しいオブジェクト
  */

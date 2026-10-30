@@ -80,6 +80,67 @@ describe('assignOnlyMutable', () => {
     });
   });
 
+  describe('StringComparison', () => {
+    it('キーが比べ方に合うものだけを代入する', () => {
+      const result = assignOnlyMutable(
+        {},
+        { onClick: 1, onChange: 2, value: 3 },
+        { startsWith: 'on' },
+      );
+      expect(result).toEqual({ onClick: 1, onChange: 2 });
+    });
+
+    it('複数の比べ方はすべてに合うときに代入する（AND）', () => {
+      const result = assignOnlyMutable(
+        {},
+        { onValueChange: 1, onClick: 2, valueChange: 3 },
+        { startsWith: 'on', endsWith: 'Change' },
+      );
+      expect(result).toEqual({ onValueChange: 1 });
+    });
+
+    it('比べ方が1つも無い場合は何も代入しない', () => {
+      const result = assignOnlyMutable({ a: 1 }, { a: 10, b: 20 }, {});
+      expect(result).toEqual({ a: 1 });
+    });
+
+    it('symbolのキーは代入しない', () => {
+      const symbol = Symbol('a');
+      const result = assignOnlyMutable(
+        {},
+        { [symbol]: 1, a: 2 },
+        {
+          includes: 'a',
+        },
+      );
+      expect(result).toEqual({ a: 2 });
+      expect(symbol in result).toBe(false);
+    });
+  });
+
+  describe('配列', () => {
+    it('キー・RegExp・StringComparisonを混ぜられ、どれかに合えば代入する（OR）', () => {
+      const symbol = Symbol('s');
+      const result = assignOnlyMutable(
+        {},
+        { id: 1, onClick: 2, inputRef: 3, 0: 4, [symbol]: 5, name: 6 },
+        ['id', /^on/, { endsWith: 'Ref' }, 0, symbol],
+      );
+      expect(result).toEqual({
+        id: 1,
+        onClick: 2,
+        inputRef: 3,
+        0: 4,
+        [symbol]: 5,
+      });
+    });
+
+    it('空の配列は何も代入しない', () => {
+      const result = assignOnlyMutable({ a: 1 }, { a: 10 }, []);
+      expect(result).toEqual({ a: 1 });
+    });
+  });
+
   describe('関数', () => {
     it('真を返したものだけを代入する', () => {
       const result = assignOnlyMutable(

@@ -1000,17 +1000,23 @@ assignOnly<T extends object, V extends object>(target: T, values: V, condition: 
 
 Returns a new object with only the properties of `values` that match `condition` assigned to `target`. Symbol keys are included. A matching `undefined` value is assigned too.
 
-| Condition                 | Description                                                                                                                               |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| A key or an array of keys | Assigns only the properties whose keys match (numbers are compared as strings)                                                            |
-| `RegExp`                  | Assigns only the properties whose keys match the regular expression (symbol keys are not assigned)                                        |
-| A function                | Assigns only the properties for which `(value, key, targetValue) => boolean` returns true. `targetValue` is the current value in `target` |
+| Condition                | Description                                                                                                                                                  |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| A key                    | Assigns only the properties whose keys match (numbers are compared as strings)                                                                               |
+| `RegExp`                 | Assigns only the properties whose keys match the regular expression (symbol keys are not assigned)                                                           |
+| `{ includes }` and so on | Assigns only the properties whose keys match a partial, prefix, suffix, or regular expression comparison (`StringComparison`) (symbol keys are not assigned) |
+| An array                 | Keys, `RegExp`s, and `StringComparison`s can be mixed; assigns the properties that match any of them (OR)                                                    |
+| A function               | Assigns only the properties for which `(value, key, targetValue) => boolean` returns true. `targetValue` is the current value in `target`                    |
 
-Keys, arrays of keys, and regular expressions can be passed straight from a loaded configuration.
+Conditions on keys follow the same rules as `createStringMatcher` (a string is an exact match). Conditions other than functions can be passed straight from a loaded configuration.
 
 ```ts
 assignOnly({ a: 1, b: 2 }, { a: 10, b: 20, c: 30 }, ['a', 'c']); // { a: 10, b: 2, c: 30 }
 assignOnly({}, { onClick: f, value: 1 }, /^on[A-Z]/); // { onClick: f }
+assignOnly({}, { onClick: f, inputRef: r, value: 1 }, [
+  { startsWith: 'on' },
+  { endsWith: 'Ref' },
+]); // { onClick: f, inputRef: r }
 
 // Assign only the values that differ from the current values in target
 assignOnly(
@@ -1462,7 +1468,8 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 } (state becomes { a: 9, b: 2 })
 | `AssignDefinedMutableOptions`   | Options for `assignDefinedMutable`                                                                                                                                                                                                                                                                                                                          |
 | `AssignDefinedOptions`          | Same as `AssignDefinedMutableOptions`                                                                                                                                                                                                                                                                                                                       |
 | `AssignDefinedResult<T, V>`     | The return type of `assignDefined` and `assignDefinedMutable`. Keys whose values in `values` may be skipped as `undefined` keep the type of the value in `target`                                                                                                                                                                                           |
-| `AssignOnlyCondition<V>`        | The condition of `assignOnly` and `assignOnlyMutable` (a key, an array of keys, a `RegExp`, or an `AssignOnlyPredicate<V>`)                                                                                                                                                                                                                                 |
+| `AssignOnlyCondition<V>`        | The condition of `assignOnly` and `assignOnlyMutable` (an `AssignOnlyConditionItem`, an array of them, or an `AssignOnlyPredicate<V>`)                                                                                                                                                                                                                      |
+| `AssignOnlyConditionItem`       | One condition on keys of `assignOnly` and `assignOnlyMutable` (a key, a `RegExp`, or a `StringComparison`)                                                                                                                                                                                                                                                  |
 | `AssignOnlyKeysResult<T, V, K>` | The return type of `assignOnly` and `assignOnlyMutable` when the condition is keys. Only the given keys are assigned. Keys that are optional in `values` keep the type of the value in `target` (or `undefined` if `target` does not have the key)                                                                                                          |
 | `AssignOnlyMutableOptions`      | Options for `assignOnlyMutable`                                                                                                                                                                                                                                                                                                                             |
 | `AssignOnlyOptions`             | Same as `AssignOnlyMutableOptions`                                                                                                                                                                                                                                                                                                                          |
@@ -1493,18 +1500,19 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 } (state becomes { a: 9, b: 2 })
 
 ### string
 
-| Function                                          | Description                                                  |
-| ------------------------------------------------- | ------------------------------------------------------------ |
-| `createExtractor(delimiters?)`                    | Creates a function that extracts text enclosed in delimiters |
-| `createReplacerByMap(map)`                        | Creates a function that replaces text according to a map     |
-| `ensureString(data)`                              | Converts a value to a string                                 |
-| `escapeRegExp(data)`                              | Escapes special regular expression characters                |
-| `isSurroundedBy(data, prefix, suffix?)`           | Checks whether a string is enclosed by given strings         |
-| `lowerFirst(data)`                                | Converts the first character to lowercase                    |
-| `replaceByMap(data, map)`                         | Replaces text according to a map                             |
-| `replacePlaceholders(template, values, options?)` | Replaces placeholders in a template with values              |
-| `toCamelCase(data)`, ...                          | Converts the case of a string                                |
-| `upperFirst(data)`                                | Converts the first character to uppercase                    |
+| Function                                          | Description                                                        |
+| ------------------------------------------------- | ------------------------------------------------------------------ |
+| `createExtractor(delimiters?)`                    | Creates a function that extracts text enclosed in delimiters       |
+| `createReplacerByMap(map)`                        | Creates a function that replaces text according to a map           |
+| `createStringMatcher(condition, options?)`        | Creates a function that tests whether a string matches a condition |
+| `ensureString(data)`                              | Converts a value to a string                                       |
+| `escapeRegExp(data)`                              | Escapes special regular expression characters                      |
+| `isSurroundedBy(data, prefix, suffix?)`           | Checks whether a string is enclosed by given strings               |
+| `lowerFirst(data)`                                | Converts the first character to lowercase                          |
+| `replaceByMap(data, map)`                         | Replaces text according to a map                                   |
+| `replacePlaceholders(template, values, options?)` | Replaces placeholders in a template with values                    |
+| `toCamelCase(data)`, ...                          | Converts the case of a string                                      |
+| `upperFirst(data)`                                | Converts the first character to uppercase                          |
 
 #### `createExtractor`
 
@@ -1547,6 +1555,47 @@ Creates a function that replaces text by the same rules as `replaceByMap`. The l
 const replace = createReplacerByMap({ hello: 'hi', world: 'earth' });
 ['hello world', 'hello'].map(replace); // ['hi earth', 'hi']
 ```
+
+#### `createStringMatcher`
+
+```ts
+createStringMatcher(condition: StringCondition, options?: CreateStringMatcherOptions): StringPredicate
+```
+
+Creates a function that tests whether a string matches `condition`. Functions that select strings such as keys or paths by a condition (`assignOnly` and so on) treat conditions by the same rules as this function.
+
+| Condition                                                       | Description                                                                                                                       |
+| --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| A string                                                        | An exact match                                                                                                                    |
+| `RegExp`                                                        | Matches the regular expression (the `g` flag does not change the result)                                                          |
+| `{ includes }`, `{ startsWith }`, `{ endsWith }`, `{ matches }` | A partial, prefix, suffix, or regular expression match (`StringComparison`). When several are given, all of them must match (AND) |
+| A function                                                      | Matches when `(value) => boolean` returns true                                                                                    |
+| An array                                                        | Matches when any of the conditions matches (OR)                                                                                   |
+
+- Partial matches and the like are written as objects so that they can be given from configurations (JSON), which cannot hold regular expressions. `matches` accepts a regular expression written as a string
+- An empty array and an object with no comparisons (`{}`) match nothing. Unknown comparison names are ignored
+- If the string of `matches` is not a valid regular expression, it does not match
+- An empty comparison string (`{ includes: '' }` and so on) matches everything, like JavaScript's `includes` and the others
+
+```ts
+const isHandler = createStringMatcher({ startsWith: 'on' });
+['onClick', 'value'].filter(isHandler); // ['onClick']
+
+const match = createStringMatcher([
+  'id',
+  { startsWith: 'on', endsWith: 'Change' },
+]);
+match('id'); // true
+match('onValueChange'); // true
+match('onClick'); // false
+
+createStringMatcher({ includes: 'abc' }, { ignoreCase: true })('xABCx'); // true
+```
+
+| Option        | Type                        | Description                                                                                                                                                                                                                                                                                      |
+| ------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ignoreCase?` | `boolean`                   | If `true`, case is ignored. Regular expressions are tested with the `i` flag. Defaults to `false`                                                                                                                                                                                                |
+| `normalize?`  | `(value: string) => string` | A function that normalizes strings before comparison. For string comparisons (exact match, `includes`, `startsWith`, `endsWith`) it is applied to both the value and the condition string; for regular expressions only to the value. Function conditions receive the value before normalization |
 
 #### `ensureString`
 
@@ -1677,6 +1726,11 @@ Words are split by the following rules.
 
 | Type                         | Description                                                                                                            |
 | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `CreateStringMatcherOptions` | Options for `createStringMatcher`                                                                                      |
+| `StringComparison`           | How to compare a string `{ includes?, startsWith?, endsWith?, matches? }`. Matches when all of them match              |
+| `StringCondition`            | A string condition (a `StringConditionItem` or an array of them)                                                       |
+| `StringConditionItem`        | One string condition (a string, a `RegExp`, a `StringComparison`, or a `StringPredicate`)                              |
+| `StringPredicate`            | A function that tests whether a string matches a condition `(value: string) => boolean`                                |
 | `Extractor`                  | The function created by `createExtractor`                                                                              |
 | `ExtractorOptions`           | Options for the function created by `createExtractor`                                                                  |
 | `ReplacementMap`             | The map for `replaceByMap` and `createReplacerByMap`: a Map, an object whose properties are entries, or an entry array |

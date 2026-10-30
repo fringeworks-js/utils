@@ -1000,17 +1000,23 @@ assignOnly<T extends object, V extends object>(target: T, values: V, condition: 
 
 `values` の各プロパティのうち、`condition` に合うものだけを `target` に代入した新しいオブジェクトを返します。symbol のキーも対象にします。条件に合えば、`undefined` の値も代入します。
 
-| 条件             | 説明                                                                                                            |
-| ---------------- | --------------------------------------------------------------------------------------------------------------- |
-| キー、キーの配列 | キーが一致するプロパティだけを代入する（数値は文字列にして比べる）                                              |
-| `RegExp`         | キーが正規表現にマッチするプロパティだけを代入する（symbol のキーは代入しない）                                 |
-| 関数             | `(value, key, targetValue) => boolean` が真を返したプロパティだけを代入する。`targetValue` は `target` の今の値 |
+| 条件                | 説明                                                                                                                                  |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| キー                | キーが一致するプロパティだけを代入する（数値は文字列にして比べる）                                                                    |
+| `RegExp`            | キーが正規表現にマッチするプロパティだけを代入する（symbol のキーは代入しない）                                                       |
+| `{ includes }` など | キーが部分一致・前方一致・後方一致・正規表現の比べ方（`StringComparison`）に合うプロパティだけを代入する（symbol のキーは代入しない） |
+| 配列                | キー・`RegExp`・`StringComparison` を混ぜて並べられ、どれかに合うプロパティを代入する（OR）                                           |
+| 関数                | `(value, key, targetValue) => boolean` が真を返したプロパティだけを代入する。`targetValue` は `target` の今の値                       |
 
-キーとキーの配列、正規表現は、設定から読み込んだ値をそのまま渡せます。
+キーに対する条件は `createStringMatcher` と同じルールで扱います（文字列は完全一致）。関数以外の条件は、設定から読み込んだ値をそのまま渡せます。
 
 ```ts
 assignOnly({ a: 1, b: 2 }, { a: 10, b: 20, c: 30 }, ['a', 'c']); // { a: 10, b: 2, c: 30 }
 assignOnly({}, { onClick: f, value: 1 }, /^on[A-Z]/); // { onClick: f }
+assignOnly({}, { onClick: f, inputRef: r, value: 1 }, [
+  { startsWith: 'on' },
+  { endsWith: 'Ref' },
+]); // { onClick: f, inputRef: r }
 
 // target の今の値と違うものだけを代入する
 assignOnly(
@@ -1464,7 +1470,8 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 }（state は { a: 9, b: 2 }）
 | `AssignDefinedMutableOptions`   | `assignDefinedMutable` のオプション                                                                                                                                                                                                                                                                       |
 | `AssignDefinedOptions`          | `AssignDefinedMutableOptions` と同じ                                                                                                                                                                                                                                                                      |
 | `AssignDefinedResult<T, V>`     | `assignDefined`・`assignDefinedMutable` の戻り値。`values` の値が `undefined` で反映されない可能性があるキーは、`target` の値の型も残る                                                                                                                                                                   |
-| `AssignOnlyCondition<V>`        | `assignOnly`・`assignOnlyMutable` の条件（キー・キーの配列・`RegExp`・`AssignOnlyPredicate<V>`）                                                                                                                                                                                                          |
+| `AssignOnlyCondition<V>`        | `assignOnly`・`assignOnlyMutable` の条件（`AssignOnlyConditionItem` かその配列、または `AssignOnlyPredicate<V>`）                                                                                                                                                                                         |
+| `AssignOnlyConditionItem`       | `assignOnly`・`assignOnlyMutable` のキーに対する条件の1つ（キー・`RegExp`・`StringComparison`）                                                                                                                                                                                                           |
 | `AssignOnlyKeysResult<T, V, K>` | 条件にキーを指定したときの `assignOnly`・`assignOnlyMutable` の戻り値。指定したキーだけが代入される。`values` で省略できるキーは、`target` の値の型も残る（`target` に無いキーは `undefined`）                                                                                                            |
 | `AssignOnlyMutableOptions`      | `assignOnlyMutable` のオプション                                                                                                                                                                                                                                                                          |
 | `AssignOnlyOptions`             | `AssignOnlyMutableOptions` と同じ                                                                                                                                                                                                                                                                         |
@@ -1499,6 +1506,7 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 }（state は { a: 9, b: 2 }）
 | ------------------------------------------------- | -------------------------------------------- |
 | `createExtractor(delimiters?)`                    | 囲み文字で囲まれた部分を抽出する関数を作る   |
 | `createReplacerByMap(map)`                        | マップに従って文字列を置換する関数を作る     |
+| `createStringMatcher(condition, options?)`        | 文字列が条件に合うかを判定する関数を作る     |
 | `ensureString(data)`                              | 値を文字列にする                             |
 | `escapeRegExp(data)`                              | 正規表現の特殊文字をエスケープする           |
 | `isSurroundedBy(data, prefix, suffix?)`           | 指定の文字列で囲まれているか判定する         |
@@ -1549,6 +1557,47 @@ createReplacerByMap(map: ReplacementMap): Replacer
 const replace = createReplacerByMap({ hello: 'hi', world: 'earth' });
 ['hello world', 'hello'].map(replace); // ['hi earth', 'hi']
 ```
+
+#### `createStringMatcher`
+
+```ts
+createStringMatcher(condition: StringCondition, options?: CreateStringMatcherOptions): StringPredicate
+```
+
+文字列が `condition` に合うかを判定する関数を作ります。キーやパスなどの文字列を条件で選ぶ関数（`assignOnly` など）は、この関数と同じルールで条件を扱います。
+
+| 条件                                                            | 説明                                                                                                              |
+| --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| 文字列                                                          | 完全一致                                                                                                          |
+| `RegExp`                                                        | 正規表現に一致する（`g` フラグがあっても結果は変わらない）                                                        |
+| `{ includes }`・`{ startsWith }`・`{ endsWith }`・`{ matches }` | 部分一致・前方一致・後方一致・正規表現（`StringComparison`）。複数書いた場合は、すべてに合うときに一致する（AND） |
+| 関数                                                            | `(value) => boolean` が真を返したときに一致する                                                                   |
+| 配列                                                            | どれかに合うときに一致する（OR）                                                                                  |
+
+- 部分一致などは、正規表現を書けない設定（JSON）からも指定できるよう、オブジェクトで書きます。`matches` には、正規表現を文字列で書けます
+- 空の配列と、比べ方を1つも書いていないオブジェクト（`{}`）は、何にも一致しません。知らない名前の比べ方は無視します
+- `matches` の文字列が正規表現として不正な場合は、一致しません
+- 空文字の比べ方（`{ includes: '' }` など）は、JavaScript の `includes` などと同じく、すべてに一致します
+
+```ts
+const isHandler = createStringMatcher({ startsWith: 'on' });
+['onClick', 'value'].filter(isHandler); // ['onClick']
+
+const match = createStringMatcher([
+  'id',
+  { startsWith: 'on', endsWith: 'Change' },
+]);
+match('id'); // true
+match('onValueChange'); // true
+match('onClick'); // false
+
+createStringMatcher({ includes: 'abc' }, { ignoreCase: true })('xABCx'); // true
+```
+
+| オプション    | 型                          | 説明                                                                                                                                                                                         |
+| ------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ignoreCase?` | `boolean`                   | `true` の場合、大文字・小文字を区別しない。正規表現は `i` フラグを付けて比べる。デフォルトは `false`                                                                                         |
+| `normalize?`  | `(value: string) => string` | 比べる前に文字列を正規化する関数。文字列で比べる形（完全一致・`includes`・`startsWith`・`endsWith`）は値と条件の文字列の両方に、正規表現は値にだけ使う。関数の条件には正規化する前の値を渡す |
 
 #### `ensureString`
 
@@ -1679,6 +1728,11 @@ toUpperCase(data: string): string
 
 | 型                           | 説明                                                                                                            |
 | ---------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `CreateStringMatcherOptions` | `createStringMatcher` のオプション                                                                              |
+| `StringComparison`           | 文字列の比べ方 `{ includes?, startsWith?, endsWith?, matches? }`。すべてに合うときに一致する                    |
+| `StringCondition`            | 文字列の条件（`StringConditionItem` かその配列）                                                                |
+| `StringConditionItem`        | 文字列の条件の1つ（文字列・`RegExp`・`StringComparison`・`StringPredicate`）                                    |
+| `StringPredicate`            | 文字列が条件に合うかを判定する関数 `(value: string) => boolean`                                                 |
 | `Extractor`                  | `createExtractor` で作った関数                                                                                  |
 | `ExtractorOptions`           | `createExtractor` で作った関数のオプション                                                                      |
 | `ReplacementMap`             | `replaceByMap`・`createReplacerByMap` のマップ。Map・プロパティをエントリーにするオブジェクト・エントリーの配列 |

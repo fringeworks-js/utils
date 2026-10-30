@@ -1,8 +1,10 @@
 import type { StrictRecord } from '@fringeworks/types';
 import _assignValues from '../../_internal/_assignValues';
-import { isRegExp } from '../../type/isRegExp';
+import type { StringConditionItem } from '../../string/createStringMatcher';
+import { createStringMatcher } from '../../string/createStringMatcher';
 import type {
   AssignOnlyCondition,
+  AssignOnlyConditionItem,
   AssignOnlyKeysResult,
   AssignOnlyMutableOptions,
   AssignOnlyResult,
@@ -12,7 +14,7 @@ import type {
  * valuesの値のうち、条件に合うものだけをtargetへ適用する（破壊的変更）
  * @param target 適用先のオブジェクト
  * @param values 適用する値を持ったオブジェクト
- * @param condition 条件。キー・キーの配列・正規表現（キーと照合する）・関数（値・キー・targetの今の値を受け取る）
+ * @param condition 条件。キー・正規表現・StringComparison（キーと照合する）とその配列、または関数（値・キー・targetの今の値を受け取る）
  * @param options オプション
  * @returns 値を適用した同じオブジェクト
  */
@@ -56,20 +58,21 @@ function _createShouldAssign(
     const record = target as StrictRecord;
     return (value, key) => condition(value, key, record[key]);
   }
-  if (isRegExp(condition)) {
-    // search は lastIndex を使わないため、g フラグ付きの正規表現でも結果が変わらない
-    return (_value, key) =>
-      typeof key === 'string' && key.search(condition) !== -1;
+  // symbol のキーは同じ symbol とだけ比べ、それ以外は文字列の条件として比べる
+  const symbols = new Set<symbol>();
+  const stringConditions: StringConditionItem[] = [];
+  const items: readonly AssignOnlyConditionItem[] = Array.isArray(condition)
+    ? condition
+    : [condition as AssignOnlyConditionItem];
+  for (const item of items) {
+    if (typeof item === 'symbol') {
+      symbols.add(item);
+    } else {
+      // オブジェクトのキーは文字列なので、数値は文字列にして完全一致で比べる
+      stringConditions.push(typeof item === 'number' ? String(item) : item);
+    }
   }
-  const keys = new Set(
-    (Array.isArray(condition) ? condition : [condition]).map(_toKey),
-  );
-  return (_value, key) => keys.has(key);
-}
-
-/**
- * プロパティのキーとして比べられる形にする（数値は文字列にする）
- */
-function _toKey(key: PropertyKey): string | symbol {
-  return typeof key === 'number' ? String(key) : key;
+  const matchString = createStringMatcher(stringConditions);
+  return (_value, key) =>
+    typeof key === 'symbol' ? symbols.has(key) : matchString(key);
 }

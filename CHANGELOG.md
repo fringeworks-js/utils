@@ -3,6 +3,13 @@
 All notable changes to `@fringeworks/utils` are documented in this file.\
 This project follows [Semantic Versioning](https://semver.org/).
 
+## 1.2.0 - Unreleased
+
+### Added
+
+- `createStringMatcher`, which creates a function that tests whether a string matches a condition. A string is an exact match, a `RegExp` is a regular expression, `{ includes }`, `{ startsWith }`, `{ endsWith }`, and `{ matches }` (`StringComparison`) are partial, prefix, suffix, and regular expression matches (all of them must match when several are given), a function is a custom test, and an array matches when any of its conditions matches. The `ignoreCase` and `normalize` options are available. Functions that select strings by a condition follow these rules.
+- `assignOnly` and `assignOnlyMutable` accept `StringComparison` objects and arrays that mix keys, `RegExp`s, and `StringComparison`s as conditions on keys.
+
 ## 1.1.0 - 2026-10-30
 
 ### Added

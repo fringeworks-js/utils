@@ -1,3 +1,4 @@
+import type { StringComparison } from '../../string/createStringMatcher';
 import type { ForEachValueOptions } from '../forEachValue';
 
 export type AssignOnlyMutableOptions = ForEachValueOptions & {
@@ -25,14 +26,24 @@ export type AssignOnlyPredicate<V> = (
 ) => boolean;
 
 /**
+ * assignOnlyMutable・assignOnly の、キーに対する条件の1つ
+ *
+ * - キー: キーが一致するプロパティだけを代入する（数値は文字列にして比べる）
+ * - RegExp: キーが正規表現に一致するプロパティだけを代入する（symbol のキーは代入しない）
+ * - StringComparison: キーが部分一致などの比べ方に合うプロパティだけを代入する（symbol のキーは代入しない）
+ */
+export type AssignOnlyConditionItem = PropertyKey | RegExp | StringComparison;
+
+/**
  * assignOnlyMutable・assignOnly の条件
  *
- * - キー、またはキーの配列: キーが一致するプロパティだけを代入する（数値は文字列にして比べる）
- * - RegExp: キーが正規表現にマッチするプロパティだけを代入する（symbol のキーは代入しない）
+ * - キーに対する条件、またはその配列: 条件に合うキーのプロパティだけを代入する。配列はどれかに合えば代入する（OR）
  * - 関数: 真を返したプロパティだけを代入する
  */
 export type AssignOnlyCondition<V> =
-  PropertyKey | readonly PropertyKey[] | RegExp | AssignOnlyPredicate<V>;
+  | AssignOnlyConditionItem
+  | readonly AssignOnlyConditionItem[]
+  | AssignOnlyPredicate<V>;
 
 /**
  * assignOnlyMutable・assignOnly の結果の型\
