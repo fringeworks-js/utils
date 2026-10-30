@@ -25,4 +25,12 @@ describe('assignDefinedMutable', () => {
     expect(target.polluted).toBeUndefined();
     expect(target).toEqual({ a: 1 });
   });
+
+  it('moveToEnd: 代入したキーを末尾に移し、同じオブジェクトを返す', () => {
+    const target = { a: 1, b: 2 };
+    const result = assignDefinedMutable(target, { a: 10 }, { moveToEnd: true });
+    expect(result).toBe(target);
+    expect(Object.keys(target)).toEqual(['b', 'a']);
+    expect(target.a).toBe(10);
+  });
 });

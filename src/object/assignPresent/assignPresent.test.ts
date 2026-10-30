@@ -33,4 +33,14 @@ describe('assignPresent', () => {
     const result = assignPresent({ a: 1 }, values);
     expectTypeOf(result.d).toEqualTypeOf<number | undefined>();
   });
+
+  it('moveToEnd: 代入したキーだけを末尾に移す（null は代入しないので動かない）', () => {
+    const result = assignPresent(
+      { a: 1, b: 2, c: 3 },
+      { a: 10, b: null },
+      { moveToEnd: true },
+    );
+    expect(result).toEqual({ a: 10, b: 2, c: 3 });
+    expect(Object.keys(result)).toEqual(['b', 'c', 'a']);
+  });
 });

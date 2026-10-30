@@ -60,23 +60,28 @@ The `array` functions handle `null` / `undefined` passed as an array argument as
 | ------------------------------------------- | ------------------------------------------------------------------------------ |
 | `clearArrayMutable(data)`                   | Removes all elements from an array and returns the removed elements (mutating) |
 | `compactMap(data, callback, options?)`      | Maps each element and returns an array without unwanted values                 |
+| `createRange(length, options?)`             | Creates an array of sequential numbers                                         |
 | `ensureArray(data, options?)`               | Wraps a non-array value in an array                                            |
 | `firstDefined(data)`                        | Returns the first element that is not `undefined`                              |
 | `firstPresent(data)`                        | Returns the first element that is neither `null` nor `undefined`               |
 | `insertAt(data, index, items)`              | Returns a new array with elements inserted at an index                         |
 | `insertAtMutable(data, index, items)`       | Inserts elements at an index (mutating)                                        |
+| `lastItem(data)`                            | Returns the last element                                                       |
 | `nestedGroupBy(data, properties, options?)` | Groups elements under keys taken from property values                          |
 | `nestedKeyBy(data, properties, options?)`   | Stores one element per key taken from property values                          |
 | `pushAll(data, source)`                     | Returns a new array with all elements of another array appended                |
 | `pushAllMutable(data, source)`              | Appends all elements of another array (mutating)                               |
 | `pushUnique(data, items, options?)`         | Returns a new array with only elements not yet included appended               |
 | `pushUniqueMutable(data, items, options?)`  | Appends only elements not yet included (mutating)                              |
+| `removeAt(data, index, options?)`           | Returns a new array with elements removed at an index                          |
+| `removeAtMutable(data, index, options?)`    | Removes elements at an index (mutating)                                        |
 | `repeatToLength(data, length)`              | Returns a new array that repeats the array up to a length                      |
 | `rotateArray(data, options?)`               | Returns a new array with leading elements moved to the end                     |
 | `rotateArrayMutable(data, options?)`        | Moves leading elements to the end (mutating)                                   |
 | `sortDependencies(data, options?)`          | Sorts elements by their dependencies (topological sort)                        |
 | `swapPairs(pairs)`                          | Swaps the two elements of each pair in an array of pairs                       |
 | `toArray(data, options?)`                   | Spreads an iterable into an array and wraps any other value in an array        |
+| `truncateArrayMutable(data, length)`        | Truncates an array to a length (mutating)                                      |
 
 #### `clearArrayMutable`
 
@@ -102,6 +107,25 @@ compactMap(['a', '', null], (v) => v, { exclude: 'empty' }); // ['a']
 | Option     | Type                | Description                                                                                                                                                                                           |
 | ---------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `exclude?` | `CompactMapExclude` | Values to exclude. `'undefined'`: `undefined`; `'nullish'`: `null` and `undefined`; `'empty'`: also empty strings; `'falsy'`: every falsy value (`false`, `0`, `NaN`, ...). Defaults to `'undefined'` |
+
+#### `createRange`
+
+```ts
+createRange(length: number, options?: CreateRangeOptions): number[]
+```
+
+Creates an array of `length` numbers that starts at `start` and changes by `step` (an alternative to `Array.from({ length }, (_, i) => i)`). Each element is computed as `start + index * step`, so a fractional `step` does not accumulate rounding errors. A fractional `length` is truncated, and a negative number, `NaN`, and `Infinity` are treated as 0.
+
+```ts
+createRange(5); // [0, 1, 2, 3, 4]
+createRange(3, { start: 1 }); // [1, 2, 3]
+createRange(3, { start: 10, step: -2 }); // [10, 8, 6]
+```
+
+| Option   | Type     | Description                                                                                          |
+| -------- | -------- | ---------------------------------------------------------------------------------------------------- |
+| `start?` | `number` | The first value. Defaults to `0`                                                                     |
+| `step?`  | `number` | The difference between adjacent values. A negative number makes the values decrease. Defaults to `1` |
 
 #### `ensureArray`
 
@@ -158,6 +182,14 @@ insertAtMutable<T, U = T>(data: T[], index: number, items: readonly U[] | null |
 ```
 
 The mutating version of `insertAt`. Inserts into `data` directly and returns the same array.
+
+#### `lastItem`
+
+```ts
+lastItem<V>(data: readonly V[] | null | undefined): V | undefined
+```
+
+Returns the last element, or `undefined` for an empty array. Use it instead of `data.at(-1)`, which is an ES2022 feature, when you support older environments.
 
 #### `nestedGroupBy`
 
@@ -238,6 +270,32 @@ pushUniqueMutable<T>(data: T[], items: readonly T[] | null | undefined, options?
 ```
 
 The mutating version of `pushUnique`. Appends to `data` directly and returns the same array. The options are the same as `pushUnique`.
+
+#### `removeAt`
+
+```ts
+removeAt<T>(data: readonly T[] | null | undefined, index: number, options?: RemoveAtOptions): T[]
+```
+
+Returns a new array with `count` elements removed from `index` (a non-mutating version of `splice(index, count)`). Nothing is removed when `index` is out of range (a negative number, the array length or more, or `NaN`). Like `insertAt`, a negative index is not counted from the end. A fractional `index` is truncated.
+
+```ts
+removeAt([1, 2, 3, 4], 1); // [1, 3, 4]
+removeAt([1, 2, 3, 4], 1, { count: 2 }); // [1, 4]
+removeAt([1, 2, 3, 4], -1); // [1, 2, 3, 4]
+```
+
+| Option   | Type     | Description                                                                                                                                                                          |
+| -------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `count?` | `number` | The number of elements to remove. A fractional number is truncated, and nothing is removed for 0 or less or `NaN`. Elements beyond the end of the array are ignored. Defaults to `1` |
+
+#### `removeAtMutable`
+
+```ts
+removeAtMutable<T>(data: T[], index: number, options?: RemoveAtMutableOptions): T[]
+```
+
+The mutating version of `removeAt`. Removes from `data` directly and returns the same array. The options are the same as `removeAt`.
 
 #### `repeatToLength`
 
@@ -348,12 +406,27 @@ toArray(1); // [1]
 | ------ | --------- | --------------------- |
 | `raw?` | `boolean` | Same as `ensureArray` |
 
+#### `truncateArrayMutable`
+
+```ts
+truncateArrayMutable<T>(data: T[], length: number): T[]
+```
+
+Truncates the array to `length` (mutating) and returns the same array. Unlike `data.length = length`, it does nothing when the array is already `length` or shorter (it never extends the array with empty slots). A fractional `length` is truncated, and a negative number is treated as 0. `NaN` does nothing.
+
+```ts
+const array = [1, 2, 3, 4];
+truncateArrayMutable(array, 2); // array is [1, 2]
+truncateArrayMutable(array, 5); // array is still [1, 2]
+```
+
 #### Types
 
 | Type                                 | Description                                                                  |
 | ------------------------------------ | ---------------------------------------------------------------------------- |
 | `CompactMapOptions`                  | Options for `compactMap`                                                     |
 | `CompactMapExclude`                  | The kinds of values `compactMap` excludes                                    |
+| `CreateRangeOptions`                 | Options for `createRange`                                                    |
 | `EnsureArrayOptions`                 | Options for `ensureArray`                                                    |
 | `NestedGroupByOptions`               | Options for `nestedGroupBy`                                                  |
 | `NestedGroupByResult<I>`             | The return value of `nestedGroupBy`                                          |
@@ -361,6 +434,8 @@ toArray(1); // [1]
 | `NestedKeyByResult<I>`               | The return value of `nestedKeyBy`                                            |
 | `PushUniqueMutableOptions<T>`        | Options for `pushUniqueMutable`                                              |
 | `PushUniqueOptions<T>`               | Same as `PushUniqueMutableOptions<T>`                                        |
+| `RemoveAtMutableOptions`             | Options for `removeAtMutable`                                                |
+| `RemoveAtOptions`                    | Same as `RemoveAtMutableOptions`                                             |
 | `RotateArrayMutableOptions`          | Options for `rotateArrayMutable`                                             |
 | `RotateArrayOptions`                 | Same as `RotateArrayMutableOptions`                                          |
 | `SortDependenciesOptions<I>`         | Options for `sortDependencies`                                               |
@@ -852,39 +927,41 @@ roundToStep(0.3, 0.1); // 0.3
 
 To prevent prototype pollution, functions that read or write object keys ignore the `__proto__` key. Functions that take a path, such as `set` and `unset`, do nothing when the path contains `__proto__`.
 
-| Function                                               | Description                                                                          |
-| ------------------------------------------------------ | ------------------------------------------------------------------------------------ |
-| `assignDefined(target, values, options?)`              | Returns a new object with only the values that are not `undefined` assigned          |
-| `assignDefinedMutable(target, values, options?)`       | Assigns only the values that are not `undefined` (mutating)                          |
-| `assignPresent(target, values, options?)`              | Returns a new object with only the values that are not `null` / `undefined` assigned |
-| `assignPresentMutable(target, values, options?)`       | Assigns only the values that are not `null` / `undefined` (mutating)                 |
-| `cloneDeep(value)`                                     | Makes a deep copy of a value                                                         |
-| `cloneShallow(value)`                                  | Makes a shallow copy of a value                                                      |
-| `countKeys(data)`                                      | Returns the number of enumerable properties of an object                             |
-| `createOverrideProxy(instance, overrides)`             | Creates a proxy that overrides an instance's properties                              |
-| `createSplitByKeys<T>(keys)`                           | Creates a function that splits the properties of the given keys from the rest        |
-| `distribute(data, rules, options?)`                    | Splits properties into several objects according to rules                            |
-| `exactKeys<T>()(keys)`                                 | Checks at compile time that an array lists exactly the keys of a type                |
-| `exactKeysFromRecord<T>(keys)`                         | Creates an array of keys from an object that has every key of a type                 |
-| `fillDefaults(target, defaultValues, options?)`        | Returns a new object with missing properties filled with defaults                    |
-| `fillDefaultsMutable(target, defaultValues, options?)` | Fills missing properties with defaults (mutating)                                    |
-| `filterByKeys(data, condition, options?)`              | Keeps only the properties whose keys match a condition                               |
-| `filterByValues(data, condition, options?)`            | Keeps only the values that match a condition                                         |
-| `flattenObject(data, options?)`                        | Flattens a nested object into a single level                                         |
-| `forEachValue(data, callback, options?)`               | Runs a callback for the value of each property                                       |
-| `get(data, path, options?)`                            | Returns the value of the property at a path                                          |
-| `hasOwn(data, key)`                                    | Checks whether an object has an own property (equivalent to `Object.hasOwn`)         |
-| `maybeHasOwn(data, key)`                               | Checks whether an object has an own property (safe for `null`)                       |
-| `omit(data, keys)`                                     | Returns a new object without the given keys                                          |
-| `parsePropertyPath(path)`                              | Converts a property path to an array of keys                                         |
-| `set(data, path, value)`                               | Returns a new object with a value set at a path                                      |
-| `setMutable(data, path, value)`                        | Sets a value at a path (mutating)                                                    |
-| `stableStringify(value, space?)`                       | Converts a value to a JSON string with sorted keys                                   |
-| `transformObject(source, rules, options?)`             | Reshapes an object according to rules                                                |
-| `unset(data, path)`                                    | Returns a new object without the property at a path                                  |
-| `unsetMutable(data, path)`                             | Removes the property at a path (mutating)                                            |
-| `update(target, values, options?)`                     | Returns a new object with only the changed properties updated                        |
-| `updateMutable(target, values, options?)`              | Updates only the changed properties and returns their previous values (mutating)     |
+| Function                                                 | Description                                                                          |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `assignDefined(target, values, options?)`                | Returns a new object with only the values that are not `undefined` assigned          |
+| `assignDefinedMutable(target, values, options?)`         | Assigns only the values that are not `undefined` (mutating)                          |
+| `assignOnly(target, values, condition, options?)`        | Returns a new object with only the values that match a condition assigned            |
+| `assignOnlyMutable(target, values, condition, options?)` | Assigns only the values that match a condition (mutating)                            |
+| `assignPresent(target, values, options?)`                | Returns a new object with only the values that are not `null` / `undefined` assigned |
+| `assignPresentMutable(target, values, options?)`         | Assigns only the values that are not `null` / `undefined` (mutating)                 |
+| `cloneDeep(value)`                                       | Makes a deep copy of a value                                                         |
+| `cloneShallow(value)`                                    | Makes a shallow copy of a value                                                      |
+| `countKeys(data)`                                        | Returns the number of enumerable properties of an object                             |
+| `createOverrideProxy(instance, overrides)`               | Creates a proxy that overrides an instance's properties                              |
+| `createSplitByKeys<T>(keys)`                             | Creates a function that splits the properties of the given keys from the rest        |
+| `distribute(data, rules, options?)`                      | Splits properties into several objects according to rules                            |
+| `exactKeys<T>()(keys)`                                   | Checks at compile time that an array lists exactly the keys of a type                |
+| `exactKeysFromRecord<T>(keys)`                           | Creates an array of keys from an object that has every key of a type                 |
+| `fillDefaults(target, defaultValues, options?)`          | Returns a new object with missing properties filled with defaults                    |
+| `fillDefaultsMutable(target, defaultValues, options?)`   | Fills missing properties with defaults (mutating)                                    |
+| `filterByKeys(data, condition, options?)`                | Keeps only the properties whose keys match a condition                               |
+| `filterByValues(data, condition, options?)`              | Keeps only the values that match a condition                                         |
+| `flattenObject(data, options?)`                          | Flattens a nested object into a single level                                         |
+| `forEachValue(data, callback, options?)`                 | Runs a callback for the value of each property                                       |
+| `get(data, path, options?)`                              | Returns the value of the property at a path                                          |
+| `hasOwn(data, key)`                                      | Checks whether an object has an own property (equivalent to `Object.hasOwn`)         |
+| `maybeHasOwn(data, key)`                                 | Checks whether an object has an own property (safe for `null`)                       |
+| `omit(data, keys)`                                       | Returns a new object without the given keys                                          |
+| `parsePropertyPath(path)`                                | Converts a property path to an array of keys                                         |
+| `set(data, path, value)`                                 | Returns a new object with a value set at a path                                      |
+| `setMutable(data, path, value)`                          | Sets a value at a path (mutating)                                                    |
+| `stableStringify(value, space?)`                         | Converts a value to a JSON string with sorted keys                                   |
+| `transformObject(source, rules, options?)`               | Reshapes an object according to rules                                                |
+| `unset(data, path)`                                      | Returns a new object without the property at a path                                  |
+| `unsetMutable(data, path)`                               | Removes the property at a path (mutating)                                            |
+| `update(target, values, options?)`                       | Returns a new object with only the changed properties updated                        |
+| `updateMutable(target, values, options?)`                | Updates only the changed properties and returns their previous values (mutating)     |
 
 #### `assignDefined`
 
@@ -896,11 +973,15 @@ Returns a new object with only the properties of `values` that are not `undefine
 
 ```ts
 assignDefined({ a: 1, b: 2 }, { a: undefined, b: null, c: 3 }); // { a: 1, b: null, c: 3 }
+
+// Move assigned keys to the end (so that values take precedence in styles, where later declarations win)
+assignDefined({ a: 1, b: 2 }, { a: 10 }, { moveToEnd: true }); // { b: 2, a: 10 }
 ```
 
-| Option              | Type      | Description                                                  |
-| ------------------- | --------- | ------------------------------------------------------------ |
-| `includeInherited?` | `boolean` | If `true`, inherited properties of `values` are assigned too |
+| Option              | Type      | Description                                                                                                                                                            |
+| ------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `includeInherited?` | `boolean` | If `true`, inherited properties of `values` are assigned too                                                                                                           |
+| `moveToEnd?`        | `boolean` | If `true`, assigned keys are moved to the end of the result's key order (useful for objects such as styles where later keys take precedence; integer keys do not move) |
 
 #### `assignDefinedMutable`
 
@@ -909,6 +990,49 @@ assignDefinedMutable<T extends object, V extends object>(target: T, values: V, o
 ```
 
 The mutating version of `assignDefined`. Assigns to `target` directly and returns the same object. The options are the same as `assignDefined`.
+
+#### `assignOnly`
+
+```ts
+assignOnly<T extends object, V extends object, K extends keyof V>(target: T, values: V, condition: K | readonly K[], options?: AssignOnlyOptions): AssignOnlyKeysResult<T, V, K>
+assignOnly<T extends object, V extends object>(target: T, values: V, condition: AssignOnlyCondition<V>, options?: AssignOnlyOptions): AssignOnlyResult<T, V>
+```
+
+Returns a new object with only the properties of `values` that match `condition` assigned to `target`. Symbol keys are included. A matching `undefined` value is assigned too.
+
+| Condition                 | Description                                                                                                                               |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| A key or an array of keys | Assigns only the properties whose keys match (numbers are compared as strings)                                                            |
+| `RegExp`                  | Assigns only the properties whose keys match the regular expression (symbol keys are not assigned)                                        |
+| A function                | Assigns only the properties for which `(value, key, targetValue) => boolean` returns true. `targetValue` is the current value in `target` |
+
+Keys, arrays of keys, and regular expressions can be passed straight from a loaded configuration.
+
+```ts
+assignOnly({ a: 1, b: 2 }, { a: 10, b: 20, c: 30 }, ['a', 'c']); // { a: 10, b: 2, c: 30 }
+assignOnly({}, { onClick: f, value: 1 }, /^on[A-Z]/); // { onClick: f }
+
+// Assign only the values that differ from the current values in target
+assignOnly(
+  { a: 1, b: 2 },
+  { a: 1, b: 3 },
+  (value, key, targetValue) => value !== targetValue,
+); // { a: 1, b: 3 } (only b is assigned)
+```
+
+| Option              | Type      | Description                                                                                                                                                            |
+| ------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `includeInherited?` | `boolean` | If `true`, inherited properties of `values` are assigned too                                                                                                           |
+| `moveToEnd?`        | `boolean` | If `true`, assigned keys are moved to the end of the result's key order (useful for objects such as styles where later keys take precedence; integer keys do not move) |
+
+#### `assignOnlyMutable`
+
+```ts
+assignOnlyMutable<T extends object, V extends object, K extends keyof V>(target: T, values: V, condition: K | readonly K[], options?: AssignOnlyMutableOptions): AssignOnlyKeysResult<T, V, K>
+assignOnlyMutable<T extends object, V extends object>(target: T, values: V, condition: AssignOnlyCondition<V>, options?: AssignOnlyMutableOptions): AssignOnlyResult<T, V>
+```
+
+The mutating version of `assignOnly`. Assigns to `target` directly and returns the same object. The conditions and options are the same as `assignOnly`.
 
 #### `assignPresent`
 
@@ -922,9 +1046,10 @@ Returns a new object with only the properties of `values` that are not `null` / 
 assignPresent({ a: 1, b: 2 }, { a: undefined, b: null, c: 3 }); // { a: 1, b: 2, c: 3 }
 ```
 
-| Option              | Type      | Description                                                  |
-| ------------------- | --------- | ------------------------------------------------------------ |
-| `includeInherited?` | `boolean` | If `true`, inherited properties of `values` are assigned too |
+| Option              | Type      | Description                                                                                                                                                            |
+| ------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `includeInherited?` | `boolean` | If `true`, inherited properties of `values` are assigned too                                                                                                           |
+| `moveToEnd?`        | `boolean` | If `true`, assigned keys are moved to the end of the result's key order (useful for objects such as styles where later keys take precedence; integer keys do not move) |
 
 #### `assignPresentMutable`
 
@@ -1332,33 +1457,39 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 } (state becomes { a: 9, b: 2 })
 
 #### Types
 
-| Type                          | Description                                                                                                                                                                                                                                                                                                                                                 |
-| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `AssignDefinedMutableOptions` | Options for `assignDefinedMutable`                                                                                                                                                                                                                                                                                                                          |
-| `AssignDefinedOptions`        | Same as `AssignDefinedMutableOptions`                                                                                                                                                                                                                                                                                                                       |
-| `AssignDefinedResult<T, V>`   | The return type of `assignDefined` and `assignDefinedMutable`. Keys whose values in `values` may be skipped as `undefined` keep the type of the value in `target`                                                                                                                                                                                           |
-| `AssignPresentMutableOptions` | Options for `assignPresentMutable`                                                                                                                                                                                                                                                                                                                          |
-| `AssignPresentOptions`        | Same as `AssignPresentMutableOptions`                                                                                                                                                                                                                                                                                                                       |
-| `AssignPresentResult<T, V>`   | The return type of `assignPresent` and `assignPresentMutable`. Keys whose values in `values` may be skipped as `null` / `undefined` keep the type of the value in `target` (or `undefined` if `target` does not have the key)                                                                                                                               |
-| `DistributeOptions`           | Options for `distribute`                                                                                                                                                                                                                                                                                                                                    |
-| `DistributeRules<T>`          | The rules of `distribute` `{ [group]: array of property names \| null }`                                                                                                                                                                                                                                                                                    |
-| `DistributePropertyList<T>`   | An array of property names in the rules of `distribute`                                                                                                                                                                                                                                                                                                     |
-| `DistributeResult<T, R>`      | The return value of `distribute`                                                                                                                                                                                                                                                                                                                            |
-| `FillDefaultsMutableOptions`  | Options for `fillDefaultsMutable`                                                                                                                                                                                                                                                                                                                           |
-| `FillDefaultsOptions`         | Same as `FillDefaultsMutableOptions`                                                                                                                                                                                                                                                                                                                        |
-| `FillDefaultsResult<T, V, O>` | The return type of `fillDefaults` and `fillDefaultsMutable`. Keys whose values in `target` are `undefined` (also `null` when `overwriteNull: true`) have those values removed and the type of the value in `defaultValues` added. Literal types of `defaultValues` are kept. If `overwriteNull` is a `boolean` not known at compile time, `null` may remain |
-| `FilterByKeysOptions`         | Options for `filterByKeys`                                                                                                                                                                                                                                                                                                                                  |
-| `FilterByValuesOptions`       | Options for `filterByValues`                                                                                                                                                                                                                                                                                                                                |
-| `FlattenObjectOptions`        | Options for `flattenObject`                                                                                                                                                                                                                                                                                                                                 |
-| `ForEachValueOptions`         | Options for `forEachValue`                                                                                                                                                                                                                                                                                                                                  |
-| `GetOptions`                  | Options for `get`                                                                                                                                                                                                                                                                                                                                           |
-| `PropertyPath`                | A path for `get`, `set`, `unset`, and others. A string is parsed by the rules of `parsePropertyPath`, a number or symbol is a single key, and an array is a sequence of keys                                                                                                                                                                                |
-| `SplitKeyRecord<T>`           | The object of keys passed to `createSplitByKeys`. If `T` is a union type, it has the keys of all its members                                                                                                                                                                                                                                                |
-| `SplitRest<D, T>`             | `rest` returned by the function created by `createSplitByKeys`. `D` without the keys of `T`                                                                                                                                                                                                                                                                 |
-| `TransformObjectOptions`      | Options for `transformObject`                                                                                                                                                                                                                                                                                                                               |
-| `TransformObjectRule<S, T>`   | A rule of `transformObject`                                                                                                                                                                                                                                                                                                                                 |
-| `UpdateMutableOptions`        | Options for `updateMutable`                                                                                                                                                                                                                                                                                                                                 |
-| `UpdateOptions`               | Same as `UpdateMutableOptions`                                                                                                                                                                                                                                                                                                                              |
+| Type                            | Description                                                                                                                                                                                                                                                                                                                                                 |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AssignDefinedMutableOptions`   | Options for `assignDefinedMutable`                                                                                                                                                                                                                                                                                                                          |
+| `AssignDefinedOptions`          | Same as `AssignDefinedMutableOptions`                                                                                                                                                                                                                                                                                                                       |
+| `AssignDefinedResult<T, V>`     | The return type of `assignDefined` and `assignDefinedMutable`. Keys whose values in `values` may be skipped as `undefined` keep the type of the value in `target`                                                                                                                                                                                           |
+| `AssignOnlyCondition<V>`        | The condition of `assignOnly` and `assignOnlyMutable` (a key, an array of keys, a `RegExp`, or an `AssignOnlyPredicate<V>`)                                                                                                                                                                                                                                 |
+| `AssignOnlyKeysResult<T, V, K>` | The return type of `assignOnly` and `assignOnlyMutable` when the condition is keys. Only the given keys are assigned. Keys that are optional in `values` keep the type of the value in `target` (or `undefined` if `target` does not have the key)                                                                                                          |
+| `AssignOnlyMutableOptions`      | Options for `assignOnlyMutable`                                                                                                                                                                                                                                                                                                                             |
+| `AssignOnlyOptions`             | Same as `AssignOnlyMutableOptions`                                                                                                                                                                                                                                                                                                                          |
+| `AssignOnlyPredicate<V>`        | The predicate of `assignOnly` and `assignOnlyMutable` `(value, key, targetValue) => boolean`                                                                                                                                                                                                                                                                |
+| `AssignOnlyResult<T, V>`        | The return type of `assignOnly` and `assignOnlyMutable` when the condition is a `RegExp` or a function. Any key of `values` may be skipped, so the type of the value in `target` is kept (or `undefined` if `target` does not have the key)                                                                                                                 |
+| `AssignPresentMutableOptions`   | Options for `assignPresentMutable`                                                                                                                                                                                                                                                                                                                          |
+| `AssignPresentOptions`          | Same as `AssignPresentMutableOptions`                                                                                                                                                                                                                                                                                                                       |
+| `AssignPresentResult<T, V>`     | The return type of `assignPresent` and `assignPresentMutable`. Keys whose values in `values` may be skipped as `null` / `undefined` keep the type of the value in `target` (or `undefined` if `target` does not have the key)                                                                                                                               |
+| `DistributeOptions`             | Options for `distribute`                                                                                                                                                                                                                                                                                                                                    |
+| `DistributeRules<T>`            | The rules of `distribute` `{ [group]: array of property names \| null }`                                                                                                                                                                                                                                                                                    |
+| `DistributePropertyList<T>`     | An array of property names in the rules of `distribute`                                                                                                                                                                                                                                                                                                     |
+| `DistributeResult<T, R>`        | The return value of `distribute`                                                                                                                                                                                                                                                                                                                            |
+| `FillDefaultsMutableOptions`    | Options for `fillDefaultsMutable`                                                                                                                                                                                                                                                                                                                           |
+| `FillDefaultsOptions`           | Same as `FillDefaultsMutableOptions`                                                                                                                                                                                                                                                                                                                        |
+| `FillDefaultsResult<T, V, O>`   | The return type of `fillDefaults` and `fillDefaultsMutable`. Keys whose values in `target` are `undefined` (also `null` when `overwriteNull: true`) have those values removed and the type of the value in `defaultValues` added. Literal types of `defaultValues` are kept. If `overwriteNull` is a `boolean` not known at compile time, `null` may remain |
+| `FilterByKeysOptions`           | Options for `filterByKeys`                                                                                                                                                                                                                                                                                                                                  |
+| `FilterByValuesOptions`         | Options for `filterByValues`                                                                                                                                                                                                                                                                                                                                |
+| `FlattenObjectOptions`          | Options for `flattenObject`                                                                                                                                                                                                                                                                                                                                 |
+| `ForEachValueOptions`           | Options for `forEachValue`                                                                                                                                                                                                                                                                                                                                  |
+| `GetOptions`                    | Options for `get`                                                                                                                                                                                                                                                                                                                                           |
+| `PropertyPath`                  | A path for `get`, `set`, `unset`, and others. A string is parsed by the rules of `parsePropertyPath`, a number or symbol is a single key, and an array is a sequence of keys                                                                                                                                                                                |
+| `SplitKeyRecord<T>`             | The object of keys passed to `createSplitByKeys`. If `T` is a union type, it has the keys of all its members                                                                                                                                                                                                                                                |
+| `SplitRest<D, T>`               | `rest` returned by the function created by `createSplitByKeys`. `D` without the keys of `T`                                                                                                                                                                                                                                                                 |
+| `TransformObjectOptions`        | Options for `transformObject`                                                                                                                                                                                                                                                                                                                               |
+| `TransformObjectRule<S, T>`     | A rule of `transformObject`                                                                                                                                                                                                                                                                                                                                 |
+| `UpdateMutableOptions`          | Options for `updateMutable`                                                                                                                                                                                                                                                                                                                                 |
+| `UpdateOptions`                 | Same as `UpdateMutableOptions`                                                                                                                                                                                                                                                                                                                              |
 
 ### string
 

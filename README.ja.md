@@ -60,23 +60,28 @@ import keepInRange from '@fringeworks/utils/number/keepInRange';
 | ------------------------------------------- | -------------------------------------------------------- |
 | `clearArrayMutable(data)`                   | 配列の全要素を削除し、削除した要素を返す（破壊的）       |
 | `compactMap(data, callback, options?)`      | 各要素を変換し、不要な値を除いた配列を返す               |
+| `createRange(length, options?)`             | 連続した数値の配列を作る                                 |
 | `ensureArray(data, options?)`               | 配列でない値を配列で包む                                 |
 | `firstDefined(data)`                        | 最初の `undefined` でない要素を返す                      |
 | `firstPresent(data)`                        | 最初の `null` / `undefined` でない要素を返す             |
 | `insertAt(data, index, items)`              | 指定の位置に要素を挿入した新しい配列を返す               |
 | `insertAtMutable(data, index, items)`       | 指定の位置に要素を挿入する（破壊的）                     |
+| `lastItem(data)`                            | 最後の要素を返す                                         |
 | `nestedGroupBy(data, properties, options?)` | 指定のプロパティの値をキーにして要素をグループ化する     |
 | `nestedKeyBy(data, properties, options?)`   | 指定のプロパティの値をキーにして要素を1つずつ格納する    |
 | `pushAll(data, source)`                     | 別の配列の全要素を追加した新しい配列を返す               |
 | `pushAllMutable(data, source)`              | 別の配列の全要素を追加する（破壊的）                     |
 | `pushUnique(data, items, options?)`         | まだ含まれていない要素だけを追加した新しい配列を返す     |
 | `pushUniqueMutable(data, items, options?)`  | まだ含まれていない要素だけを追加する（破壊的）           |
+| `removeAt(data, index, options?)`           | 指定の位置から要素を削除した新しい配列を返す             |
+| `removeAtMutable(data, index, options?)`    | 指定の位置から要素を削除する（破壊的）                   |
 | `repeatToLength(data, length)`              | 指定の長さになるまで配列を繰り返した新しい配列を返す     |
 | `rotateArray(data, options?)`               | 先頭の要素を末尾に移動した新しい配列を返す               |
 | `rotateArrayMutable(data, options?)`        | 先頭の要素を末尾に移動する（破壊的）                     |
 | `sortDependencies(data, options?)`          | 依存関係に従って並べ替える（トポロジカルソート）         |
 | `swapPairs(pairs)`                          | 2要素のタプルの配列の各タプルの要素を入れ替える          |
 | `toArray(data, options?)`                   | イテラブルを展開して配列にする。それ以外の値は配列で包む |
+| `truncateArrayMutable(data, length)`        | 配列を指定の長さまで切り詰める（破壊的）                 |
 
 #### `clearArrayMutable`
 
@@ -102,6 +107,25 @@ compactMap(['a', '', null], (v) => v, { exclude: 'empty' }); // ['a']
 | オプション | 型                  | 説明                                                                                                                                                                                     |
 | ---------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `exclude?` | `CompactMapExclude` | 除外する値。`'undefined'`: `undefined`、`'nullish'`: `null` と `undefined`、`'empty'`: 加えて空文字、`'falsy'`: falsy な値すべて（`false`、`0`、`NaN` など）。デフォルトは `'undefined'` |
+
+#### `createRange`
+
+```ts
+createRange(length: number, options?: CreateRangeOptions): number[]
+```
+
+`start` から `step` ずつ変わる、長さ `length` の数値の配列を作ります（`Array.from({ length }, (_, i) => i)` の代わり）。各要素は `start + index * step` で求めるので、小数の `step` でも誤差がたまりません。`length` の小数は切り捨て、負の数・`NaN`・`Infinity` は 0 として扱います。
+
+```ts
+createRange(5); // [0, 1, 2, 3, 4]
+createRange(3, { start: 1 }); // [1, 2, 3]
+createRange(3, { start: 10, step: -2 }); // [10, 8, 6]
+```
+
+| オプション | 型       | 説明                                                           |
+| ---------- | -------- | -------------------------------------------------------------- |
+| `start?`   | `number` | 最初の値。デフォルトは `0`                                     |
+| `step?`    | `number` | 隣り合う値の差。負の数にすると値が減っていく。デフォルトは `1` |
 
 #### `ensureArray`
 
@@ -158,6 +182,14 @@ insertAtMutable<T, U = T>(data: T[], index: number, items: readonly U[] | null |
 ```
 
 `insertAt` の破壊的な版です。`data` に直接挿入し、同じ配列を返します。
+
+#### `lastItem`
+
+```ts
+lastItem<V>(data: readonly V[] | null | undefined): V | undefined
+```
+
+最後の要素を返します。空配列の場合は `undefined` を返します。`data.at(-1)` は ES2022 の機能なので、それより前の環境に対応するときに使います。
 
 #### `nestedGroupBy`
 
@@ -238,6 +270,32 @@ pushUniqueMutable<T>(data: T[], items: readonly T[] | null | undefined, options?
 ```
 
 `pushUnique` の破壊的な版です。`data` に直接追加し、同じ配列を返します。オプションは `pushUnique` と同じです。
+
+#### `removeAt`
+
+```ts
+removeAt<T>(data: readonly T[] | null | undefined, index: number, options?: RemoveAtOptions): T[]
+```
+
+`index` の位置から `count` 個の要素を削除した新しい配列を返します（`splice(index, count)` の非破壊的な版）。`index` が範囲外（負の数、配列の長さ以上、`NaN`）の場合は何も削除しません。`insertAt` と同じく、負の数を後ろから数えません。`index` の小数は切り捨てます。
+
+```ts
+removeAt([1, 2, 3, 4], 1); // [1, 3, 4]
+removeAt([1, 2, 3, 4], 1, { count: 2 }); // [1, 4]
+removeAt([1, 2, 3, 4], -1); // [1, 2, 3, 4]
+```
+
+| オプション | 型       | 説明                                                                                                                     |
+| ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `count?`   | `number` | 削除する要素の数。小数は切り捨て、0 以下・`NaN` の場合は何も削除しない。配列の末尾を超える分は無視する。デフォルトは `1` |
+
+#### `removeAtMutable`
+
+```ts
+removeAtMutable<T>(data: T[], index: number, options?: RemoveAtMutableOptions): T[]
+```
+
+`removeAt` の破壊的な版です。`data` から直接削除し、同じ配列を返します。オプションは `removeAt` と同じです。
 
 #### `repeatToLength`
 
@@ -348,12 +406,27 @@ toArray(1); // [1]
 | ---------- | --------- | -------------------- |
 | `raw?`     | `boolean` | `ensureArray` と同じ |
 
+#### `truncateArrayMutable`
+
+```ts
+truncateArrayMutable<T>(data: T[], length: number): T[]
+```
+
+配列を `length` の長さまで切り詰め（破壊的）、同じ配列を返します。`data.length = length` と違い、配列が `length` 以下の長さの場合は何もしません（伸ばして空の要素を作りません）。`length` の小数は切り捨て、負の数は 0 として扱います。`NaN` の場合は何もしません。
+
+```ts
+const array = [1, 2, 3, 4];
+truncateArrayMutable(array, 2); // array は [1, 2]
+truncateArrayMutable(array, 5); // array は [1, 2] のまま
+```
+
 #### 型
 
 | 型                                   | 説明                                                   |
 | ------------------------------------ | ------------------------------------------------------ |
 | `CompactMapOptions`                  | `compactMap` のオプション                              |
 | `CompactMapExclude`                  | `compactMap` で除外する値の種類                        |
+| `CreateRangeOptions`                 | `createRange` のオプション                             |
 | `EnsureArrayOptions`                 | `ensureArray` のオプション                             |
 | `NestedGroupByOptions`               | `nestedGroupBy` のオプション                           |
 | `NestedGroupByResult<I>`             | `nestedGroupBy` の戻り値                               |
@@ -361,6 +434,8 @@ toArray(1); // [1]
 | `NestedKeyByResult<I>`               | `nestedKeyBy` の戻り値                                 |
 | `PushUniqueMutableOptions<T>`        | `pushUniqueMutable` のオプション                       |
 | `PushUniqueOptions<T>`               | `PushUniqueMutableOptions<T>` と同じ                   |
+| `RemoveAtMutableOptions`             | `removeAtMutable` のオプション                         |
+| `RemoveAtOptions`                    | `RemoveAtMutableOptions` と同じ                        |
 | `RotateArrayMutableOptions`          | `rotateArrayMutable` のオプション                      |
 | `RotateArrayOptions`                 | `RotateArrayMutableOptions` と同じ                     |
 | `SortDependenciesOptions<I>`         | `sortDependencies` のオプション                        |
@@ -852,39 +927,41 @@ roundToStep(0.3, 0.1); // 0.3
 
 プロトタイプ汚染を防ぐため、オブジェクトのキーを読み書きする関数は `__proto__` というキーを無視します。`set`・`unset` などのパスを受け取る関数は、パスに `__proto__` を含む場合は何もしません。
 
-| 関数                                                   | 説明                                                                         |
-| ------------------------------------------------------ | ---------------------------------------------------------------------------- |
-| `assignDefined(target, values, options?)`              | `undefined` でない値だけを代入した新しいオブジェクトを返す                   |
-| `assignDefinedMutable(target, values, options?)`       | `undefined` でない値だけを代入する（破壊的）                                 |
-| `assignPresent(target, values, options?)`              | `null` / `undefined` でない値だけを代入した新しいオブジェクトを返す          |
-| `assignPresentMutable(target, values, options?)`       | `null` / `undefined` でない値だけを代入する（破壊的）                        |
-| `cloneDeep(value)`                                     | 値を深くコピーする                                                           |
-| `cloneShallow(value)`                                  | 値を浅くコピーする                                                           |
-| `countKeys(data)`                                      | オブジェクトの列挙可能なプロパティの数を返す                                 |
-| `createOverrideProxy(instance, overrides)`             | インスタンスのプロパティを上書きするプロキシを作る                           |
-| `createSplitByKeys<T>(keys)`                           | 指定したキーのプロパティとそれ以外に分ける関数を作る                         |
-| `distribute(data, rules, options?)`                    | プロパティをルールに従って複数のオブジェクトに分ける                         |
-| `exactKeys<T>()(keys)`                                 | 型のキーを過不足なく列挙した配列であることをコンパイル時に検査する           |
-| `exactKeysFromRecord<T>(keys)`                         | 型の全てのキーを持つオブジェクトからキーの配列を作る                         |
-| `fillDefaults(target, defaultValues, options?)`        | 値の無いプロパティをデフォルト値で埋めた新しいオブジェクトを返す             |
-| `fillDefaultsMutable(target, defaultValues, options?)` | 値の無いプロパティをデフォルト値で埋める（破壊的）                           |
-| `filterByKeys(data, condition, options?)`              | 条件に合うキーのプロパティだけを残す                                         |
-| `filterByValues(data, condition, options?)`            | 条件に合う値だけを残す                                                       |
-| `flattenObject(data, options?)`                        | ネストしたオブジェクトを1階層にする                                          |
-| `forEachValue(data, callback, options?)`               | 各プロパティの値でコールバックを実行する                                     |
-| `get(data, path, options?)`                            | パスで指定したプロパティの値を返す                                           |
-| `hasOwn(data, key)`                                    | オブジェクトが指定のプロパティを自身で持つか判定する（`Object.hasOwn` 相当） |
-| `maybeHasOwn(data, key)`                               | オブジェクトが指定のプロパティを自身で持つか判定する（`null` でも安全）      |
-| `omit(data, keys)`                                     | 指定のキーのプロパティを除いた新しいオブジェクトを返す                       |
-| `parsePropertyPath(path)`                              | プロパティのパスをキーの配列に変換する                                       |
-| `set(data, path, value)`                               | パスで指定したプロパティに値を設定した新しいオブジェクトを返す               |
-| `setMutable(data, path, value)`                        | パスで指定したプロパティに値を設定する（破壊的）                             |
-| `stableStringify(value, space?)`                       | キーを並べ替えて JSON 文字列にする                                           |
-| `transformObject(source, rules, options?)`             | ルールに従ってオブジェクトの構造を変換する                                   |
-| `unset(data, path)`                                    | パスで指定したプロパティを削除した新しいオブジェクトを返す                   |
-| `unsetMutable(data, path)`                             | パスで指定したプロパティを削除する（破壊的）                                 |
-| `update(target, values, options?)`                     | 値が変わるプロパティだけを更新した新しいオブジェクトを返す                   |
-| `updateMutable(target, values, options?)`              | 値が変わるプロパティだけを更新し、更新前の値を返す（破壊的）                 |
+| 関数                                                     | 説明                                                                         |
+| -------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `assignDefined(target, values, options?)`                | `undefined` でない値だけを代入した新しいオブジェクトを返す                   |
+| `assignDefinedMutable(target, values, options?)`         | `undefined` でない値だけを代入する（破壊的）                                 |
+| `assignOnly(target, values, condition, options?)`        | 条件に合う値だけを代入した新しいオブジェクトを返す                           |
+| `assignOnlyMutable(target, values, condition, options?)` | 条件に合う値だけを代入する（破壊的）                                         |
+| `assignPresent(target, values, options?)`                | `null` / `undefined` でない値だけを代入した新しいオブジェクトを返す          |
+| `assignPresentMutable(target, values, options?)`         | `null` / `undefined` でない値だけを代入する（破壊的）                        |
+| `cloneDeep(value)`                                       | 値を深くコピーする                                                           |
+| `cloneShallow(value)`                                    | 値を浅くコピーする                                                           |
+| `countKeys(data)`                                        | オブジェクトの列挙可能なプロパティの数を返す                                 |
+| `createOverrideProxy(instance, overrides)`               | インスタンスのプロパティを上書きするプロキシを作る                           |
+| `createSplitByKeys<T>(keys)`                             | 指定したキーのプロパティとそれ以外に分ける関数を作る                         |
+| `distribute(data, rules, options?)`                      | プロパティをルールに従って複数のオブジェクトに分ける                         |
+| `exactKeys<T>()(keys)`                                   | 型のキーを過不足なく列挙した配列であることをコンパイル時に検査する           |
+| `exactKeysFromRecord<T>(keys)`                           | 型の全てのキーを持つオブジェクトからキーの配列を作る                         |
+| `fillDefaults(target, defaultValues, options?)`          | 値の無いプロパティをデフォルト値で埋めた新しいオブジェクトを返す             |
+| `fillDefaultsMutable(target, defaultValues, options?)`   | 値の無いプロパティをデフォルト値で埋める（破壊的）                           |
+| `filterByKeys(data, condition, options?)`                | 条件に合うキーのプロパティだけを残す                                         |
+| `filterByValues(data, condition, options?)`              | 条件に合う値だけを残す                                                       |
+| `flattenObject(data, options?)`                          | ネストしたオブジェクトを1階層にする                                          |
+| `forEachValue(data, callback, options?)`                 | 各プロパティの値でコールバックを実行する                                     |
+| `get(data, path, options?)`                              | パスで指定したプロパティの値を返す                                           |
+| `hasOwn(data, key)`                                      | オブジェクトが指定のプロパティを自身で持つか判定する（`Object.hasOwn` 相当） |
+| `maybeHasOwn(data, key)`                                 | オブジェクトが指定のプロパティを自身で持つか判定する（`null` でも安全）      |
+| `omit(data, keys)`                                       | 指定のキーのプロパティを除いた新しいオブジェクトを返す                       |
+| `parsePropertyPath(path)`                                | プロパティのパスをキーの配列に変換する                                       |
+| `set(data, path, value)`                                 | パスで指定したプロパティに値を設定した新しいオブジェクトを返す               |
+| `setMutable(data, path, value)`                          | パスで指定したプロパティに値を設定する（破壊的）                             |
+| `stableStringify(value, space?)`                         | キーを並べ替えて JSON 文字列にする                                           |
+| `transformObject(source, rules, options?)`               | ルールに従ってオブジェクトの構造を変換する                                   |
+| `unset(data, path)`                                      | パスで指定したプロパティを削除した新しいオブジェクトを返す                   |
+| `unsetMutable(data, path)`                               | パスで指定したプロパティを削除する（破壊的）                                 |
+| `update(target, values, options?)`                       | 値が変わるプロパティだけを更新した新しいオブジェクトを返す                   |
+| `updateMutable(target, values, options?)`                | 値が変わるプロパティだけを更新し、更新前の値を返す（破壊的）                 |
 
 #### `assignDefined`
 
@@ -896,11 +973,15 @@ assignDefined<T extends object, V extends object>(target: T, values: V, options?
 
 ```ts
 assignDefined({ a: 1, b: 2 }, { a: undefined, b: null, c: 3 }); // { a: 1, b: null, c: 3 }
+
+// 代入したキーを末尾に移す（後ろに並んだ宣言が優先されるスタイルで、values の指定を優先させる）
+assignDefined({ a: 1, b: 2 }, { a: 10 }, { moveToEnd: true }); // { b: 2, a: 10 }
 ```
 
-| オプション          | 型        | 説明                                                           |
-| ------------------- | --------- | -------------------------------------------------------------- |
-| `includeInherited?` | `boolean` | `true` の場合、`values` の継承したプロパティも代入の対象にする |
+| オプション          | 型        | 説明                                                                                                                        |
+| ------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `includeInherited?` | `boolean` | `true` の場合、`values` の継承したプロパティも代入の対象にする                                                              |
+| `moveToEnd?`        | `boolean` | `true` の場合、代入したキーを結果のキーの並びの末尾に移す（後ろのキーが優先されるスタイルなどで使う。整数のキーは動かない） |
 
 #### `assignDefinedMutable`
 
@@ -909,6 +990,49 @@ assignDefinedMutable<T extends object, V extends object>(target: T, values: V, o
 ```
 
 `assignDefined` の破壊的な版です。`target` に直接代入し、同じオブジェクトを返します。オプションは `assignDefined` と同じです。
+
+#### `assignOnly`
+
+```ts
+assignOnly<T extends object, V extends object, K extends keyof V>(target: T, values: V, condition: K | readonly K[], options?: AssignOnlyOptions): AssignOnlyKeysResult<T, V, K>
+assignOnly<T extends object, V extends object>(target: T, values: V, condition: AssignOnlyCondition<V>, options?: AssignOnlyOptions): AssignOnlyResult<T, V>
+```
+
+`values` の各プロパティのうち、`condition` に合うものだけを `target` に代入した新しいオブジェクトを返します。symbol のキーも対象にします。条件に合えば、`undefined` の値も代入します。
+
+| 条件             | 説明                                                                                                            |
+| ---------------- | --------------------------------------------------------------------------------------------------------------- |
+| キー、キーの配列 | キーが一致するプロパティだけを代入する（数値は文字列にして比べる）                                              |
+| `RegExp`         | キーが正規表現にマッチするプロパティだけを代入する（symbol のキーは代入しない）                                 |
+| 関数             | `(value, key, targetValue) => boolean` が真を返したプロパティだけを代入する。`targetValue` は `target` の今の値 |
+
+キーとキーの配列、正規表現は、設定から読み込んだ値をそのまま渡せます。
+
+```ts
+assignOnly({ a: 1, b: 2 }, { a: 10, b: 20, c: 30 }, ['a', 'c']); // { a: 10, b: 2, c: 30 }
+assignOnly({}, { onClick: f, value: 1 }, /^on[A-Z]/); // { onClick: f }
+
+// target の今の値と違うものだけを代入する
+assignOnly(
+  { a: 1, b: 2 },
+  { a: 1, b: 3 },
+  (value, key, targetValue) => value !== targetValue,
+); // { a: 1, b: 3 }（b だけを代入）
+```
+
+| オプション          | 型        | 説明                                                                                                                        |
+| ------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `includeInherited?` | `boolean` | `true` の場合、`values` の継承したプロパティも代入の対象にする                                                              |
+| `moveToEnd?`        | `boolean` | `true` の場合、代入したキーを結果のキーの並びの末尾に移す（後ろのキーが優先されるスタイルなどで使う。整数のキーは動かない） |
+
+#### `assignOnlyMutable`
+
+```ts
+assignOnlyMutable<T extends object, V extends object, K extends keyof V>(target: T, values: V, condition: K | readonly K[], options?: AssignOnlyMutableOptions): AssignOnlyKeysResult<T, V, K>
+assignOnlyMutable<T extends object, V extends object>(target: T, values: V, condition: AssignOnlyCondition<V>, options?: AssignOnlyMutableOptions): AssignOnlyResult<T, V>
+```
+
+`assignOnly` の破壊的な版です。`target` に直接代入し、同じオブジェクトを返します。条件とオプションは `assignOnly` と同じです。
 
 #### `assignPresent`
 
@@ -922,9 +1046,10 @@ assignPresent<T extends object, V extends object>(target: T, values: V, options?
 assignPresent({ a: 1, b: 2 }, { a: undefined, b: null, c: 3 }); // { a: 1, b: 2, c: 3 }
 ```
 
-| オプション          | 型        | 説明                                                           |
-| ------------------- | --------- | -------------------------------------------------------------- |
-| `includeInherited?` | `boolean` | `true` の場合、`values` の継承したプロパティも代入の対象にする |
+| オプション          | 型        | 説明                                                                                                                        |
+| ------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `includeInherited?` | `boolean` | `true` の場合、`values` の継承したプロパティも代入の対象にする                                                              |
+| `moveToEnd?`        | `boolean` | `true` の場合、代入したキーを結果のキーの並びの末尾に移す（後ろのキーが優先されるスタイルなどで使う。整数のキーは動かない） |
 
 #### `assignPresentMutable`
 
@@ -1334,33 +1459,39 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 }（state は { a: 9, b: 2 }）
 
 #### 型
 
-| 型                            | 説明                                                                                                                                                                                                                                                                                                      |
-| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `AssignDefinedMutableOptions` | `assignDefinedMutable` のオプション                                                                                                                                                                                                                                                                       |
-| `AssignDefinedOptions`        | `AssignDefinedMutableOptions` と同じ                                                                                                                                                                                                                                                                      |
-| `AssignDefinedResult<T, V>`   | `assignDefined`・`assignDefinedMutable` の戻り値。`values` の値が `undefined` で反映されない可能性があるキーは、`target` の値の型も残る                                                                                                                                                                   |
-| `AssignPresentMutableOptions` | `assignPresentMutable` のオプション                                                                                                                                                                                                                                                                       |
-| `AssignPresentOptions`        | `AssignPresentMutableOptions` と同じ                                                                                                                                                                                                                                                                      |
-| `AssignPresentResult<T, V>`   | `assignPresent`・`assignPresentMutable` の戻り値。`values` の値が `null` / `undefined` で反映されない可能性があるキーは、`target` の値の型も残る（`target` に無いキーは `undefined`）                                                                                                                     |
-| `DistributeOptions`           | `distribute` のオプション                                                                                                                                                                                                                                                                                 |
-| `DistributeRules<T>`          | `distribute` のルール `{ [group]: プロパティ名の配列 \| null }`                                                                                                                                                                                                                                           |
-| `DistributePropertyList<T>`   | `distribute` のルールに指定するプロパティ名の配列                                                                                                                                                                                                                                                         |
-| `DistributeResult<T, R>`      | `distribute` の戻り値                                                                                                                                                                                                                                                                                     |
-| `FillDefaultsMutableOptions`  | `fillDefaultsMutable` のオプション                                                                                                                                                                                                                                                                        |
-| `FillDefaultsOptions`         | `FillDefaultsMutableOptions` と同じ                                                                                                                                                                                                                                                                       |
-| `FillDefaultsResult<T, V, O>` | `fillDefaults`・`fillDefaultsMutable` の戻り値。`target` の値が `undefined`（`overwriteNull: true` の場合は `null` も）のキーは、その値を除いて `defaultValues` の値の型が加わる。`defaultValues` のリテラル型は保たれる。`overwriteNull` がコンパイル時に決まらない `boolean` の場合は `null` が残りうる |
-| `FilterByKeysOptions`         | `filterByKeys` のオプション                                                                                                                                                                                                                                                                               |
-| `FilterByValuesOptions`       | `filterByValues` のオプション                                                                                                                                                                                                                                                                             |
-| `FlattenObjectOptions`        | `flattenObject` のオプション                                                                                                                                                                                                                                                                              |
-| `ForEachValueOptions`         | `forEachValue` のオプション                                                                                                                                                                                                                                                                               |
-| `GetOptions`                  | `get` のオプション                                                                                                                                                                                                                                                                                        |
-| `PropertyPath`                | `get`・`set`・`unset` などのパス。文字列は `parsePropertyPath` の規則で解釈し、数値・symbol は1つのキー、配列はキーの並びとして扱う                                                                                                                                                                       |
-| `SplitKeyRecord<T>`           | `createSplitByKeys` に渡すキーのオブジェクト。`T` がユニオン型の場合は、全てのメンバーのキーを持つ                                                                                                                                                                                                        |
-| `SplitRest<D, T>`             | `createSplitByKeys` で作った関数の戻り値の `rest`。`D` から `T` のキーを除いたもの                                                                                                                                                                                                                        |
-| `TransformObjectOptions`      | `transformObject` のオプション                                                                                                                                                                                                                                                                            |
-| `TransformObjectRule<S, T>`   | `transformObject` のルール                                                                                                                                                                                                                                                                                |
-| `UpdateMutableOptions`        | `updateMutable` のオプション                                                                                                                                                                                                                                                                              |
-| `UpdateOptions`               | `UpdateMutableOptions` と同じ                                                                                                                                                                                                                                                                             |
+| 型                              | 説明                                                                                                                                                                                                                                                                                                      |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AssignDefinedMutableOptions`   | `assignDefinedMutable` のオプション                                                                                                                                                                                                                                                                       |
+| `AssignDefinedOptions`          | `AssignDefinedMutableOptions` と同じ                                                                                                                                                                                                                                                                      |
+| `AssignDefinedResult<T, V>`     | `assignDefined`・`assignDefinedMutable` の戻り値。`values` の値が `undefined` で反映されない可能性があるキーは、`target` の値の型も残る                                                                                                                                                                   |
+| `AssignOnlyCondition<V>`        | `assignOnly`・`assignOnlyMutable` の条件（キー・キーの配列・`RegExp`・`AssignOnlyPredicate<V>`）                                                                                                                                                                                                          |
+| `AssignOnlyKeysResult<T, V, K>` | 条件にキーを指定したときの `assignOnly`・`assignOnlyMutable` の戻り値。指定したキーだけが代入される。`values` で省略できるキーは、`target` の値の型も残る（`target` に無いキーは `undefined`）                                                                                                            |
+| `AssignOnlyMutableOptions`      | `assignOnlyMutable` のオプション                                                                                                                                                                                                                                                                          |
+| `AssignOnlyOptions`             | `AssignOnlyMutableOptions` と同じ                                                                                                                                                                                                                                                                         |
+| `AssignOnlyPredicate<V>`        | `assignOnly`・`assignOnlyMutable` の判定の関数 `(value, key, targetValue) => boolean`                                                                                                                                                                                                                     |
+| `AssignOnlyResult<T, V>`        | 条件に `RegExp` か関数を指定したときの `assignOnly`・`assignOnlyMutable` の戻り値。`values` のどのキーも代入されない可能性があるので、`target` の値の型も残る（`target` に無いキーは `undefined`）                                                                                                        |
+| `AssignPresentMutableOptions`   | `assignPresentMutable` のオプション                                                                                                                                                                                                                                                                       |
+| `AssignPresentOptions`          | `AssignPresentMutableOptions` と同じ                                                                                                                                                                                                                                                                      |
+| `AssignPresentResult<T, V>`     | `assignPresent`・`assignPresentMutable` の戻り値。`values` の値が `null` / `undefined` で反映されない可能性があるキーは、`target` の値の型も残る（`target` に無いキーは `undefined`）                                                                                                                     |
+| `DistributeOptions`             | `distribute` のオプション                                                                                                                                                                                                                                                                                 |
+| `DistributeRules<T>`            | `distribute` のルール `{ [group]: プロパティ名の配列 \| null }`                                                                                                                                                                                                                                           |
+| `DistributePropertyList<T>`     | `distribute` のルールに指定するプロパティ名の配列                                                                                                                                                                                                                                                         |
+| `DistributeResult<T, R>`        | `distribute` の戻り値                                                                                                                                                                                                                                                                                     |
+| `FillDefaultsMutableOptions`    | `fillDefaultsMutable` のオプション                                                                                                                                                                                                                                                                        |
+| `FillDefaultsOptions`           | `FillDefaultsMutableOptions` と同じ                                                                                                                                                                                                                                                                       |
+| `FillDefaultsResult<T, V, O>`   | `fillDefaults`・`fillDefaultsMutable` の戻り値。`target` の値が `undefined`（`overwriteNull: true` の場合は `null` も）のキーは、その値を除いて `defaultValues` の値の型が加わる。`defaultValues` のリテラル型は保たれる。`overwriteNull` がコンパイル時に決まらない `boolean` の場合は `null` が残りうる |
+| `FilterByKeysOptions`           | `filterByKeys` のオプション                                                                                                                                                                                                                                                                               |
+| `FilterByValuesOptions`         | `filterByValues` のオプション                                                                                                                                                                                                                                                                             |
+| `FlattenObjectOptions`          | `flattenObject` のオプション                                                                                                                                                                                                                                                                              |
+| `ForEachValueOptions`           | `forEachValue` のオプション                                                                                                                                                                                                                                                                               |
+| `GetOptions`                    | `get` のオプション                                                                                                                                                                                                                                                                                        |
+| `PropertyPath`                  | `get`・`set`・`unset` などのパス。文字列は `parsePropertyPath` の規則で解釈し、数値・symbol は1つのキー、配列はキーの並びとして扱う                                                                                                                                                                       |
+| `SplitKeyRecord<T>`             | `createSplitByKeys` に渡すキーのオブジェクト。`T` がユニオン型の場合は、全てのメンバーのキーを持つ                                                                                                                                                                                                        |
+| `SplitRest<D, T>`               | `createSplitByKeys` で作った関数の戻り値の `rest`。`D` から `T` のキーを除いたもの                                                                                                                                                                                                                        |
+| `TransformObjectOptions`        | `transformObject` のオプション                                                                                                                                                                                                                                                                            |
+| `TransformObjectRule<S, T>`     | `transformObject` のルール                                                                                                                                                                                                                                                                                |
+| `UpdateMutableOptions`          | `updateMutable` のオプション                                                                                                                                                                                                                                                                              |
+| `UpdateOptions`                 | `UpdateMutableOptions` と同じ                                                                                                                                                                                                                                                                             |
 
 ### string
 
