@@ -12,6 +12,7 @@ import type { FilterByValuesOptions } from './types';
  * @param condition 条件
  * @param options オプション
  * @returns 条件に合うものだけを残した新しい値。1つも無い場合は null
+ * @deprecated `@fringeworks/debug-tools` の `searchByValues` に移しました（文字列の条件は `createStringMatcher` と同じルールになり、部分一致は `{ includes }` で書きます）。utils 2.0.0 で削除します
  */
 export default function filterByValues(
   data: unknown,

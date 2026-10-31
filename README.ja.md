@@ -927,41 +927,41 @@ roundToStep(0.3, 0.1); // 0.3
 
 プロトタイプ汚染を防ぐため、オブジェクトのキーを読み書きする関数は `__proto__` というキーを無視します。`set`・`unset` などのパスを受け取る関数は、パスに `__proto__` を含む場合は何もしません。
 
-| 関数                                                     | 説明                                                                         |
-| -------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `assignDefined(target, values, options?)`                | `undefined` でない値だけを代入した新しいオブジェクトを返す                   |
-| `assignDefinedMutable(target, values, options?)`         | `undefined` でない値だけを代入する（破壊的）                                 |
-| `assignOnly(target, values, condition, options?)`        | 条件に合う値だけを代入した新しいオブジェクトを返す                           |
-| `assignOnlyMutable(target, values, condition, options?)` | 条件に合う値だけを代入する（破壊的）                                         |
-| `assignPresent(target, values, options?)`                | `null` / `undefined` でない値だけを代入した新しいオブジェクトを返す          |
-| `assignPresentMutable(target, values, options?)`         | `null` / `undefined` でない値だけを代入する（破壊的）                        |
-| `cloneDeep(value)`                                       | 値を深くコピーする                                                           |
-| `cloneShallow(value)`                                    | 値を浅くコピーする                                                           |
-| `countKeys(data)`                                        | オブジェクトの列挙可能なプロパティの数を返す                                 |
-| `createOverrideProxy(instance, overrides)`               | インスタンスのプロパティを上書きするプロキシを作る                           |
-| `createSplitByKeys<T>(keys)`                             | 指定したキーのプロパティとそれ以外に分ける関数を作る                         |
-| `distribute(data, rules, options?)`                      | プロパティをルールに従って複数のオブジェクトに分ける                         |
-| `exactKeys<T>()(keys)`                                   | 型のキーを過不足なく列挙した配列であることをコンパイル時に検査する           |
-| `exactKeysFromRecord<T>(keys)`                           | 型の全てのキーを持つオブジェクトからキーの配列を作る                         |
-| `fillDefaults(target, defaultValues, options?)`          | 値の無いプロパティをデフォルト値で埋めた新しいオブジェクトを返す             |
-| `fillDefaultsMutable(target, defaultValues, options?)`   | 値の無いプロパティをデフォルト値で埋める（破壊的）                           |
-| `filterByKeys(data, condition, options?)`                | 条件に合うキーのプロパティだけを残す                                         |
-| `filterByValues(data, condition, options?)`              | 条件に合う値だけを残す                                                       |
-| `flattenObject(data, options?)`                          | ネストしたオブジェクトを1階層にする                                          |
-| `forEachValue(data, callback, options?)`                 | 各プロパティの値でコールバックを実行する                                     |
-| `get(data, path, options?)`                              | パスで指定したプロパティの値を返す                                           |
-| `hasOwn(data, key)`                                      | オブジェクトが指定のプロパティを自身で持つか判定する（`Object.hasOwn` 相当） |
-| `maybeHasOwn(data, key)`                                 | オブジェクトが指定のプロパティを自身で持つか判定する（`null` でも安全）      |
-| `omit(data, keys)`                                       | 指定のキーのプロパティを除いた新しいオブジェクトを返す                       |
-| `parsePropertyPath(path)`                                | プロパティのパスをキーの配列に変換する                                       |
-| `set(data, path, value)`                                 | パスで指定したプロパティに値を設定した新しいオブジェクトを返す               |
-| `setMutable(data, path, value)`                          | パスで指定したプロパティに値を設定する（破壊的）                             |
-| `stableStringify(value, space?)`                         | キーを並べ替えて JSON 文字列にする                                           |
-| `transformObject(source, rules, options?)`               | ルールに従ってオブジェクトの構造を変換する                                   |
-| `unset(data, path)`                                      | パスで指定したプロパティを削除した新しいオブジェクトを返す                   |
-| `unsetMutable(data, path)`                               | パスで指定したプロパティを削除する（破壊的）                                 |
-| `update(target, values, options?)`                       | 値が変わるプロパティだけを更新した新しいオブジェクトを返す                   |
-| `updateMutable(target, values, options?)`                | 値が変わるプロパティだけを更新し、更新前の値を返す（破壊的）                 |
+| 関数                                                     | 説明                                                                                       |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `assignDefined(target, values, options?)`                | `undefined` でない値だけを代入した新しいオブジェクトを返す                                 |
+| `assignDefinedMutable(target, values, options?)`         | `undefined` でない値だけを代入する（破壊的）                                               |
+| `assignOnly(target, values, condition, options?)`        | 条件に合う値だけを代入した新しいオブジェクトを返す                                         |
+| `assignOnlyMutable(target, values, condition, options?)` | 条件に合う値だけを代入する（破壊的）                                                       |
+| `assignPresent(target, values, options?)`                | `null` / `undefined` でない値だけを代入した新しいオブジェクトを返す                        |
+| `assignPresentMutable(target, values, options?)`         | `null` / `undefined` でない値だけを代入する（破壊的）                                      |
+| `cloneDeep(value)`                                       | 値を深くコピーする                                                                         |
+| `cloneShallow(value)`                                    | 値を浅くコピーする                                                                         |
+| `countKeys(data)`                                        | オブジェクトの列挙可能なプロパティの数を返す                                               |
+| `createOverrideProxy(instance, overrides)`               | インスタンスのプロパティを上書きするプロキシを作る                                         |
+| `createSplitByKeys<T>(keys)`                             | 指定したキーのプロパティとそれ以外に分ける関数を作る                                       |
+| `distribute(data, rules, options?)`                      | プロパティをルールに従って複数のオブジェクトに分ける                                       |
+| `exactKeys<T>()(keys)`                                   | 型のキーを過不足なく列挙した配列であることをコンパイル時に検査する                         |
+| `exactKeysFromRecord<T>(keys)`                           | 型の全てのキーを持つオブジェクトからキーの配列を作る                                       |
+| `fillDefaults(target, defaultValues, options?)`          | 値の無いプロパティをデフォルト値で埋めた新しいオブジェクトを返す                           |
+| `fillDefaultsMutable(target, defaultValues, options?)`   | 値の無いプロパティをデフォルト値で埋める（破壊的）                                         |
+| `filterByKeys(data, condition, options?)`                | **非推奨**（debug-tools の `searchByKeys` に移した）。条件に合うキーのプロパティだけを残す |
+| `filterByValues(data, condition, options?)`              | **非推奨**（debug-tools の `searchByValues` に移した）。条件に合う値だけを残す             |
+| `flattenObject(data, options?)`                          | ネストしたオブジェクトを1階層にする                                                        |
+| `forEachValue(data, callback, options?)`                 | 各プロパティの値でコールバックを実行する                                                   |
+| `get(data, path, options?)`                              | パスで指定したプロパティの値を返す                                                         |
+| `hasOwn(data, key)`                                      | オブジェクトが指定のプロパティを自身で持つか判定する（`Object.hasOwn` 相当）               |
+| `maybeHasOwn(data, key)`                                 | オブジェクトが指定のプロパティを自身で持つか判定する（`null` でも安全）                    |
+| `omit(data, keys)`                                       | 指定のキーのプロパティを除いた新しいオブジェクトを返す                                     |
+| `parsePropertyPath(path)`                                | プロパティのパスをキーの配列に変換する                                                     |
+| `set(data, path, value)`                                 | パスで指定したプロパティに値を設定した新しいオブジェクトを返す                             |
+| `setMutable(data, path, value)`                          | パスで指定したプロパティに値を設定する（破壊的）                                           |
+| `stableStringify(value, space?)`                         | キーを並べ替えて JSON 文字列にする                                                         |
+| `transformObject(source, rules, options?)`               | ルールに従ってオブジェクトの構造を変換する                                                 |
+| `unset(data, path)`                                      | パスで指定したプロパティを削除した新しいオブジェクトを返す                                 |
+| `unsetMutable(data, path)`                               | パスで指定したプロパティを削除する（破壊的）                                               |
+| `update(target, values, options?)`                       | 値が変わるプロパティだけを更新した新しいオブジェクトを返す                                 |
+| `updateMutable(target, values, options?)`                | 値が変わるプロパティだけを更新し、更新前の値を返す（破壊的）                               |
 
 #### `assignDefined`
 
@@ -1210,6 +1210,8 @@ fillDefaultsMutable<T extends object, const V extends object, const O extends Fi
 filterByKeys(data: unknown, condition: string | number, options?: FilterByKeysOptions): unknown
 ```
 
+> **非推奨**: `@fringeworks/debug-tools` の `searchByKeys` に移しました。utils 2.0.0 で削除します。移し先では、文字列の条件を `createStringMatcher` と同じルールで比べます（文字列は完全一致。部分一致は `{ includes: '...' }` で書く）。
+
 オブジェクトや配列を再帰的にたどり、キーが条件に合うプロパティだけを残した新しい値を返します。`condition` が文字列の場合はキーに含まれるか（部分一致）、数値の場合はキーと等しいか（`0` は `'0'` に一致）で判定します。条件に合ったプロパティは値ごと残し、合わなかったプロパティは値の中をさらにたどります。条件に合うものが1つもない場合は `null` を返します。残る構造は実行時に決まるため、戻り値の型は `unknown` です。配列は元のインデックスを保ち、条件に合わなかった位置は空き要素になります。
 
 ```ts
@@ -1230,6 +1232,8 @@ filterByKeys({ UserName: 'A', age: 1 }, 'username', {
 ```ts
 filterByValues(data: unknown, condition: unknown, options?: FilterByValuesOptions): unknown
 ```
+
+> **非推奨**: `@fringeworks/debug-tools` の `searchByValues` に移しました。utils 2.0.0 で削除します。移し先では、文字列の条件を `createStringMatcher` と同じルールで比べます（文字列は完全一致。部分一致は `{ includes: '...' }` で書く）。
 
 オブジェクトや配列を再帰的にたどり、値が条件に合う要素だけを残した新しい値を返します。`condition` が文字列の場合は文字列の値に含まれるか（部分一致）、それ以外の場合は値と等しいか（`===`）で判定します。残す要素や `null` を返す条件、配列の扱いは `filterByKeys` と同じです。
 

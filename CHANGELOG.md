@@ -3,7 +3,13 @@
 All notable changes to `@fringeworks/utils` are documented in this file.\
 This project follows [Semantic Versioning](https://semver.org/).
 
-## 1.2.0 - Unreleased
+## 1.3.0 - 2026-10-31
+
+### Deprecated
+
+- `filterByKeys` and `filterByValues`. They moved to `searchByKeys` and `searchByValues` of `@fringeworks/debug-tools`, which compare string conditions by the same rules as `createStringMatcher` (a string is an exact match; write a partial match as `{ includes: '...' }`). They will be removed in 2.0.0.
+
+## 1.2.0 - 2026-10-31
 
 ### Added
 

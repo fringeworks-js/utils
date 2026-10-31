@@ -927,41 +927,41 @@ roundToStep(0.3, 0.1); // 0.3
 
 To prevent prototype pollution, functions that read or write object keys ignore the `__proto__` key. Functions that take a path, such as `set` and `unset`, do nothing when the path contains `__proto__`.
 
-| Function                                                 | Description                                                                          |
-| -------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| `assignDefined(target, values, options?)`                | Returns a new object with only the values that are not `undefined` assigned          |
-| `assignDefinedMutable(target, values, options?)`         | Assigns only the values that are not `undefined` (mutating)                          |
-| `assignOnly(target, values, condition, options?)`        | Returns a new object with only the values that match a condition assigned            |
-| `assignOnlyMutable(target, values, condition, options?)` | Assigns only the values that match a condition (mutating)                            |
-| `assignPresent(target, values, options?)`                | Returns a new object with only the values that are not `null` / `undefined` assigned |
-| `assignPresentMutable(target, values, options?)`         | Assigns only the values that are not `null` / `undefined` (mutating)                 |
-| `cloneDeep(value)`                                       | Makes a deep copy of a value                                                         |
-| `cloneShallow(value)`                                    | Makes a shallow copy of a value                                                      |
-| `countKeys(data)`                                        | Returns the number of enumerable properties of an object                             |
-| `createOverrideProxy(instance, overrides)`               | Creates a proxy that overrides an instance's properties                              |
-| `createSplitByKeys<T>(keys)`                             | Creates a function that splits the properties of the given keys from the rest        |
-| `distribute(data, rules, options?)`                      | Splits properties into several objects according to rules                            |
-| `exactKeys<T>()(keys)`                                   | Checks at compile time that an array lists exactly the keys of a type                |
-| `exactKeysFromRecord<T>(keys)`                           | Creates an array of keys from an object that has every key of a type                 |
-| `fillDefaults(target, defaultValues, options?)`          | Returns a new object with missing properties filled with defaults                    |
-| `fillDefaultsMutable(target, defaultValues, options?)`   | Fills missing properties with defaults (mutating)                                    |
-| `filterByKeys(data, condition, options?)`                | Keeps only the properties whose keys match a condition                               |
-| `filterByValues(data, condition, options?)`              | Keeps only the values that match a condition                                         |
-| `flattenObject(data, options?)`                          | Flattens a nested object into a single level                                         |
-| `forEachValue(data, callback, options?)`                 | Runs a callback for the value of each property                                       |
-| `get(data, path, options?)`                              | Returns the value of the property at a path                                          |
-| `hasOwn(data, key)`                                      | Checks whether an object has an own property (equivalent to `Object.hasOwn`)         |
-| `maybeHasOwn(data, key)`                                 | Checks whether an object has an own property (safe for `null`)                       |
-| `omit(data, keys)`                                       | Returns a new object without the given keys                                          |
-| `parsePropertyPath(path)`                                | Converts a property path to an array of keys                                         |
-| `set(data, path, value)`                                 | Returns a new object with a value set at a path                                      |
-| `setMutable(data, path, value)`                          | Sets a value at a path (mutating)                                                    |
-| `stableStringify(value, space?)`                         | Converts a value to a JSON string with sorted keys                                   |
-| `transformObject(source, rules, options?)`               | Reshapes an object according to rules                                                |
-| `unset(data, path)`                                      | Returns a new object without the property at a path                                  |
-| `unsetMutable(data, path)`                               | Removes the property at a path (mutating)                                            |
-| `update(target, values, options?)`                       | Returns a new object with only the changed properties updated                        |
-| `updateMutable(target, values, options?)`                | Updates only the changed properties and returns their previous values (mutating)     |
+| Function                                                 | Description                                                                                                     |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `assignDefined(target, values, options?)`                | Returns a new object with only the values that are not `undefined` assigned                                     |
+| `assignDefinedMutable(target, values, options?)`         | Assigns only the values that are not `undefined` (mutating)                                                     |
+| `assignOnly(target, values, condition, options?)`        | Returns a new object with only the values that match a condition assigned                                       |
+| `assignOnlyMutable(target, values, condition, options?)` | Assigns only the values that match a condition (mutating)                                                       |
+| `assignPresent(target, values, options?)`                | Returns a new object with only the values that are not `null` / `undefined` assigned                            |
+| `assignPresentMutable(target, values, options?)`         | Assigns only the values that are not `null` / `undefined` (mutating)                                            |
+| `cloneDeep(value)`                                       | Makes a deep copy of a value                                                                                    |
+| `cloneShallow(value)`                                    | Makes a shallow copy of a value                                                                                 |
+| `countKeys(data)`                                        | Returns the number of enumerable properties of an object                                                        |
+| `createOverrideProxy(instance, overrides)`               | Creates a proxy that overrides an instance's properties                                                         |
+| `createSplitByKeys<T>(keys)`                             | Creates a function that splits the properties of the given keys from the rest                                   |
+| `distribute(data, rules, options?)`                      | Splits properties into several objects according to rules                                                       |
+| `exactKeys<T>()(keys)`                                   | Checks at compile time that an array lists exactly the keys of a type                                           |
+| `exactKeysFromRecord<T>(keys)`                           | Creates an array of keys from an object that has every key of a type                                            |
+| `fillDefaults(target, defaultValues, options?)`          | Returns a new object with missing properties filled with defaults                                               |
+| `fillDefaultsMutable(target, defaultValues, options?)`   | Fills missing properties with defaults (mutating)                                                               |
+| `filterByKeys(data, condition, options?)`                | **Deprecated** (moved to `searchByKeys` of debug-tools). Keeps only the properties whose keys match a condition |
+| `filterByValues(data, condition, options?)`              | **Deprecated** (moved to `searchByValues` of debug-tools). Keeps only the values that match a condition         |
+| `flattenObject(data, options?)`                          | Flattens a nested object into a single level                                                                    |
+| `forEachValue(data, callback, options?)`                 | Runs a callback for the value of each property                                                                  |
+| `get(data, path, options?)`                              | Returns the value of the property at a path                                                                     |
+| `hasOwn(data, key)`                                      | Checks whether an object has an own property (equivalent to `Object.hasOwn`)                                    |
+| `maybeHasOwn(data, key)`                                 | Checks whether an object has an own property (safe for `null`)                                                  |
+| `omit(data, keys)`                                       | Returns a new object without the given keys                                                                     |
+| `parsePropertyPath(path)`                                | Converts a property path to an array of keys                                                                    |
+| `set(data, path, value)`                                 | Returns a new object with a value set at a path                                                                 |
+| `setMutable(data, path, value)`                          | Sets a value at a path (mutating)                                                                               |
+| `stableStringify(value, space?)`                         | Converts a value to a JSON string with sorted keys                                                              |
+| `transformObject(source, rules, options?)`               | Reshapes an object according to rules                                                                           |
+| `unset(data, path)`                                      | Returns a new object without the property at a path                                                             |
+| `unsetMutable(data, path)`                               | Removes the property at a path (mutating)                                                                       |
+| `update(target, values, options?)`                       | Returns a new object with only the changed properties updated                                                   |
+| `updateMutable(target, values, options?)`                | Updates only the changed properties and returns their previous values (mutating)                                |
 
 #### `assignDefined`
 
@@ -1210,6 +1210,8 @@ The mutating version of `fillDefaults`. Sets the values on `target` directly and
 filterByKeys(data: unknown, condition: string | number, options?: FilterByKeysOptions): unknown
 ```
 
+> **Deprecated**: Moved to `searchByKeys` of `@fringeworks/debug-tools`. It will be removed in utils 2.0.0. The new function compares string conditions by the same rules as `createStringMatcher` (a string is an exact match; write a partial match as `{ includes: '...' }`).
+
 Walks objects and arrays recursively and returns a new value that keeps only the properties whose keys match the condition. When `condition` is a string, a key matches if it contains `condition` (substring match); when it is a number, the key must equal it (`0` matches `'0'`). A matching property is kept with its whole value, and a non-matching property is searched further. Returns `null` when nothing matches. The remaining structure is only known at runtime, so the return type is `unknown`. Arrays keep their original indexes, leaving holes where nothing matched.
 
 ```ts
@@ -1230,6 +1232,8 @@ filterByKeys({ UserName: 'A', age: 1 }, 'username', {
 ```ts
 filterByValues(data: unknown, condition: unknown, options?: FilterByValuesOptions): unknown
 ```
+
+> **Deprecated**: Moved to `searchByValues` of `@fringeworks/debug-tools`. It will be removed in utils 2.0.0. The new function compares string conditions by the same rules as `createStringMatcher` (a string is an exact match; write a partial match as `{ includes: '...' }`).
 
 Walks objects and arrays recursively and returns a new value that keeps only the values matching the condition. When `condition` is a string, a string value matches if it contains `condition` (substring match); otherwise the value must equal `condition` (`===`). What is kept, when `null` is returned, and how arrays are handled are the same as `filterByKeys`.
 
