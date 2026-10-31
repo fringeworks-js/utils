@@ -14,8 +14,6 @@ export * from './exactKeys';
 export * from './exactKeysFromRecord';
 export * from './fillDefaults';
 export * from './fillDefaultsMutable';
-export * from './filterByKeys';
-export * from './filterByValues';
 export * from './flattenObject';
 export * from './forEachValue';
 export * from './get';

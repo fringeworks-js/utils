@@ -52,4 +52,9 @@ describe('limitNaturalNumber', () => {
     expect(limitNaturalNumber(-1, { negativeValue: 2.5 })).toBe(2.5);
     expect(limitNaturalNumber(0, { zeroValue: 0.5 })).toBe(0.5);
   });
+
+  it('undefinedのオプションは指定しなかったものとして扱う', () => {
+    expect(limitNaturalNumber(0.5, { zeroValue: undefined })).toBeNull();
+    expect(limitNaturalNumber(0, { zeroValue: undefined })).toBeNull();
+  });
 });

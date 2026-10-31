@@ -848,11 +848,11 @@ limitPositiveNumber(-1, { negativeValue: 'abs' }); // 1
 limitPositiveNumber(0, { zeroValue: 0 }); // 0
 ```
 
-| Option           | Type                                   | Description                                                                                      |
-| ---------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `negativeValue?` | `number \| null \| undefined \| 'abs'` | The value returned for a negative number. `'abs'` returns the absolute value. Defaults to `null` |
-| `zeroValue?`     | `number \| null \| undefined`          | The value returned for `0`. Defaults to `null`                                                   |
-| `nanValue?`      | `number \| null \| undefined`          | The value returned for `NaN`. Defaults to `null`                                                 |
+| Option           | Type                      | Description                                                                                      |
+| ---------------- | ------------------------- | ------------------------------------------------------------------------------------------------ |
+| `negativeValue?` | `number \| null \| 'abs'` | The value returned for a negative number. `'abs'` returns the absolute value. Defaults to `null` |
+| `zeroValue?`     | `number \| null`          | The value returned for `0`. Defaults to `null`                                                   |
+| `nanValue?`      | `number \| null`          | The value returned for `NaN`. Defaults to `null`                                                 |
 
 #### `loopInRange`
 
@@ -927,41 +927,39 @@ roundToStep(0.3, 0.1); // 0.3
 
 To prevent prototype pollution, functions that read or write object keys ignore the `__proto__` key. Functions that take a path, such as `set` and `unset`, do nothing when the path contains `__proto__`.
 
-| Function                                                 | Description                                                                                                     |
-| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `assignDefined(target, values, options?)`                | Returns a new object with only the values that are not `undefined` assigned                                     |
-| `assignDefinedMutable(target, values, options?)`         | Assigns only the values that are not `undefined` (mutating)                                                     |
-| `assignOnly(target, values, condition, options?)`        | Returns a new object with only the values that match a condition assigned                                       |
-| `assignOnlyMutable(target, values, condition, options?)` | Assigns only the values that match a condition (mutating)                                                       |
-| `assignPresent(target, values, options?)`                | Returns a new object with only the values that are not `null` / `undefined` assigned                            |
-| `assignPresentMutable(target, values, options?)`         | Assigns only the values that are not `null` / `undefined` (mutating)                                            |
-| `cloneDeep(value)`                                       | Makes a deep copy of a value                                                                                    |
-| `cloneShallow(value)`                                    | Makes a shallow copy of a value                                                                                 |
-| `countKeys(data)`                                        | Returns the number of enumerable properties of an object                                                        |
-| `createOverrideProxy(instance, overrides)`               | Creates a proxy that overrides an instance's properties                                                         |
-| `createSplitByKeys<T>(keys)`                             | Creates a function that splits the properties of the given keys from the rest                                   |
-| `distribute(data, rules, options?)`                      | Splits properties into several objects according to rules                                                       |
-| `exactKeys<T>()(keys)`                                   | Checks at compile time that an array lists exactly the keys of a type                                           |
-| `exactKeysFromRecord<T>(keys)`                           | Creates an array of keys from an object that has every key of a type                                            |
-| `fillDefaults(target, defaultValues, options?)`          | Returns a new object with missing properties filled with defaults                                               |
-| `fillDefaultsMutable(target, defaultValues, options?)`   | Fills missing properties with defaults (mutating)                                                               |
-| `filterByKeys(data, condition, options?)`                | **Deprecated** (moved to `searchByKeys` of debug-tools). Keeps only the properties whose keys match a condition |
-| `filterByValues(data, condition, options?)`              | **Deprecated** (moved to `searchByValues` of debug-tools). Keeps only the values that match a condition         |
-| `flattenObject(data, options?)`                          | Flattens a nested object into a single level                                                                    |
-| `forEachValue(data, callback, options?)`                 | Runs a callback for the value of each property                                                                  |
-| `get(data, path, options?)`                              | Returns the value of the property at a path                                                                     |
-| `hasOwn(data, key)`                                      | Checks whether an object has an own property (equivalent to `Object.hasOwn`)                                    |
-| `maybeHasOwn(data, key)`                                 | Checks whether an object has an own property (safe for `null`)                                                  |
-| `omit(data, keys)`                                       | Returns a new object without the given keys                                                                     |
-| `parsePropertyPath(path)`                                | Converts a property path to an array of keys                                                                    |
-| `set(data, path, value)`                                 | Returns a new object with a value set at a path                                                                 |
-| `setMutable(data, path, value)`                          | Sets a value at a path (mutating)                                                                               |
-| `stableStringify(value, space?)`                         | Converts a value to a JSON string with sorted keys                                                              |
-| `transformObject(source, rules, options?)`               | Reshapes an object according to rules                                                                           |
-| `unset(data, path)`                                      | Returns a new object without the property at a path                                                             |
-| `unsetMutable(data, path)`                               | Removes the property at a path (mutating)                                                                       |
-| `update(target, values, options?)`                       | Returns a new object with only the changed properties updated                                                   |
-| `updateMutable(target, values, options?)`                | Updates only the changed properties and returns their previous values (mutating)                                |
+| Function                                                 | Description                                                                          |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `assignDefined(target, values, options?)`                | Returns a new object with only the values that are not `undefined` assigned          |
+| `assignDefinedMutable(target, values, options?)`         | Assigns only the values that are not `undefined` (mutating)                          |
+| `assignOnly(target, values, condition, options?)`        | Returns a new object with only the values that match a condition assigned            |
+| `assignOnlyMutable(target, values, condition, options?)` | Assigns only the values that match a condition (mutating)                            |
+| `assignPresent(target, values, options?)`                | Returns a new object with only the values that are not `null` / `undefined` assigned |
+| `assignPresentMutable(target, values, options?)`         | Assigns only the values that are not `null` / `undefined` (mutating)                 |
+| `cloneDeep(value)`                                       | Makes a deep copy of a value                                                         |
+| `cloneShallow(value)`                                    | Makes a shallow copy of a value                                                      |
+| `countKeys(data)`                                        | Returns the number of enumerable properties of an object                             |
+| `createOverrideProxy(instance, overrides)`               | Creates a proxy that overrides an instance's properties                              |
+| `createSplitByKeys<T>(keys)`                             | Creates a function that splits the properties of the given keys from the rest        |
+| `distribute(data, rules, options?)`                      | Splits properties into several objects according to rules                            |
+| `exactKeys<T>()(keys)`                                   | Checks at compile time that an array lists exactly the keys of a type                |
+| `exactKeysFromRecord<T>(keys)`                           | Creates an array of keys from an object that has every key of a type                 |
+| `fillDefaults(target, defaultValues, options?)`          | Returns a new object with missing properties filled with defaults                    |
+| `fillDefaultsMutable(target, defaultValues, options?)`   | Fills missing properties with defaults (mutating)                                    |
+| `flattenObject(data, options?)`                          | Flattens a nested object into a single level                                         |
+| `forEachValue(data, callback, options?)`                 | Runs a callback for the value of each property                                       |
+| `get(data, path, options?)`                              | Returns the value of the property at a path                                          |
+| `hasOwn(data, key)`                                      | Checks whether an object has an own property (equivalent to `Object.hasOwn`)         |
+| `maybeHasOwn(data, key)`                                 | Checks whether an object has an own property (safe for `null`)                       |
+| `omit(data, keys)`                                       | Returns a new object without the given keys                                          |
+| `parsePropertyPath(path)`                                | Converts a property path to an array of keys                                         |
+| `set(data, path, value)`                                 | Returns a new object with a value set at a path                                      |
+| `setMutable(data, path, value)`                          | Sets a value at a path (mutating)                                                    |
+| `stableStringify(value, space?)`                         | Converts a value to a JSON string with sorted keys                                   |
+| `transformObject(source, rules, options?)`               | Reshapes an object according to rules                                                |
+| `unset(data, path)`                                      | Returns a new object without the property at a path                                  |
+| `unsetMutable(data, path)`                               | Removes the property at a path (mutating)                                            |
+| `update(target, values, options?)`                       | Returns a new object with only the changed properties updated                        |
+| `updateMutable(target, values, options?)`                | Updates only the changed properties and returns their previous values (mutating)     |
 
 #### `assignDefined`
 
@@ -1203,49 +1201,6 @@ fillDefaultsMutable<T extends object, const V extends object, const O extends Fi
 ```
 
 The mutating version of `fillDefaults`. Sets the values on `target` directly and returns the same object. The options are the same as `fillDefaults`.
-
-#### `filterByKeys`
-
-```ts
-filterByKeys(data: unknown, condition: string | number, options?: FilterByKeysOptions): unknown
-```
-
-> **Deprecated**: Moved to `searchByKeys` of `@fringeworks/debug-tools`. It will be removed in utils 2.0.0. The new function compares string conditions by the same rules as `createStringMatcher` (a string is an exact match; write a partial match as `{ includes: '...' }`).
-
-Walks objects and arrays recursively and returns a new value that keeps only the properties whose keys match the condition. When `condition` is a string, a key matches if it contains `condition` (substring match); when it is a number, the key must equal it (`0` matches `'0'`). A matching property is kept with its whole value, and a non-matching property is searched further. Returns `null` when nothing matches. The remaining structure is only known at runtime, so the return type is `unknown`. Arrays keep their original indexes, leaving holes where nothing matched.
-
-```ts
-filterByKeys({ a: { name: 1, x: 2 }, y: [{ name: 3 }] }, 'name');
-// { a: { name: 1 }, y: [{ name: 3 }] }
-filterByKeys({ UserName: 'A', age: 1 }, 'username', {
-  normalize: (value) => value.toLowerCase(),
-});
-// { UserName: 'A' }
-```
-
-| Option       | Type                        | Description                                                                                                         |
-| ------------ | --------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `normalize?` | `(value: string) => string` | A function that normalizes keys and the condition when comparing with a string condition. Not normalized if omitted |
-
-#### `filterByValues`
-
-```ts
-filterByValues(data: unknown, condition: unknown, options?: FilterByValuesOptions): unknown
-```
-
-> **Deprecated**: Moved to `searchByValues` of `@fringeworks/debug-tools`. It will be removed in utils 2.0.0. The new function compares string conditions by the same rules as `createStringMatcher` (a string is an exact match; write a partial match as `{ includes: '...' }`).
-
-Walks objects and arrays recursively and returns a new value that keeps only the values matching the condition. When `condition` is a string, a string value matches if it contains `condition` (substring match); otherwise the value must equal `condition` (`===`). What is kept, when `null` is returned, and how arrays are handled are the same as `filterByKeys`.
-
-```ts
-filterByValues({ a: 'Alice', b: 'Bob', c: { d: 'Alan' } }, 'Al');
-// { a: 'Alice', c: { d: 'Alan' } }
-filterByValues({ a: 1, b: 2, c: 1 }, 1); // { a: 1, c: 1 }
-```
-
-| Option       | Type                        | Description                                                                                                           |
-| ------------ | --------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `normalize?` | `(value: string) => string` | A function that normalizes values and the condition when comparing with a string condition. Not normalized if omitted |
 
 #### `flattenObject`
 
@@ -1489,8 +1444,6 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 } (state becomes { a: 9, b: 2 })
 | `FillDefaultsMutableOptions`    | Options for `fillDefaultsMutable`                                                                                                                                                                                                                                                                                                                           |
 | `FillDefaultsOptions`           | Same as `FillDefaultsMutableOptions`                                                                                                                                                                                                                                                                                                                        |
 | `FillDefaultsResult<T, V, O>`   | The return type of `fillDefaults` and `fillDefaultsMutable`. Keys whose values in `target` are `undefined` (also `null` when `overwriteNull: true`) have those values removed and the type of the value in `defaultValues` added. Literal types of `defaultValues` are kept. If `overwriteNull` is a `boolean` not known at compile time, `null` may remain |
-| `FilterByKeysOptions`           | Options for `filterByKeys`                                                                                                                                                                                                                                                                                                                                  |
-| `FilterByValuesOptions`         | Options for `filterByValues`                                                                                                                                                                                                                                                                                                                                |
 | `FlattenObjectOptions`          | Options for `flattenObject`                                                                                                                                                                                                                                                                                                                                 |
 | `ForEachValueOptions`           | Options for `forEachValue`                                                                                                                                                                                                                                                                                                                                  |
 | `GetOptions`                    | Options for `get`                                                                                                                                                                                                                                                                                                                                           |

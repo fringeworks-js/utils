@@ -29,7 +29,7 @@ export default function limitNaturalNumber(
   const natural = Math.floor(positive);
   if (natural === 0) {
     // 切り捨てて0になった場合
-    return 'zeroValue' in options ? options.zeroValue : null;
+    return options.zeroValue ?? null;
   }
   return natural;
 }

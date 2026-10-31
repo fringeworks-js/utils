@@ -49,4 +49,19 @@ describe('limitPositiveNumber', () => {
       expect(limitPositiveNumber(-5, { negativeValue: 'abs' })).toBe(5);
     });
   });
+
+  it('undefinedのオプションは指定しなかったものとして扱う', () => {
+    const options = {
+      nanValue: undefined,
+      zeroValue: undefined,
+      negativeValue: undefined,
+    };
+    expect(limitPositiveNumber(NaN, options)).toBeNull();
+    expect(limitPositiveNumber(0, options)).toBeNull();
+    expect(limitPositiveNumber(-1, options)).toBeNull();
+  });
+
+  it('nullを指定した場合はnullを返す', () => {
+    expect(limitPositiveNumber(0, { zeroValue: null })).toBeNull();
+  });
 });

@@ -3,6 +3,16 @@
 All notable changes to `@fringeworks/utils` are documented in this file.\
 This project follows [Semantic Versioning](https://semver.org/).
 
+## 2.0.0 - 2026-10-31
+
+### Changed
+
+- `limitPositiveNumber` and `limitNaturalNumber` treat an option whose value is `undefined` (`nanValue`, `zeroValue`, and `negativeValue`) as not specified, and return `null` as when the key is absent. Previously, `{ zeroValue: undefined }` returned `undefined`. The types of these options no longer include `undefined` as a value to return.
+
+### Removed
+
+- `filterByKeys` and `filterByValues`, which were deprecated in 1.3.0. Use `searchByKeys` and `searchByValues` of `@fringeworks/debug-tools` instead. In the new functions, a string condition is an exact match by the same rules as `createStringMatcher`; write a partial match as `{ includes: '...' }`. A number condition of `filterByKeys` becomes a string (`0` → `'0'`), and `searchByValues` compares numbers, booleans, and bigints as strings.
+
 ## 1.3.0 - 2026-10-31
 
 ### Deprecated

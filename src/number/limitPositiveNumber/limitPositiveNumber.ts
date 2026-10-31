@@ -16,23 +16,18 @@ export default function limitPositiveNumber(
     return value;
   } else if (Number.isNaN(value)) {
     // NaNの場合
-    return 'nanValue' in options ? options.nanValue : null;
+    return options.nanValue ?? null;
   } else if (value > 0) {
     // 正の数はそのまま
     return value;
   } else if (value === 0) {
     // 0の場合
-    return 'zeroValue' in options ? options.zeroValue : null;
+    return options.zeroValue ?? null;
   } else {
     // 負の数の場合
-    if ('negativeValue' in options) {
-      if (options.negativeValue === 'abs') {
-        return Math.abs(value);
-      } else {
-        return options.negativeValue;
-      }
-    } else {
-      return null;
+    if (options.negativeValue === 'abs') {
+      return Math.abs(value);
     }
+    return options.negativeValue ?? null;
   }
 }
