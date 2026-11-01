@@ -2,6 +2,7 @@ export * from './array';
 export * from './boolean';
 export * from './compare';
 export * from './date';
+export * from './development';
 export * from './function';
 export * from './map';
 export * from './number';

@@ -3,6 +3,12 @@
 All notable changes to `@fringeworks/utils` are documented in this file.\
 This project follows [Semantic Versioning](https://semver.org/).
 
+## 2.1.0 - 2026-11-01
+
+### Added
+
+- `warnInDevelopment`, which passes its arguments to `console.warn` unless `process.env.NODE_ENV` is `'production'`. In environments without `process`, it always warns.
+
 ## 2.0.0 - 2026-10-31
 
 ### Changed

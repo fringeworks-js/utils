@@ -614,6 +614,20 @@ lerpDate(value: Date, ratio: number, options?: LerpDateOptions): Date
 | ----------------- | ----------------------- |
 | `LerpDateOptions` | `lerpDate` のオプション |
 
+### development
+
+| 関数                         | 説明               |
+| ---------------------------- | ------------------ |
+| `warnInDevelopment(...data)` | 開発時だけ警告する |
+
+#### `warnInDevelopment`
+
+```ts
+warnInDevelopment(...data: unknown[]): void
+```
+
+`process.env.NODE_ENV` が `'production'` のとき以外は、`data` を `console.warn` に渡します。多くのバンドラーは `process.env.NODE_ENV` を置き換えるため、本番のビルドでは警告が消えます。`process` が無い環境（バンドラーを通さずに ES モジュールを読み込むブラウザーなど）では、常に警告します。
+
 ### function
 
 | 関数                          | 説明                     |

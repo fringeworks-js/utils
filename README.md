@@ -614,6 +614,20 @@ Returns the date linearly interpolated by `ratio` between the base date (`baseVa
 | ----------------- | ---------------------- |
 | `LerpDateOptions` | Options for `lerpDate` |
 
+### development
+
+| Function                     | Description                   |
+| ---------------------------- | ----------------------------- |
+| `warnInDevelopment(...data)` | Warns only during development |
+
+#### `warnInDevelopment`
+
+```ts
+warnInDevelopment(...data: unknown[]): void
+```
+
+Passes `data` to `console.warn`, except when `process.env.NODE_ENV` is `'production'`. Many bundlers replace `process.env.NODE_ENV`, so the warnings disappear from production builds. In environments without `process` (such as a browser loading ES modules without a bundler), it always warns.
+
 ### function
 
 | Function                      | Description                      |
