@@ -21,16 +21,16 @@ type ComparisonStrategyMap = {
 };
 
 /**
- * 範囲内か判定する。範囲が配列でない場合は undefined
+ * 範囲内か判定する（両端を含む）。範囲が配列でない場合は undefined\
+ * 下限が上限より大きい場合は入れ替える（範囲として1組で渡すため。isWithinRange と同じ）
  */
 function isInRange(value: unknown, range: unknown): boolean | undefined {
   if (!Array.isArray(range)) {
     return undefined;
   }
-  return (
-    (value as number) >= (range[0] as number) &&
-    (value as number) <= (range[1] as number)
-  );
+  const [first, second] = range as [number, number];
+  const [min, max] = first > second ? [second, first] : [first, second];
+  return (value as number) >= min && (value as number) <= max;
 }
 
 /**

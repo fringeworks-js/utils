@@ -8,8 +8,6 @@
 
 ```bash
 npm install @fringeworks/utils
-# or
-pnpm add @fringeworks/utils
 ```
 
 ## Usage
@@ -422,27 +420,28 @@ truncateArrayMutable(array, 5); // array is still [1, 2]
 
 #### Types
 
-| Type                                 | Description                                                                  |
-| ------------------------------------ | ---------------------------------------------------------------------------- |
-| `CompactMapOptions`                  | Options for `compactMap`                                                     |
-| `CompactMapExclude`                  | The kinds of values `compactMap` excludes                                    |
-| `CreateRangeOptions`                 | Options for `createRange`                                                    |
-| `EnsureArrayOptions`                 | Options for `ensureArray`                                                    |
-| `NestedGroupByOptions`               | Options for `nestedGroupBy`                                                  |
-| `NestedGroupByResult<I>`             | The return value of `nestedGroupBy`                                          |
-| `NestedKeyByOptions`                 | Options for `nestedKeyBy`                                                    |
-| `NestedKeyByResult<I>`               | The return value of `nestedKeyBy`                                            |
-| `PushUniqueMutableOptions<T>`        | Options for `pushUniqueMutable`                                              |
-| `PushUniqueOptions<T>`               | Same as `PushUniqueMutableOptions<T>`                                        |
-| `RemoveAtMutableOptions`             | Options for `removeAtMutable`                                                |
-| `RemoveAtOptions`                    | Same as `RemoveAtMutableOptions`                                             |
-| `RotateArrayMutableOptions`          | Options for `rotateArrayMutable`                                             |
-| `RotateArrayOptions`                 | Same as `RotateArrayMutableOptions`                                          |
-| `SortDependenciesOptions<I>`         | Options for `sortDependencies`                                               |
-| `SortDependenciesGetId<I>`           | A function returning an element's ID `(item) => unknown`                     |
-| `SortDependenciesGetDependencies<I>` | A function returning an element's dependencies `(item) => I \| readonly I[]` |
-| `SwapPairsResult<T>`                 | The return value of `swapPairs` (the type with each pair swapped)            |
-| `ToArrayOptions`                     | Options for `toArray`                                                        |
+| Type                                 | Description                                                                                              |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| `CompactMapOptions`                  | Options for `compactMap`                                                                                 |
+| `CompactMapExclude`                  | The kinds of values `compactMap` excludes                                                                |
+| `IndexedIteratee<V, R>`              | The type of the `callback` of `compactMap`, `(value, index, data) => R` (a type of `@fringeworks/types`) |
+| `CreateRangeOptions`                 | Options for `createRange`                                                                                |
+| `EnsureArrayOptions`                 | Options for `ensureArray`                                                                                |
+| `NestedGroupByOptions`               | Options for `nestedGroupBy`                                                                              |
+| `NestedGroupByResult<I>`             | The return value of `nestedGroupBy`                                                                      |
+| `NestedKeyByOptions`                 | Options for `nestedKeyBy`                                                                                |
+| `NestedKeyByResult<I>`               | The return value of `nestedKeyBy`                                                                        |
+| `PushUniqueMutableOptions<T>`        | Options for `pushUniqueMutable`                                                                          |
+| `PushUniqueOptions<T>`               | Same as `PushUniqueMutableOptions<T>`                                                                    |
+| `RemoveAtMutableOptions`             | Options for `removeAtMutable`                                                                            |
+| `RemoveAtOptions`                    | Same as `RemoveAtMutableOptions`                                                                         |
+| `RotateArrayMutableOptions`          | Options for `rotateArrayMutable`                                                                         |
+| `RotateArrayOptions`                 | Same as `RotateArrayMutableOptions`                                                                      |
+| `SortDependenciesOptions<I>`         | Options for `sortDependencies`                                                                           |
+| `SortDependenciesGetId<I>`           | A function returning an element's ID `(item) => unknown`                                                 |
+| `SortDependenciesGetDependencies<I>` | A function returning an element's dependencies `(item) => I \| readonly I[]`                             |
+| `SwapPairsResult<T>`                 | The return value of `swapPairs` (the type with each pair swapped)                                        |
+| `ToArrayOptions`                     | Options for `toArray`                                                                                    |
 
 ### boolean
 
@@ -510,7 +509,7 @@ compare('hello', 'matches', /^h/); // true
 | `'=='` / `'!='`                  | Any             | Any                             | Loose equality / inequality                                                                                                                          |
 | `'>'` / `'>='` / `'<'` / `'<='`  | Any             | Any                             | Relational comparison (numbers, strings, `Date`, and so on, following JavaScript's comparison operators)                                             |
 | `'deepEqual'` / `'notDeepEqual'` | Any             | Any                             | Whether the structures are equal / not equal (`isEqual`)                                                                                             |
-| `'between'` / `'notBetween'`     | Any             | `[min, max]`                    | Whether `left` is inside / outside the range (inclusive)                                                                                             |
+| `'between'` / `'notBetween'`     | Any             | `[min, max]`                    | Whether `left` is inside / outside the range (inclusive; `min` and `max` are swapped if reversed)                                                    |
 | `'oneOf'` / `'notOneOf'`         | Any             | Array                           | Whether `left` equals one / none of `right` (`Array.includes`)                                                                                       |
 | `'includes'` / `'notIncludes'`   | String or array | Substring or element            | Whether `left` contains / does not contain `right` (`String.includes` / `Array.includes`)                                                            |
 | `'includesAll'`                  | String or array | Array of substrings or elements | Whether `left` contains all of `right` (`true` when `right` is empty)                                                                                |
@@ -1459,6 +1458,7 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 } (state becomes { a: 9, b: 2 })
 | `FillDefaultsOptions`           | Same as `FillDefaultsMutableOptions`                                                                                                                                                                                                                                                                                                                        |
 | `FillDefaultsResult<T, V, O>`   | The return type of `fillDefaults` and `fillDefaultsMutable`. Keys whose values in `target` are `undefined` (also `null` when `overwriteNull: true`) have those values removed and the type of the value in `defaultValues` added. Literal types of `defaultValues` are kept. If `overwriteNull` is a `boolean` not known at compile time, `null` may remain |
 | `FlattenObjectOptions`          | Options for `flattenObject`                                                                                                                                                                                                                                                                                                                                 |
+| `LooseRecord`                   | The return type of `flattenObject`, `Record<PropertyKey, any>` (a type of `@fringeworks/types`)                                                                                                                                                                                                                                                             |
 | `ForEachValueOptions`           | Options for `forEachValue`                                                                                                                                                                                                                                                                                                                                  |
 | `GetOptions`                    | Options for `get`                                                                                                                                                                                                                                                                                                                                           |
 | `PropertyPath`                  | A path for `get`, `set`, `unset`, and others. A string is parsed by the rules of `parsePropertyPath`, a number or symbol is a single key, and an array is a sequence of keys                                                                                                                                                                                |
@@ -1695,18 +1695,19 @@ Words are split by the following rules.
 
 #### Types
 
-| Type                         | Description                                                                                                            |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `CreateStringMatcherOptions` | Options for `createStringMatcher`                                                                                      |
-| `StringComparison`           | How to compare a string `{ includes?, startsWith?, endsWith?, matches? }`. Matches when all of them match              |
-| `StringCondition`            | A string condition (a `StringConditionItem` or an array of them)                                                       |
-| `StringConditionItem`        | One string condition (a string, a `RegExp`, a `StringComparison`, or a `StringPredicate`)                              |
-| `StringPredicate`            | A function that tests whether a string matches a condition `(value: string) => boolean`                                |
-| `Extractor`                  | The function created by `createExtractor`                                                                              |
-| `ExtractorOptions`           | Options for the function created by `createExtractor`                                                                  |
-| `ReplacementMap`             | The map for `replaceByMap` and `createReplacerByMap`: a Map, an object whose properties are entries, or an entry array |
-| `Replacer`                   | The function created by `createReplacerByMap`                                                                          |
-| `ReplacePlaceholdersOptions` | Options for `replacePlaceholders`                                                                                      |
+| Type                         | Description                                                                                                                |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `CreateStringMatcherOptions` | Options for `createStringMatcher`                                                                                          |
+| `StringComparison`           | How to compare a string `{ includes?, startsWith?, endsWith?, matches? }`. Matches when all of them match                  |
+| `StringCondition`            | A string condition (a `StringConditionItem` or an array of them)                                                           |
+| `StringConditionItem`        | One string condition (a string, a `RegExp`, a `StringComparison`, or a `StringPredicate`)                                  |
+| `StringPredicate`            | A function that tests whether a string matches a condition `(value: string) => boolean`                                    |
+| `Extractor`                  | The function created by `createExtractor`                                                                                  |
+| `ExtractorOptions`           | Options for the function created by `createExtractor`                                                                      |
+| `ReplacementMap`             | The map for `replaceByMap` and `createReplacerByMap`: a Map, an object whose properties are entries, or an entry array     |
+| `Replacer`                   | The function created by `createReplacerByMap`                                                                              |
+| `ReplacePlaceholdersOptions` | Options for `replacePlaceholders`                                                                                          |
+| `LooseDictionary`            | The type of the object passed as `values` of `replacePlaceholders`, `Record<string, any>` (a type of `@fringeworks/types`) |
 
 ### timer
 
@@ -1973,18 +1974,23 @@ Returns a value as the inferred type, bypassing type checking. Use it instead of
 
 #### Constants
 
-| Constant | Description                               |
-| -------- | ----------------------------------------- |
-| `Kind`   | The kinds of values returned by `getKind` |
+| Constant         | Description                                                                                             |
+| ---------------- | ------------------------------------------------------------------------------------------------------- |
+| `Kind`           | The kinds of values returned by `getKind`                                                               |
+| `ToStringResult` | The values for the main built-in objects that `getRawType` returns (a constant of `@fringeworks/types`) |
 
 #### Types
 
-| Type                   | Description                           |
-| ---------------------- | ------------------------------------- |
-| `GetPriorityOptions`   | Options for `getPriority`             |
-| `GetRawTypeResult`     | The return value of `getRawType`      |
-| `IsValidNumberOptions` | Options for `isValidNumber`           |
-| `Kind`                 | The kind values returned by `getKind` |
+| Type                   | Description                                                                                                     |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `Empty`                | The type `isEmpty` narrows to, `Nullish \| ''` (a type of `@fringeworks/types`)                                 |
+| `GetPriorityOptions`   | Options for `getPriority`                                                                                       |
+| `GetRawTypeResult`     | The return value of `getRawType`                                                                                |
+| `IsValidNumberOptions` | Options for `isValidNumber`                                                                                     |
+| `Kind`                 | The kind values returned by `getKind`                                                                           |
+| `Nullish`              | `undefined \| null` (a type of `@fringeworks/types`)                                                            |
+| `Primitive`            | The type `isPrimitive` narrows to (a type of `@fringeworks/types`)                                              |
+| `ToStringResult`       | The type of the values for the main built-in objects that `getRawType` returns (a type of `@fringeworks/types`) |
 
 ## License
 

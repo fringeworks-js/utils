@@ -3,6 +3,22 @@
 All notable changes to `@fringeworks/utils` are documented in this file.\
 This project follows [Semantic Versioning](https://semver.org/).
 
+## 2.3.0 - 2026-11-12
+
+### Added
+
+- The types of `@fringeworks/types` that appear in the API of this package are also exported from this package, so they can be used without installing `@fringeworks/types`: `Empty`, `Nullish`, `Primitive`, `IndexedIteratee`, `LooseRecord`, `LooseDictionary`, and `ToStringResult` (with its constant).
+
+### Fixed
+
+- The `'between'` and `'notBetween'` operators of `compare` swap the bounds when the lower bound is greater than the upper bound, as `isWithinRange` does.
+
+## 2.2.0 - 2026-11-07
+
+### Changed
+
+- The dependency range of `@fringeworks/types` is now `^1.1.1` (it was `^1.0.0`). There are no changes to the functions.
+
 ## 2.1.0 - 2026-11-01
 
 ### Added

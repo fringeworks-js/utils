@@ -27,3 +27,7 @@ export type FlattenObjectOptions = {
    */
   keepArrays?: boolean;
 };
+
+// キーが文字列のオブジェクトの型（`flattenObject` の戻り値、`transformObject` の型引数の既定）。
+// 利用者が `@fringeworks/types` を入れずに使えるよう、ここから export する
+export type { LooseRecord } from '@fringeworks/types';

@@ -8,8 +8,6 @@
 
 ```bash
 npm install @fringeworks/utils
-# または
-pnpm add @fringeworks/utils
 ```
 
 ## 使い方
@@ -422,27 +420,28 @@ truncateArrayMutable(array, 5); // array は [1, 2] のまま
 
 #### 型
 
-| 型                                   | 説明                                                   |
-| ------------------------------------ | ------------------------------------------------------ |
-| `CompactMapOptions`                  | `compactMap` のオプション                              |
-| `CompactMapExclude`                  | `compactMap` で除外する値の種類                        |
-| `CreateRangeOptions`                 | `createRange` のオプション                             |
-| `EnsureArrayOptions`                 | `ensureArray` のオプション                             |
-| `NestedGroupByOptions`               | `nestedGroupBy` のオプション                           |
-| `NestedGroupByResult<I>`             | `nestedGroupBy` の戻り値                               |
-| `NestedKeyByOptions`                 | `nestedKeyBy` のオプション                             |
-| `NestedKeyByResult<I>`               | `nestedKeyBy` の戻り値                                 |
-| `PushUniqueMutableOptions<T>`        | `pushUniqueMutable` のオプション                       |
-| `PushUniqueOptions<T>`               | `PushUniqueMutableOptions<T>` と同じ                   |
-| `RemoveAtMutableOptions`             | `removeAtMutable` のオプション                         |
-| `RemoveAtOptions`                    | `RemoveAtMutableOptions` と同じ                        |
-| `RotateArrayMutableOptions`          | `rotateArrayMutable` のオプション                      |
-| `RotateArrayOptions`                 | `RotateArrayMutableOptions` と同じ                     |
-| `SortDependenciesOptions<I>`         | `sortDependencies` のオプション                        |
-| `SortDependenciesGetId<I>`           | 要素から ID を返す関数 `(item) => unknown`             |
-| `SortDependenciesGetDependencies<I>` | 要素から依存先を返す関数 `(item) => I \| readonly I[]` |
-| `SwapPairsResult<T>`                 | `swapPairs` の戻り値（各タプルの要素を入れ替えた型）   |
-| `ToArrayOptions`                     | `toArray` のオプション                                 |
+| 型                                   | 説明                                                                                     |
+| ------------------------------------ | ---------------------------------------------------------------------------------------- |
+| `CompactMapOptions`                  | `compactMap` のオプション                                                                |
+| `CompactMapExclude`                  | `compactMap` で除外する値の種類                                                          |
+| `IndexedIteratee<V, R>`              | `compactMap` の `callback` の型 `(value, index, data) => R`（`@fringeworks/types` の型） |
+| `CreateRangeOptions`                 | `createRange` のオプション                                                               |
+| `EnsureArrayOptions`                 | `ensureArray` のオプション                                                               |
+| `NestedGroupByOptions`               | `nestedGroupBy` のオプション                                                             |
+| `NestedGroupByResult<I>`             | `nestedGroupBy` の戻り値                                                                 |
+| `NestedKeyByOptions`                 | `nestedKeyBy` のオプション                                                               |
+| `NestedKeyByResult<I>`               | `nestedKeyBy` の戻り値                                                                   |
+| `PushUniqueMutableOptions<T>`        | `pushUniqueMutable` のオプション                                                         |
+| `PushUniqueOptions<T>`               | `PushUniqueMutableOptions<T>` と同じ                                                     |
+| `RemoveAtMutableOptions`             | `removeAtMutable` のオプション                                                           |
+| `RemoveAtOptions`                    | `RemoveAtMutableOptions` と同じ                                                          |
+| `RotateArrayMutableOptions`          | `rotateArrayMutable` のオプション                                                        |
+| `RotateArrayOptions`                 | `RotateArrayMutableOptions` と同じ                                                       |
+| `SortDependenciesOptions<I>`         | `sortDependencies` のオプション                                                          |
+| `SortDependenciesGetId<I>`           | 要素から ID を返す関数 `(item) => unknown`                                               |
+| `SortDependenciesGetDependencies<I>` | 要素から依存先を返す関数 `(item) => I \| readonly I[]`                                   |
+| `SwapPairsResult<T>`                 | `swapPairs` の戻り値（各タプルの要素を入れ替えた型）                                     |
+| `ToArrayOptions`                     | `toArray` のオプション                                                                   |
 
 ### boolean
 
@@ -510,7 +509,7 @@ compare('hello', 'matches', /^h/); // true
 | `'=='` / `'!='`                  | 任意             | 任意                       | 緩い等価・不等価                                                                                       |
 | `'>'` / `'>='` / `'<'` / `'<='`  | 任意             | 任意                       | 大小比較（数値・文字列・`Date` など、JavaScript の比較演算子の動作に従う）                             |
 | `'deepEqual'` / `'notDeepEqual'` | 任意             | 任意                       | 構造が等しいか・等しくないか（`isEqual`）                                                              |
-| `'between'` / `'notBetween'`     | 任意             | `[min, max]`               | 範囲内か・範囲外か（両端を含む）                                                                       |
+| `'between'` / `'notBetween'`     | 任意             | `[min, max]`               | 範囲内か・範囲外か（両端を含む。下限が上限より大きい場合は入れ替える）                                 |
 | `'oneOf'` / `'notOneOf'`         | 任意             | 配列                       | `right` のいずれかと等しいか・どれとも等しくないか（`Array.includes`）                                 |
 | `'includes'` / `'notIncludes'`   | 文字列または配列 | 部分文字列または要素       | `left` が `right` を含むか・含まないか（`String.includes` / `Array.includes`）                         |
 | `'includesAll'`                  | 文字列または配列 | 部分文字列または要素の配列 | `left` が `right` のすべてを含むか（`right` が空なら `true`）                                          |
@@ -1461,6 +1460,7 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 }（state は { a: 9, b: 2 }）
 | `FillDefaultsOptions`           | `FillDefaultsMutableOptions` と同じ                                                                                                                                                                                                                                                                       |
 | `FillDefaultsResult<T, V, O>`   | `fillDefaults`・`fillDefaultsMutable` の戻り値。`target` の値が `undefined`（`overwriteNull: true` の場合は `null` も）のキーは、その値を除いて `defaultValues` の値の型が加わる。`defaultValues` のリテラル型は保たれる。`overwriteNull` がコンパイル時に決まらない `boolean` の場合は `null` が残りうる |
 | `FlattenObjectOptions`          | `flattenObject` のオプション                                                                                                                                                                                                                                                                              |
+| `LooseRecord`                   | `flattenObject` の戻り値の型 `Record<PropertyKey, any>`（`@fringeworks/types` の型）                                                                                                                                                                                                                      |
 | `ForEachValueOptions`           | `forEachValue` のオプション                                                                                                                                                                                                                                                                               |
 | `GetOptions`                    | `get` のオプション                                                                                                                                                                                                                                                                                        |
 | `PropertyPath`                  | `get`・`set`・`unset` などのパス。文字列は `parsePropertyPath` の規則で解釈し、数値・symbol は1つのキー、配列はキーの並びとして扱う                                                                                                                                                                       |
@@ -1709,6 +1709,7 @@ toUpperCase(data: string): string
 | `ReplacementMap`             | `replaceByMap`・`createReplacerByMap` のマップ。Map・プロパティをエントリーにするオブジェクト・エントリーの配列 |
 | `Replacer`                   | `createReplacerByMap` で作った関数                                                                              |
 | `ReplacePlaceholdersOptions` | `replacePlaceholders` のオプション                                                                              |
+| `LooseDictionary`            | `replacePlaceholders` の `values` に渡すオブジェクトの型 `Record<string, any>`（`@fringeworks/types` の型）     |
 
 ### timer
 
@@ -1975,18 +1976,23 @@ unsafeCast<T>(value: unknown): T
 
 #### 定数
 
-| 定数   | 説明                     |
-| ------ | ------------------------ |
-| `Kind` | `getKind` が返す値の種類 |
+| 定数             | 説明                                                                           |
+| ---------------- | ------------------------------------------------------------------------------ |
+| `Kind`           | `getKind` が返す値の種類                                                       |
+| `ToStringResult` | `getRawType` が返す主な組み込みオブジェクトの値（`@fringeworks/types` の定数） |
 
 #### 型
 
-| 型                     | 説明                         |
-| ---------------------- | ---------------------------- |
-| `GetPriorityOptions`   | `getPriority` のオプション   |
-| `GetRawTypeResult`     | `getRawType` の戻り値        |
-| `IsValidNumberOptions` | `isValidNumber` のオプション |
-| `Kind`                 | `getKind` が返す値の種類の値 |
+| 型                     | 説明                                                                             |
+| ---------------------- | -------------------------------------------------------------------------------- |
+| `Empty`                | `isEmpty` が絞り込む型 `Nullish \| ''`（`@fringeworks/types` の型）              |
+| `GetPriorityOptions`   | `getPriority` のオプション                                                       |
+| `GetRawTypeResult`     | `getRawType` の戻り値                                                            |
+| `IsValidNumberOptions` | `isValidNumber` のオプション                                                     |
+| `Kind`                 | `getKind` が返す値の種類の値                                                     |
+| `Nullish`              | `undefined \| null`（`@fringeworks/types` の型）                                 |
+| `Primitive`            | `isPrimitive` が絞り込む型（`@fringeworks/types` の型）                          |
+| `ToStringResult`       | `getRawType` が返す主な組み込みオブジェクトの値の型（`@fringeworks/types` の型） |
 
 ## ライセンス
 

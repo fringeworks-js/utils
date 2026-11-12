@@ -13,3 +13,7 @@ export type CompactMapOptions = {
 };
 
 export type CompactMapExclude = 'undefined' | 'nullish' | 'empty' | 'falsy';
+
+// 要素と添字を受け取る関数の型（`compactMap` の `callback`）。
+// 利用者が `@fringeworks/types` を入れずに使えるよう、ここから export する
+export type { IndexedIteratee } from '@fringeworks/types';

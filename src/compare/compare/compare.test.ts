@@ -72,9 +72,13 @@ describe('compare', () => {
     expect(compare(10, 'notBetween', [0, 10])).toBe(false);
   });
 
-  it('between の min が max より大きい場合は常に範囲外', () => {
-    expect(compare(5, 'between', [10, 0])).toBe(false);
-    expect(compare(5, 'notBetween', [10, 0])).toBe(true);
+  it('between の min が max より大きい場合は入れ替える', () => {
+    expect(compare(5, 'between', [10, 0])).toBe(true);
+    expect(compare(0, 'between', [10, 0])).toBe(true);
+    expect(compare(11, 'between', [10, 0])).toBe(false);
+    expect(compare(5, 'notBetween', [10, 0])).toBe(false);
+    expect(compare(11, 'notBetween', [10, 0])).toBe(true);
+    expect(compare('b', 'between', ['c', 'a'])).toBe(true);
   });
 
   it('oneOf / notOneOf 配列のいずれかと等しい', () => {

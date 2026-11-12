@@ -27,3 +27,7 @@ export type ReplacePlaceholdersOptions = {
    */
   includeInherited?: boolean;
 };
+
+// 置き換える値を持つオブジェクトの型（`replacePlaceholders` の `values`）。
+// 利用者が `@fringeworks/types` を入れずに使えるよう、ここから export する
+export type { LooseDictionary } from '@fringeworks/types';
