@@ -3,7 +3,7 @@
 All notable changes to `@fringeworks/utils` are documented in this file.\
 This project follows [Semantic Versioning](https://semver.org/).
 
-## 2.4.0 - Unreleased
+## 2.4.0 - 2026-11-21
 
 ### Added
 
