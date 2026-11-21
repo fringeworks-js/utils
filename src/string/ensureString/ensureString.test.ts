@@ -32,8 +32,9 @@ describe('ensureString', () => {
   });
 
   it('日時', () => {
-    const result = ensureString(new Date(1999, 0, 2, 3, 40, 56, 789));
-    expect(result).toBe('Sat Jan 02 1999 03:40:56 GMT+0900 (日本標準時)');
+    // 表記は実行環境の時間帯と言語で変わるので、String で作った文字列と比べる
+    const date = new Date(1999, 0, 2, 3, 40, 56, 789);
+    expect(ensureString(date)).toBe(String(date));
   });
 
   it('オブジェクト', () => {
