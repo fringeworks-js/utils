@@ -3,6 +3,16 @@
 All notable changes to `@fringeworks/utils` are documented in this file.\
 This project follows [Semantic Versioning](https://semver.org/).
 
+## 2.4.0 - Unreleased
+
+### Added
+
+- `EqualityFunction` of `@fringeworks/types` is also exported from this package, as the type of the `isEqual` option of `pushUniqueMutable` and `updateMutable`.
+
+### Changed
+
+- The `isEqual` option of `pushUniqueMutable` and `updateMutable` is now typed as `EqualityFunction`. The shape of the function is the same, so no changes are needed.
+
 ## 2.3.0 - 2026-11-12
 
 ### Added

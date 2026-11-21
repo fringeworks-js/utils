@@ -256,10 +256,10 @@ Returns a new array with only the elements of `items` that `data` does not conta
 pushUnique([1, 2], [2, 3, 3]); // [1, 2, 3]
 ```
 
-| Option       | Type                                | Description                                                                                                                              |
-| ------------ | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `threshold?` | `number`                            | Uses a `Set` for the check when the total number of elements is at least this value. Defaults to `100`                                   |
-| `isEqual?`   | `(value1: T, value2: T) => boolean` | A function that decides whether two elements are equal. When given, a linear search is used regardless of `threshold`. Defaults to `===` |
+| Option       | Type                  | Description                                                                                                                              |
+| ------------ | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `threshold?` | `number`              | Uses a `Set` for the check when the total number of elements is at least this value. Defaults to `100`                                   |
+| `isEqual?`   | `EqualityFunction<T>` | A function that decides whether two elements are equal. When given, a linear search is used regardless of `threshold`. Defaults to `===` |
 
 #### `pushUniqueMutable`
 
@@ -426,6 +426,7 @@ truncateArrayMutable(array, 5); // array is still [1, 2]
 | `CompactMapExclude`                  | The kinds of values `compactMap` excludes                                                                |
 | `IndexedIteratee<V, R>`              | The type of the `callback` of `compactMap`, `(value, index, data) => R` (a type of `@fringeworks/types`) |
 | `CreateRangeOptions`                 | Options for `createRange`                                                                                |
+| `EqualityFunction<T>`                | The type of the `isEqual` of `pushUniqueMutable`, `(a, b) => boolean` (a type of `@fringeworks/types`)   |
 | `EnsureArrayOptions`                 | Options for `ensureArray`                                                                                |
 | `NestedGroupByOptions`               | Options for `nestedGroupBy`                                                                              |
 | `NestedGroupByResult<I>`             | The return value of `nestedGroupBy`                                                                      |
@@ -1416,9 +1417,9 @@ update(state, { a: 1 }) === state; // true
 update({ a: { x: 1 } }, { a: { x: 1 } }, { isEqual }); // the original object
 ```
 
-| Option     | Type                                            | Description                                                                                                                                                                        |
-| ---------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `isEqual?` | `(value1: unknown, value2: unknown) => boolean` | A function that checks whether a value is unchanged. Defaults to `Object.is` (`NaN` equals `NaN`, and `+0` differs from `-0`). Pass the `isEqual` function to compare by structure |
+| Option     | Type                        | Description                                                                                                                                                                        |
+| ---------- | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `isEqual?` | `EqualityFunction<unknown>` | A function that checks whether a value is unchanged. Defaults to `Object.is` (`NaN` equals `NaN`, and `+0` differs from `-0`). Pass the `isEqual` function to compare by structure |
 
 #### `updateMutable`
 
@@ -1457,6 +1458,7 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 } (state becomes { a: 9, b: 2 })
 | `FillDefaultsMutableOptions`    | Options for `fillDefaultsMutable`                                                                                                                                                                                                                                                                                                                           |
 | `FillDefaultsOptions`           | Same as `FillDefaultsMutableOptions`                                                                                                                                                                                                                                                                                                                        |
 | `FillDefaultsResult<T, V, O>`   | The return type of `fillDefaults` and `fillDefaultsMutable`. Keys whose values in `target` are `undefined` (also `null` when `overwriteNull: true`) have those values removed and the type of the value in `defaultValues` added. Literal types of `defaultValues` are kept. If `overwriteNull` is a `boolean` not known at compile time, `null` may remain |
+| `EqualityFunction<T>`           | The type of the `isEqual` of `updateMutable`, `(a, b) => boolean` (a type of `@fringeworks/types`)                                                                                                                                                                                                                                                          |
 | `FlattenObjectOptions`          | Options for `flattenObject`                                                                                                                                                                                                                                                                                                                                 |
 | `LooseRecord`                   | The return type of `flattenObject`, `Record<PropertyKey, any>` (a type of `@fringeworks/types`)                                                                                                                                                                                                                                                             |
 | `ForEachValueOptions`           | Options for `forEachValue`                                                                                                                                                                                                                                                                                                                                  |

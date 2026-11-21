@@ -256,10 +256,10 @@ pushUnique<T>(data: readonly T[] | null | undefined, items: readonly T[] | null 
 pushUnique([1, 2], [2, 3, 3]); // [1, 2, 3]
 ```
 
-| オプション   | 型                                  | 説明                                                                                                              |
-| ------------ | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `threshold?` | `number`                            | 要素数の合計がこの値以上の場合は `Set` を使って判定する。デフォルトは `100`                                       |
-| `isEqual?`   | `(value1: T, value2: T) => boolean` | 2つの要素が等しいかを判定する関数。指定した場合は `threshold` に関わらず線形探索になる。デフォルトは `===` で判定 |
+| オプション   | 型                    | 説明                                                                                                              |
+| ------------ | --------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `threshold?` | `number`              | 要素数の合計がこの値以上の場合は `Set` を使って判定する。デフォルトは `100`                                       |
+| `isEqual?`   | `EqualityFunction<T>` | 2つの要素が等しいかを判定する関数。指定した場合は `threshold` に関わらず線形探索になる。デフォルトは `===` で判定 |
 
 #### `pushUniqueMutable`
 
@@ -426,6 +426,7 @@ truncateArrayMutable(array, 5); // array は [1, 2] のまま
 | `CompactMapExclude`                  | `compactMap` で除外する値の種類                                                          |
 | `IndexedIteratee<V, R>`              | `compactMap` の `callback` の型 `(value, index, data) => R`（`@fringeworks/types` の型） |
 | `CreateRangeOptions`                 | `createRange` のオプション                                                               |
+| `EqualityFunction<T>`                | `pushUniqueMutable` の `isEqual` の型 `(a, b) => boolean`（`@fringeworks/types` の型）   |
 | `EnsureArrayOptions`                 | `ensureArray` のオプション                                                               |
 | `NestedGroupByOptions`               | `nestedGroupBy` のオプション                                                             |
 | `NestedGroupByResult<I>`             | `nestedGroupBy` の戻り値                                                                 |
@@ -1418,9 +1419,9 @@ update(state, { a: 1 }) === state; // true
 update({ a: { x: 1 } }, { a: { x: 1 } }, { isEqual }); // 元のオブジェクト
 ```
 
-| オプション | 型                                              | 説明                                                                                                                                                            |
-| ---------- | ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `isEqual?` | `(value1: unknown, value2: unknown) => boolean` | 値が変わっていないかを判定する関数。デフォルトは `Object.is` で比較する（`NaN` 同士は等しく、`+0` と `-0` は異なる）。構造で比較する場合は `isEqual` 関数を渡す |
+| オプション | 型                          | 説明                                                                                                                                                            |
+| ---------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `isEqual?` | `EqualityFunction<unknown>` | 値が変わっていないかを判定する関数。デフォルトは `Object.is` で比較する（`NaN` 同士は等しく、`+0` と `-0` は異なる）。構造で比較する場合は `isEqual` 関数を渡す |
 
 #### `updateMutable`
 
@@ -1459,6 +1460,7 @@ updateMutable(state, { a: 9, b: 2 }); // { a: 1 }（state は { a: 9, b: 2 }）
 | `FillDefaultsMutableOptions`    | `fillDefaultsMutable` のオプション                                                                                                                                                                                                                                                                        |
 | `FillDefaultsOptions`           | `FillDefaultsMutableOptions` と同じ                                                                                                                                                                                                                                                                       |
 | `FillDefaultsResult<T, V, O>`   | `fillDefaults`・`fillDefaultsMutable` の戻り値。`target` の値が `undefined`（`overwriteNull: true` の場合は `null` も）のキーは、その値を除いて `defaultValues` の値の型が加わる。`defaultValues` のリテラル型は保たれる。`overwriteNull` がコンパイル時に決まらない `boolean` の場合は `null` が残りうる |
+| `EqualityFunction<T>`           | `updateMutable` の `isEqual` の型 `(a, b) => boolean`（`@fringeworks/types` の型）                                                                                                                                                                                                                        |
 | `FlattenObjectOptions`          | `flattenObject` のオプション                                                                                                                                                                                                                                                                              |
 | `LooseRecord`                   | `flattenObject` の戻り値の型 `Record<PropertyKey, any>`（`@fringeworks/types` の型）                                                                                                                                                                                                                      |
 | `ForEachValueOptions`           | `forEachValue` のオプション                                                                                                                                                                                                                                                                               |
